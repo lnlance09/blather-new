@@ -1,0 +1,48 @@
+@import "../../scss/_colors.scss";
+
+.predictionList {
+    .ui.items {
+        .item {
+            @media only screen and (max-width: 1025px) {
+                .itemImg {
+                    display: none !important;
+                }
+
+                .placeholderPicWrapper {
+                    display: none !important;
+                }
+
+                .content {
+                    width: 100% !important;
+
+                    .header {
+                        width: 100% !important;
+                    }
+                }
+            }
+        
+            @media only screen and (min-width: 1025px) {
+                .placeholderPicWrapper {
+                    height: 90px;
+                    width: 90px;
+                }
+
+                .content .header .ui.image.avatar {
+                    display: none;
+                }
+            }
+
+            .placeholderPicWrapper {
+                margin-right: 1em;
+            }
+
+            .extra {
+                .ui.red.label {
+                    .close.icon {
+                        margin: 0 .75em 0 0;
+                    }
+                }
+            }
+        }
+    }
+}

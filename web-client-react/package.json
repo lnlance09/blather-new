@@ -1,0 +1,79 @@
+{
+  "name": "web-client-react",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@testing-library/jest-dom": "^5.11.4",
+    "@testing-library/react": "^11.1.0",
+    "@testing-library/user-event": "^12.1.10",
+    "babel-loader": "^8.2.2",
+    "fomantic-ui": "^2.8.8",
+    "fomantic-ui-css": "^2.8.8",
+    "highcharts": "^9.1.1",
+    "highcharts-react-official": "^3.0.0",
+    "js-file-download": "^0.4.12",
+    "lodash": "^4.17.21",
+    "moment": "^2.29.1",
+    "node-sass": "^6.0.0",
+    "numeral": "^2.0.6",
+    "prop-types": "^15.7.2",
+    "randomstring": "^1.2.1",
+    "react": "^17.0.2",
+    "react-copy-to-clipboard": "^5.0.3",
+    "react-debounce-input": "^3.2.3",
+    "react-dom": "^17.0.2",
+    "react-dropzone": "^11.3.4",
+    "react-ga": "^3.3.0",
+    "react-linkify": "^1.0.0-alpha",
+    "react-meta-tags": "^1.0.1",
+    "react-moment": "^1.1.1",
+    "react-number-format": "^4.6.3",
+    "react-router-dom": "^5.2.0",
+    "react-router-scroll-top": "^0.2.1",
+    "react-scripts": "4.0.3",
+    "react-semantic-ui-datepickers": "^2.13.1",
+    "react-share": "^4.4.0",
+    "react-svg": "^14.0.5",
+    "react-toastify": "^7.0.4",
+    "react-tooltip": "^4.2.21",
+    "react-truncate": "^2.4.0",
+    "semantic-ui-css": "^2.4.1",
+    "semantic-ui-react": "^2.0.3",
+    "validator": "^13.6.0",
+    "web-vitals": "^1.0.1"
+  },
+  "scripts": {
+    "prettify": "prettier --print-width 100 --tab-width 4 --use-tabs --no-semi --trailing-comma none --jsx-bracket-same-line false --parser flow --write 'src/**/*.{js,jsx}'",
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@craco/craco": "^6.1.2",
+    "@semantic-ui-react/craco-less": "^1.2.1",
+    "laravel-echo": "^1.11.0",
+    "prettier": "^2.3.1",
+    "pusher-js": "^7.0.3",
+    "semantic-ui-less": "^2.4.1",
+    "use-reducer-logger": "^1.0.2"
+  }
+}

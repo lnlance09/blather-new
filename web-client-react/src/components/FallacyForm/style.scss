@@ -1,0 +1,35 @@
+@import "../../scss/_colors.scss";
+
+.predictionFormComponent {
+    .daysFromNow {
+        color: $blue;
+        font-weight: bold;
+    }
+
+    .dateField {
+        .field {
+            width: 100% !important;
+        }
+    }
+
+    .ui.grid.stackable {
+        .column.eight.wide {
+            @media only screen and (max-width: 1025px) {
+                padding-bottom: 0 !important;
+                padding-top: 0 !important;
+            }
+
+            &:nth-of-type(2) {
+                textarea {
+                    background: $invertedBackgroundColor;
+                    border: solid 1px rgba(255, 255, 255, 0.15);
+					box-shadow: none !important;
+					caret-color: $white !important;
+					color: $white;
+                    margin-top: 9px;
+					-webkit-box-shadow: 0 0 0 50px $invertedBackgroundColor inset !important;
+                }
+            }
+        }
+    }
+}

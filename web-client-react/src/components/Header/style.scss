@@ -1,0 +1,198 @@
+@import "../../scss/_colors.scss";
+@import url('https://fonts.googleapis.com/css2?family=Nanum+Gothic+Coding&display=swap');
+
+$logoHeight: 40px;
+
+.pageHeaderComponent {
+    height: 76px;
+
+    @media only screen and (max-width: 1025px) {
+        .container.desktop {
+            display: none;
+        }
+    }
+
+    @media only screen and (min-width: 1025px) {
+        .container.mobile {
+            display: none;
+        }
+    }
+
+    .simpleLogo {
+        display: inline-block;
+        height: $logoHeight;
+        width: $logoHeight;
+
+        svg {
+            cursor: pointer;
+            height: $logoHeight;
+            width: $logoHeight;
+        }
+    }
+
+    .basicHeaderContainer {
+        padding: 10px 0;
+
+        svg {
+            height: $logoHeight;
+            width: $logoHeight;
+        }
+    }
+
+    .ui.borderless.fluid.top.fixed.menu {
+        // border-bottom: solid 1px rgba(255, 255, 255, 0.15);
+        box-shadow: none !important;
+
+        a.item {
+            font-size: 15px;
+
+            &.active {
+                background: $white;
+                font-weight: bold;
+            }
+        }
+
+        &.inverted {
+            background: $invertedBackgroundColor;
+
+            @media only screen and (max-width: 1025px) {
+                background: transparentize(lighten($invertedBackgroundColor, 3%), 0.05);
+                border-bottom: solid 1px rgba(255, 255, 255, 0.1);
+            }
+
+            a.item.active {
+                background: $invertedBackgroundColor;
+                color: $offWhite !important;
+            }
+        }
+
+        .container {
+            height: 76px;
+
+            .item.logoItem {
+                h1.header {
+                    cursor: pointer;
+                    font-family: 'Nanum Gothic Coding', sans-serif;
+                    font-size: 36px;
+                    line-height: 9px;
+                    margin-left: 12px;
+                    margin-top: 0;
+                }
+            }
+
+            .item.active {
+                background: transparentize(lighten($invertedBackgroundColor, 3%), 0.05) !important;
+            }
+
+            &.desktop {
+                .item.logoItem {
+                    padding-left: 0;
+                }
+            }
+
+            .item.trigger {
+                cursor: pointer;
+                margin: 0 36px 0 0;
+                padding: 0;
+
+                .icon {
+                    margin: 0;
+                }
+            }
+
+            .bellDropdown {
+                .item.trigger {
+                    margin: 0 10px 0 1px;
+                }
+            }
+
+            .right.item {
+                @media only screen and (min-width: 1025px) {
+                    padding-right: 0;
+                }
+
+                button.compact.blue {
+                    margin-left: 14px;
+                }
+
+                .menu.transition:not(.visible) {
+                    display: none !important;
+                }
+
+                .moonButton {
+                    cursor: pointer;
+                }
+
+                .trigger.item {
+                    margin-right: 30px;
+                }
+
+                .paddedDropdownItem {
+                    border-top: solid 1px rgba(255, 255, 255, 0.15);
+                    cursor: pointer;
+                    display: block;
+                    padding: 18px 10px !important;
+
+                    &:first-of-type {
+                        border-top: none;
+                    }
+
+                    &:hover {
+                        background: rgba(255, 255, 255, 0.08);
+                        transition: 0.2s;
+                    }
+                }
+
+                .dropdown.bellDropdown {
+                    .menu.transition.visible {
+                        right: -140px;
+                        width: 400px;
+                    }
+                }
+
+                .dropdown.profileDropdown {
+                    .menu.transition.visible {
+                        left: -50px;
+                        top: 36px;
+                        width: 160px;
+                    }
+                }
+            }
+
+            &.mobile {
+                .item.trigger {
+                    margin: 0 12px 0 0;
+                }
+
+                .dropdown.bellDropdown {
+                    .menu.transition.visible {
+                        right: -140px;
+                        width: 400px;
+                    }
+                }
+
+                .dropdown.msgDropdown {
+                    .menu.transition.visible {
+                        right: 0;
+                    }
+                }
+            }
+        }
+    }
+
+	.sidebar.ui.labeled.icon.menu .item {
+		background: lighten($invertedBackgroundColor, 5%) !important;
+		color: $white !important;
+        font-weight: bold !important;
+        line-height: 24px !important;
+        text-align: left !important;
+
+        .icon {
+            color: $blue;
+            display: inline;
+            font-size: 24px !important;
+            padding-right: 16px;
+            vertical-align: middle;
+        }
+    }
+}

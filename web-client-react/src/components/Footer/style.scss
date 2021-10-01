@@ -1,0 +1,29 @@
+@import "../../scss/_colors.scss";
+
+.pageFooterComponent {
+    .ui.segment {
+        border-top: solid 1px $midWhite;
+        padding: 5em 0em;
+        
+        &.inverted {
+            // background: lighten($invertedBackgroundColor, 7%);
+            border-top: none;
+
+            @media only screen and (max-width: 1025px) {
+                // background: transparentize(lighten($invertedBackgroundColor, 3%), 0.05);
+                border-top: solid 1px rgba(255, 255, 255, 0.1);
+                padding: 3em 0em;
+            }
+        }
+
+        .emojiMarginLeft {
+            margin-left: 9px;
+        }
+
+        .etherLink {
+            color: $white;
+            text-decoration: underline;
+            word-break: break-all;
+        }
+    }
+}

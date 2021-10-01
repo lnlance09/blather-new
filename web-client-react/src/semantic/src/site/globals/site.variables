@@ -1,0 +1,50 @@
+/*******************************
+     User Global Variables
+*******************************/
+@primaryColor   : @pink;
+@secondaryColor : @blue;
+@red            : #db2828;
+@orange         : #f2711c;
+@yellow         : #fbbd08;
+@olive          : #b5cc18;
+@green          : #21ba45;
+@teal           : #00b5ad;
+@blue           : #2185d0;
+@violet         : #6435c9;
+@purple         : #a333c8;
+@pink           : #e03997;
+@brown          : #a5673f;
+@grey           : #767676;
+@black          : #1b1c1d;
+
+@teal: #40739e;
+@blue: #0097e6;
+@green: #44bd32;
+@yellow: #e1b12c;
+@red: #c23616;
+@purple: #8c7ae6;
+@violet: #192a56;
+@grey: #dcdde1;
+@black: #2f3640;
+
+@lightTeal: #487eb0;
+@lightBlue: #00a8ff;
+@lightGreen: #4cd137;
+@lightYellow: #fbc531;
+@lightRed: #e84118;
+@lightPurple: #9c88ff;
+@lightPurple: #273c75;
+@lightGrey: #f5f6fa;
+@lightBlack: #353b48;
+
+@fontName          : 'Overpass';
+@fontSmoothing     : antialiased;
+@googleFontFamily  : 'Anton';
+
+@googleFontName    : 'Overpass';
+@importGoogleFonts : true;
+@googleFontSizes   : '';
+@googleDisplay     : 'swap';
+
+@googleProtocol    : 'https://';
+@googleFontRequest : '@{googleFontName}&display=@{googleSubset}';
