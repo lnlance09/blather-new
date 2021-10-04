@@ -3,6 +3,7 @@ const reducer = (state, action) => {
 		case "GET_REFERENCE":
 			return {
 				...state,
+				loaded: true,
 				reference: action.ref
 			}
 		default:

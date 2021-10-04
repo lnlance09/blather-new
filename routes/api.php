@@ -28,8 +28,9 @@ Route::post('/fallacies/create', [FallacyController::class, 'create']);
 
 Route::get('/reference', [ReferenceController::class, 'index']);
 
-Route::get('/pages/{slug}', [PageController::class, 'show']);
+Route::get('/pages/{network}/{username}', [PageController::class, 'show']);
 
+Route::get('/tweets', [TweetController::class, 'index']);
 Route::get('/tweets/{id}', [TweetController::class, 'show']);
 
 Route::get('/users', [UserController::class, 'index']);

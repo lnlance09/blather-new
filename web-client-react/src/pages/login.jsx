@@ -16,6 +16,7 @@ const SignIn = ({ history }) => {
 			containerClassName="signInPage"
 			history={history}
 			inverted={state.inverted}
+			showFooter={false}
 			simpleHeader
 		>
 			<DisplayMetaTags page="signin" />

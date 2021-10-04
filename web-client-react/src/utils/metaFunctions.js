@@ -2,10 +2,10 @@ import MetaTags from "react-meta-tags"
 import moment from "moment"
 
 export const DisplayMetaTags = ({ page, state }) => {
-	const twitterHandle = "preditc"
-	const baseUrl = "https://preditc.com"
-	const siteName = "Preditc"
-	const description = `${siteName} is a social network that is used to share ideas and opinions about cryptocurrencies and their future performances`
+	const twitterHandle = "blatherio"
+	const baseUrl = "https://blather.io"
+	const siteName = "Blather"
+	const description = `${siteName} is a website and application that lets users assign logical fallacies to tweets. You can make political memes out of tweets and fallacies.`
 	const img = ""
 	let metaTags = {}
 
@@ -17,25 +17,25 @@ export const DisplayMetaTags = ({ page, state }) => {
 				title: `About - ${siteName}`
 			}
 			break
-		case "applications":
+		case "activity":
 			metaTags = {
 				description,
 				img,
-				title: `My Applications - ${siteName}`
+				title: `Activity - ${siteName}`
 			}
 			break
-		case "coin":
+		case "arguments":
 			metaTags = {
-				description: state.loaded ? state.coin.description : description,
-				img: state.loaded ? state.coin.logo : img,
-				title: state.loaded ? `${state.coin.name} - ${siteName}` : siteName
-			}
-			break
-		case "coins":
-			metaTags = {
-				description: "Browse cryptocurrencies, tokens and coins on preditc.com",
+				description,
 				img,
-				title: `Coins - ${siteName}`
+				title: `Arguments - ${siteName}`
+			}
+			break
+		case "assign":
+			metaTags = {
+				description,
+				img,
+				title: `Assign a Logical Fallacy - ${siteName}`
 			}
 			break
 		case "contact":
@@ -45,21 +45,7 @@ export const DisplayMetaTags = ({ page, state }) => {
 				title: `Contact Us - ${siteName}`
 			}
 			break
-		case "createWallet":
-			metaTags = {
-				description: `Generate an ${state.coin.name} wallet online that includes address, public key and private key. Fast. Free. Secure.`,
-				img,
-				title: `Generate ${state.coin.name} Address Online - ${siteName}`
-			}
-			break
-		case "forgot":
-			metaTags = {
-				description: "Reset your password",
-				img,
-				title: `Reset Your Password - ${siteName}`
-			}
-			break
-		case "prediction":
+		case "fallacy":
 			const { prediction } = state
 			const pCoin = prediction.coin
 			const pUser = prediction.user
@@ -75,11 +61,32 @@ export const DisplayMetaTags = ({ page, state }) => {
 				title: state.loaded ? pTitle : siteName
 			}
 			break
-		case "predictions":
+		case "forgot":
 			metaTags = {
-				description: "Browse cryptocurrency predictions on preditc.com",
+				description: "Reset your password",
 				img,
-				title: `Predictions - ${siteName}`
+				title: `Reset Your Password - ${siteName}`
+			}
+			break
+		case "grifters":
+			metaTags = {
+				description: "Grifters",
+				img,
+				title: `Grifters - ${siteName}`
+			}
+			break
+		case "notFound":
+			metaTags = {
+				description,
+				img,
+				title: `Not Found - ${siteName}`
+			}
+			break
+		case "page":
+			metaTags = {
+				description,
+				img,
+				title: `${state.page.name} - ${siteName}`
 			}
 			break
 		case "privacy":
@@ -89,11 +96,25 @@ export const DisplayMetaTags = ({ page, state }) => {
 				title: `Privacy - ${siteName}`
 			}
 			break
+		case "reference":
+			metaTags = {
+				description,
+				img,
+				title: `Reference - ${siteName}`
+			}
+			break
 		case "rules":
 			metaTags = {
 				description,
 				img,
 				title: `Rules - ${siteName}`
+			}
+			break
+		case "search":
+			metaTags = {
+				description,
+				img,
+				title: `Search - ${siteName}`
 			}
 			break
 		case "settings":
@@ -110,18 +131,11 @@ export const DisplayMetaTags = ({ page, state }) => {
 				title: `Sign In - ${siteName}`
 			}
 			break
-		case "trader":
+		case "user":
 			metaTags = {
 				description: state.loaded ? state.trader.bio : description,
 				img: state.loaded ? state.trader.img : img,
 				title: state.loaded ? `${state.trader.name} - ${siteName}` : siteName
-			}
-			break
-		case "traders":
-			metaTags = {
-				description: "Browse some of the best cryptocurrency traders on preditc.com",
-				img,
-				title: `Traders - ${siteName}`
 			}
 			break
 		default:

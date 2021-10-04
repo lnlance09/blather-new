@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Models\FallacyTwitter;
+use App\Models\Page;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -59,5 +61,10 @@ class Tweet extends Model
     public function fallacies()
     {
         return $this->hasMany(FallacyTwitter::class);
+    }
+
+    public function page()
+    {
+        return $this->hasOne(Page::class, 'id', 'page_id');
     }
 }

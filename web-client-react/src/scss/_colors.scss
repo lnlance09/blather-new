@@ -1,32 +1,32 @@
 /*---  Colors  ---*/
-$red: #eb4d4b;
-$orange: #f0932b;
-$yellow: #f9ca24;
+$red: #c0392b;
+$orange: #d35400;
+$yellow: #f39c12;
 $olive: #6ab04c;
-$green: #6ab04c;
-$teal: #22a6b3;
-$blue: #4834d4;
-$violet: #6435c9;
-$purple: #be2edd;;
-$pink: #e03997;
+$green: #27ae60;
+$teal: #16a085;
+$blue: #2980b9;
+$violet: #8e44ad;
+$purple: #2c3e50;
+$pink: #ffb8b8;
 $brown: #a5673f;
-$grey: #718093;
-$black: #2f3640;
+$grey: #7f8c8d;
+$black: #2c3e50;
 
 /*---  Light Colors  ---*/
-$lightRed: #ff7979;
-$lightOrange: #ffbe76;
-$lightYellow: #f6e58d;
+$lightRed: #e74c3c;
+$lightOrange: #e67e22;
+$lightYellow: #f1c40f;
 $lightOlive: #badc58;
-$lightGreen: #badc58;
-$lightTeal: #7ed6df;
-$lightBlue: #686de0;
-$lightViolet: #a291fb;
-$lightPurple: #e056fd;
-$lightPink: #ff8edf;
+$lightGreen: #2ecc71;
+$lightTeal: #1abc9c;
+$lightBlue: #3498db;
+$lightViolet: #9b59b6;
+$lightPurple: #34495e;
+$lightPink: #ffcccc;
 $lightBrown: #d67c1c;
-$lightGrey: #7f8fa6;
-$lightBlack: #353b48;
+$lightGrey: #95a5a6;
+$lightBlack: #34495e;
 
 /*---   Neutrals  ---*/
 $fullBlack: #000000;
@@ -35,13 +35,21 @@ $darkWhite: #f3f4f5;
 $midWhite: #dcddde;
 $white: #ffffff;
 
-$invertedBackgroundColor: #050505;
-
 /*---   Social colors  ---*/
 $facebook: #3b5998;
 $twitter: #0084b4;
 $youtube: #ff0000;
 $reddit: #ff5700;
 $patreon: #f96854;
+
+/*--- Twitter ---*/
+$twitterExtraExtraLightGrey: rgb(245,248,250);
+$twitterExtraLightGrey: rgb(225,232,237);
+$twitterLightGrey: rgb(170,184,194);
+$twitterDarkGrey: rgb(101,119,134);
+$twitterExtraExtraLightGrey1: rgba(245,248,250,0.1);
+$twitterExtraExtraLightGrey2: rgba(245,248,250,0.2);
+
+$invertedBackgroundColor: #212121;
 
 $dividerMargin: 25px;

@@ -6,7 +6,6 @@ use App\Http\Resources\FallacyTwitter as FallacyTwitterResource;
 use App\Http\Resources\FallacyYouTube as FallacyYouTubeResource;
 use App\Http\Resources\Page as PageResource;
 use App\Http\Resources\Reference as ReferenceResource;
-use App\Http\Resources\Tweet as TweetResource;
 use App\Http\Resources\User as UserResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 

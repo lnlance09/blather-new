@@ -17,7 +17,8 @@ class Reference extends JsonResource
         return [
             'id' => $this->id,
             'description' => $this->description,
-            'name' => $this->name
+            'name' => $this->name,
+            'fallacyCount' => $this->fallacies_count
         ];
     }
 }

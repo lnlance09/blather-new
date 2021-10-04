@@ -17,103 +17,103 @@ span.ui.text {
   line-height: 1;
 }
 span.ui.primary.text {
-  color: #e03997;
+  color: #ffb8b8;
 }
 span.ui.inverted.primary.text {
-  color: #00a8ff;
+  color: #3498db;
 }
 span.ui.secondary.text {
-  color: #0097e6;
+  color: #2980b9;
 }
 span.ui.inverted.secondary.text {
-  color: #353b48;
+  color: #34495e;
 }
 span.ui.red.text {
-  color: #c23616;
+  color: #c0392b;
 }
 span.ui.inverted.red.text {
-  color: #e84118;
+  color: #e74c3c;
 }
 span.ui.orange.text {
-  color: #f2711c;
+  color: #d35400;
 }
 span.ui.inverted.orange.text {
-  color: #FF851B;
+  color: #e67e22;
 }
 span.ui.yellow.text {
-  color: #e1b12c;
+  color: #f39c12;
 }
 span.ui.inverted.yellow.text {
-  color: #fbc531;
+  color: #f1c40f;
 }
 span.ui.olive.text {
-  color: #b5cc18;
+  color: #6ab04c;
 }
 span.ui.inverted.olive.text {
-  color: #D9E778;
+  color: #badc58;
 }
 span.ui.green.text {
-  color: #44bd32;
+  color: #27ae60;
 }
 span.ui.inverted.green.text {
-  color: #4cd137;
+  color: #2ecc71;
 }
 span.ui.teal.text {
-  color: #40739e;
+  color: #16a085;
 }
 span.ui.inverted.teal.text {
-  color: #487eb0;
+  color: #1abc9c;
 }
 span.ui.blue.text {
-  color: #0097e6;
+  color: #2980b9;
 }
 span.ui.inverted.blue.text {
-  color: #00a8ff;
+  color: #3498db;
 }
 span.ui.violet.text {
-  color: #192a56;
+  color: #8e44ad;
 }
 span.ui.inverted.violet.text {
-  color: #A291FB;
+  color: #9b59b6;
 }
 span.ui.purple.text {
-  color: #8c7ae6;
+  color: #2c3e50;
 }
 span.ui.inverted.purple.text {
-  color: #273c75;
+  color: #34495e;
 }
 span.ui.pink.text {
-  color: #e03997;
+  color: #ffb8b8;
 }
 span.ui.inverted.pink.text {
-  color: #FF8EDF;
+  color: #ffcccc;
 }
 span.ui.brown.text {
   color: #a5673f;
 }
 span.ui.inverted.brown.text {
-  color: #D67C1C;
+  color: #d67c1c;
 }
 span.ui.grey.text {
-  color: #dcdde1;
+  color: #7f8c8d;
 }
 span.ui.inverted.grey.text {
-  color: #f5f6fa;
+  color: #95a5a6;
 }
 span.ui.black.text {
-  color: #2f3640;
+  color: #2c3e50;
 }
 span.ui.inverted.black.text {
-  color: #353b48;
+  color: #34495e;
 }
 span.ui.error.text {
-  color: #c23616;
+  color: #c0392b;
 }
 span.ui.info.text {
   color: #31CCEC;
 }
 span.ui.success.text {
-  color: #44bd32;
+  color: #27ae60;
 }
 span.ui.warning.text {
   color: #F2C037;

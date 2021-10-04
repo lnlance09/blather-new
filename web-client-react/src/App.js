@@ -3,9 +3,13 @@ import "./semantic/dist/semantic.min.css"
 import "./scss/app.scss"
 import { Route, Router, Switch } from "react-router-dom"
 import About from "pages/about"
+import Activity from "pages/activity"
+import Arguments from "pages/arguments"
+import Assign from "pages/assign"
 import Contact from "pages/contact"
 import Fallacy from "pages/fallacies"
 import Forgot from "pages/forgot"
+import Grifters from "pages/grifters"
 import history from "history.js"
 import Login from "pages/login"
 import NotFound from "pages/notFound"
@@ -30,11 +34,17 @@ const App = () => {
 								exact
 								path="/"
 								render={(props) => (
-									<About key={window.location.pathname} {...props} />
+									<Assign key={window.location.pathname} {...props} />
 								)}
 							/>
 
 							<Route component={About} exact path="/about" />
+
+							<Route component={Activity} exact path="/activity" />
+
+							<Route component={Arguments} exact path="/arguments" />
+
+							<Route component={Contact} exact path="/contact" />
 
 							<Route
 								exact
@@ -44,8 +54,6 @@ const App = () => {
 								)}
 							/>
 
-							<Route component={Contact} exact path="/contact" />
-
 							<Route
 								exact
 								path="/forgot"
@@ -54,11 +62,13 @@ const App = () => {
 								)}
 							/>
 
+							<Route component={Grifters} exact path="/grifters" />
+
 							<Route component={Login} exact path="/login" />
 
 							<Route
 								exact
-								path="/pages/:slug"
+								path="/pages/:network/:slug"
 								render={(props) => (
 									<Page key={window.location.pathname} {...props} />
 								)}
@@ -73,6 +83,14 @@ const App = () => {
 							<Route
 								exact
 								path="/search"
+								render={(props) => (
+									<Search key={window.location.pathname} {...props} />
+								)}
+							/>
+
+							<Route
+								exact
+								path="/search/:type"
 								render={(props) => (
 									<Search key={window.location.pathname} {...props} />
 								)}

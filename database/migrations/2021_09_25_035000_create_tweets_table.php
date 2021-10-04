@@ -47,7 +47,7 @@ class CreateTweetsTable extends Migration
             $table->text('tweet_json');
             $table->timestamps();
 
-            $table->foreign('page_id')->references('id')->on('pages');
+            $table->foreign('page_id')->references('social_media_id')->on('pages');
         });
     }
 

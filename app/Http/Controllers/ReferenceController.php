@@ -26,7 +26,9 @@ class ReferenceController extends Controller
      */
     public function index(Request $request)
     {
-        $ref = Reference::orderBy('name')->paginate(100);
+        $ref = Reference::withCount(['fallacies'])
+            ->orderBy('name')
+            ->paginate(100);
         return new ReferenceCollection($ref);
     }
 

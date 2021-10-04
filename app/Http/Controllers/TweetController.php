@@ -20,13 +20,22 @@ class TweetController extends Controller
     public function index(Request $request)
     {
         $q = $request->input('q');
+        $pageId = $request->input('pageId', null);
         $sort = $request->input('sort', 'id');
         $dir = $request->input('dir', 'asc');
 
-        $tweets = Tweet::where('full_tex', 'LIKE', '%' . $q . '%')
+        $tweets = Tweet::where('full_text', 'LIKE', '%' . $q . '%')
+            // ->where('page_id', $pageId)
+            ->orWhere('retweeted_full_text', 'LIKE', '%' . $q . '%')
+            ->orWhere('quoted_full_text', 'LIKE', '%' . $q . '%')
+            ->with(['page'])
             ->withCount(['fallacies'])
+            ->whereHas('page')
+            // ->whereHas('page', function ($query) use ($q) {
+            //    $query->where('coin_id', $coinId)->where('status', 'Correct');
+            // })
             ->orderBy($sort, $dir)
-            ->get();
+            ->paginate(15);
         return new TweetCollection($tweets);
     }
 

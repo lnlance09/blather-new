@@ -47,7 +47,7 @@
   width: 100%;
   height: 100%;
   animation: loader 0.6s infinite linear;
-  border: 0.2em solid #dcdde1;
+  border: 0.2em solid #7f8c8d;
   border-radius: 500rem;
   box-shadow: 0 0 0 1px transparent;
 }
@@ -279,7 +279,7 @@
 .ui.primary.loading.loading.loading.loading .input > i.icon:after,
 .ui.primary.loading.loading.loading.loading > i.icon:after,
 .ui.primary.loader.loader.loader:after {
-  color: #e03997;
+  color: #ffb8b8;
 }
 .ui.inverted.primary.elastic.loader:before,
 .ui.inverted.primary.elastic.loading.loading.loading:not(.segment):not(.segments):not(.card):before,
@@ -289,7 +289,7 @@
 .ui.inverted.primary.loading.loading.loading.loading .input > i.icon:after,
 .ui.inverted.primary.loading.loading.loading.loading > i.icon:after,
 .ui.inverted.primary.loader.loader.loader:after {
-  color: #00a8ff;
+  color: #3498db;
 }
 .ui.secondary.elastic.loader.loader:before,
 .ui.secondary.basic.elastic.loading.button:before,
@@ -301,7 +301,7 @@
 .ui.secondary.loading.loading.loading.loading .input > i.icon:after,
 .ui.secondary.loading.loading.loading.loading > i.icon:after,
 .ui.secondary.loader.loader.loader:after {
-  color: #0097e6;
+  color: #2980b9;
 }
 .ui.inverted.secondary.elastic.loader:before,
 .ui.inverted.secondary.elastic.loading.loading.loading:not(.segment):not(.segments):not(.card):before,
@@ -311,7 +311,7 @@
 .ui.inverted.secondary.loading.loading.loading.loading .input > i.icon:after,
 .ui.inverted.secondary.loading.loading.loading.loading > i.icon:after,
 .ui.inverted.secondary.loader.loader.loader:after {
-  color: #353b48;
+  color: #34495e;
 }
 .ui.red.elastic.loader.loader:before,
 .ui.red.basic.elastic.loading.button:before,
@@ -323,7 +323,7 @@
 .ui.red.loading.loading.loading.loading .input > i.icon:after,
 .ui.red.loading.loading.loading.loading > i.icon:after,
 .ui.red.loader.loader.loader:after {
-  color: #c23616;
+  color: #c0392b;
 }
 .ui.inverted.red.elastic.loader:before,
 .ui.inverted.red.elastic.loading.loading.loading:not(.segment):not(.segments):not(.card):before,
@@ -333,7 +333,7 @@
 .ui.inverted.red.loading.loading.loading.loading .input > i.icon:after,
 .ui.inverted.red.loading.loading.loading.loading > i.icon:after,
 .ui.inverted.red.loader.loader.loader:after {
-  color: #e84118;
+  color: #e74c3c;
 }
 .ui.orange.elastic.loader.loader:before,
 .ui.orange.basic.elastic.loading.button:before,
@@ -345,7 +345,7 @@
 .ui.orange.loading.loading.loading.loading .input > i.icon:after,
 .ui.orange.loading.loading.loading.loading > i.icon:after,
 .ui.orange.loader.loader.loader:after {
-  color: #f2711c;
+  color: #d35400;
 }
 .ui.inverted.orange.elastic.loader:before,
 .ui.inverted.orange.elastic.loading.loading.loading:not(.segment):not(.segments):not(.card):before,
@@ -355,7 +355,7 @@
 .ui.inverted.orange.loading.loading.loading.loading .input > i.icon:after,
 .ui.inverted.orange.loading.loading.loading.loading > i.icon:after,
 .ui.inverted.orange.loader.loader.loader:after {
-  color: #FF851B;
+  color: #e67e22;
 }
 .ui.yellow.elastic.loader.loader:before,
 .ui.yellow.basic.elastic.loading.button:before,
@@ -367,7 +367,7 @@
 .ui.yellow.loading.loading.loading.loading .input > i.icon:after,
 .ui.yellow.loading.loading.loading.loading > i.icon:after,
 .ui.yellow.loader.loader.loader:after {
-  color: #e1b12c;
+  color: #f39c12;
 }
 .ui.inverted.yellow.elastic.loader:before,
 .ui.inverted.yellow.elastic.loading.loading.loading:not(.segment):not(.segments):not(.card):before,
@@ -377,7 +377,7 @@
 .ui.inverted.yellow.loading.loading.loading.loading .input > i.icon:after,
 .ui.inverted.yellow.loading.loading.loading.loading > i.icon:after,
 .ui.inverted.yellow.loader.loader.loader:after {
-  color: #fbc531;
+  color: #f1c40f;
 }
 .ui.olive.elastic.loader.loader:before,
 .ui.olive.basic.elastic.loading.button:before,
@@ -389,7 +389,7 @@
 .ui.olive.loading.loading.loading.loading .input > i.icon:after,
 .ui.olive.loading.loading.loading.loading > i.icon:after,
 .ui.olive.loader.loader.loader:after {
-  color: #b5cc18;
+  color: #6ab04c;
 }
 .ui.inverted.olive.elastic.loader:before,
 .ui.inverted.olive.elastic.loading.loading.loading:not(.segment):not(.segments):not(.card):before,
@@ -399,7 +399,7 @@
 .ui.inverted.olive.loading.loading.loading.loading .input > i.icon:after,
 .ui.inverted.olive.loading.loading.loading.loading > i.icon:after,
 .ui.inverted.olive.loader.loader.loader:after {
-  color: #D9E778;
+  color: #badc58;
 }
 .ui.green.elastic.loader.loader:before,
 .ui.green.basic.elastic.loading.button:before,
@@ -411,7 +411,7 @@
 .ui.green.loading.loading.loading.loading .input > i.icon:after,
 .ui.green.loading.loading.loading.loading > i.icon:after,
 .ui.green.loader.loader.loader:after {
-  color: #44bd32;
+  color: #27ae60;
 }
 .ui.inverted.green.elastic.loader:before,
 .ui.inverted.green.elastic.loading.loading.loading:not(.segment):not(.segments):not(.card):before,
@@ -421,7 +421,7 @@
 .ui.inverted.green.loading.loading.loading.loading .input > i.icon:after,
 .ui.inverted.green.loading.loading.loading.loading > i.icon:after,
 .ui.inverted.green.loader.loader.loader:after {
-  color: #4cd137;
+  color: #2ecc71;
 }
 .ui.teal.elastic.loader.loader:before,
 .ui.teal.basic.elastic.loading.button:before,
@@ -433,7 +433,7 @@
 .ui.teal.loading.loading.loading.loading .input > i.icon:after,
 .ui.teal.loading.loading.loading.loading > i.icon:after,
 .ui.teal.loader.loader.loader:after {
-  color: #40739e;
+  color: #16a085;
 }
 .ui.inverted.teal.elastic.loader:before,
 .ui.inverted.teal.elastic.loading.loading.loading:not(.segment):not(.segments):not(.card):before,
@@ -443,7 +443,7 @@
 .ui.inverted.teal.loading.loading.loading.loading .input > i.icon:after,
 .ui.inverted.teal.loading.loading.loading.loading > i.icon:after,
 .ui.inverted.teal.loader.loader.loader:after {
-  color: #487eb0;
+  color: #1abc9c;
 }
 .ui.blue.elastic.loader.loader:before,
 .ui.blue.basic.elastic.loading.button:before,
@@ -455,7 +455,7 @@
 .ui.blue.loading.loading.loading.loading .input > i.icon:after,
 .ui.blue.loading.loading.loading.loading > i.icon:after,
 .ui.blue.loader.loader.loader:after {
-  color: #0097e6;
+  color: #2980b9;
 }
 .ui.inverted.blue.elastic.loader:before,
 .ui.inverted.blue.elastic.loading.loading.loading:not(.segment):not(.segments):not(.card):before,
@@ -465,7 +465,7 @@
 .ui.inverted.blue.loading.loading.loading.loading .input > i.icon:after,
 .ui.inverted.blue.loading.loading.loading.loading > i.icon:after,
 .ui.inverted.blue.loader.loader.loader:after {
-  color: #00a8ff;
+  color: #3498db;
 }
 .ui.violet.elastic.loader.loader:before,
 .ui.violet.basic.elastic.loading.button:before,
@@ -477,7 +477,7 @@
 .ui.violet.loading.loading.loading.loading .input > i.icon:after,
 .ui.violet.loading.loading.loading.loading > i.icon:after,
 .ui.violet.loader.loader.loader:after {
-  color: #192a56;
+  color: #8e44ad;
 }
 .ui.inverted.violet.elastic.loader:before,
 .ui.inverted.violet.elastic.loading.loading.loading:not(.segment):not(.segments):not(.card):before,
@@ -487,7 +487,7 @@
 .ui.inverted.violet.loading.loading.loading.loading .input > i.icon:after,
 .ui.inverted.violet.loading.loading.loading.loading > i.icon:after,
 .ui.inverted.violet.loader.loader.loader:after {
-  color: #A291FB;
+  color: #9b59b6;
 }
 .ui.purple.elastic.loader.loader:before,
 .ui.purple.basic.elastic.loading.button:before,
@@ -499,7 +499,7 @@
 .ui.purple.loading.loading.loading.loading .input > i.icon:after,
 .ui.purple.loading.loading.loading.loading > i.icon:after,
 .ui.purple.loader.loader.loader:after {
-  color: #8c7ae6;
+  color: #2c3e50;
 }
 .ui.inverted.purple.elastic.loader:before,
 .ui.inverted.purple.elastic.loading.loading.loading:not(.segment):not(.segments):not(.card):before,
@@ -509,7 +509,7 @@
 .ui.inverted.purple.loading.loading.loading.loading .input > i.icon:after,
 .ui.inverted.purple.loading.loading.loading.loading > i.icon:after,
 .ui.inverted.purple.loader.loader.loader:after {
-  color: #273c75;
+  color: #34495e;
 }
 .ui.pink.elastic.loader.loader:before,
 .ui.pink.basic.elastic.loading.button:before,
@@ -521,7 +521,7 @@
 .ui.pink.loading.loading.loading.loading .input > i.icon:after,
 .ui.pink.loading.loading.loading.loading > i.icon:after,
 .ui.pink.loader.loader.loader:after {
-  color: #e03997;
+  color: #ffb8b8;
 }
 .ui.inverted.pink.elastic.loader:before,
 .ui.inverted.pink.elastic.loading.loading.loading:not(.segment):not(.segments):not(.card):before,
@@ -531,7 +531,7 @@
 .ui.inverted.pink.loading.loading.loading.loading .input > i.icon:after,
 .ui.inverted.pink.loading.loading.loading.loading > i.icon:after,
 .ui.inverted.pink.loader.loader.loader:after {
-  color: #FF8EDF;
+  color: #ffcccc;
 }
 .ui.brown.elastic.loader.loader:before,
 .ui.brown.basic.elastic.loading.button:before,
@@ -553,7 +553,7 @@
 .ui.inverted.brown.loading.loading.loading.loading .input > i.icon:after,
 .ui.inverted.brown.loading.loading.loading.loading > i.icon:after,
 .ui.inverted.brown.loader.loader.loader:after {
-  color: #D67C1C;
+  color: #d67c1c;
 }
 .ui.grey.elastic.loader.loader:before,
 .ui.grey.basic.elastic.loading.button:before,
@@ -565,7 +565,7 @@
 .ui.grey.loading.loading.loading.loading .input > i.icon:after,
 .ui.grey.loading.loading.loading.loading > i.icon:after,
 .ui.grey.loader.loader.loader:after {
-  color: #dcdde1;
+  color: #7f8c8d;
 }
 .ui.inverted.grey.elastic.loader:before,
 .ui.inverted.grey.elastic.loading.loading.loading:not(.segment):not(.segments):not(.card):before,
@@ -575,7 +575,7 @@
 .ui.inverted.grey.loading.loading.loading.loading .input > i.icon:after,
 .ui.inverted.grey.loading.loading.loading.loading > i.icon:after,
 .ui.inverted.grey.loader.loader.loader:after {
-  color: #f5f6fa;
+  color: #95a5a6;
 }
 .ui.black.elastic.loader.loader:before,
 .ui.black.basic.elastic.loading.button:before,
@@ -587,7 +587,7 @@
 .ui.black.loading.loading.loading.loading .input > i.icon:after,
 .ui.black.loading.loading.loading.loading > i.icon:after,
 .ui.black.loader.loader.loader:after {
-  color: #2f3640;
+  color: #2c3e50;
 }
 .ui.inverted.black.elastic.loader:before,
 .ui.inverted.black.elastic.loading.loading.loading:not(.segment):not(.segments):not(.card):before,
@@ -597,7 +597,7 @@
 .ui.inverted.black.loading.loading.loading.loading .input > i.icon:after,
 .ui.inverted.black.loading.loading.loading.loading > i.icon:after,
 .ui.inverted.black.loader.loader.loader:after {
-  color: #353b48;
+  color: #34495e;
 }
 .ui.elastic.loader.loader:before,
 .ui.elastic.loading.loading.loading:before,
@@ -614,7 +614,7 @@
 }
 .ui.elastic.basic.loading.button:before,
 .ui.elastic.basic.loading.button:after {
-  color: #dcdde1;
+  color: #7f8c8d;
 }
 .ui.double.loading.loading.loading.loading.button:after {
   border-bottom-color: currentColor;
@@ -679,7 +679,7 @@
   color: #FFFFFF;
 }
 .ui.inverted.dimmer > .ui.elastic.loader {
-  color: #dcdde1;
+  color: #7f8c8d;
 }
 .ui.elastic.loading.loading:not(.form):not(.segment):not(.segments):not(.card):after,
 .ui.elastic.loading.loading .input > i.icon:after,

@@ -345,14 +345,14 @@
 .ui.steps a.active.step:hover::after,
 .ui.steps a.active.step:hover {
   cursor: pointer;
-  background: #f5f6fa;
+  background: #95a5a6;
   color: rgba(0, 0, 0, 0.87);
 }
 
 /* Completed */
 .ui.steps .step.completed > i.icon:before,
 .ui.ordered.steps .step.completed:before {
-  color: #44bd32;
+  color: #27ae60;
 }
 
 /* Disabled */
@@ -563,11 +563,11 @@
 }
 .ui.inverted.steps .step {
   color: rgba(255, 255, 255, 0.9);
-  background: #2f3640;
+  background: #2c3e50;
   border-color: #555555;
 }
 .ui.inverted.steps .step:after {
-  background-color: #2f3640;
+  background-color: #2c3e50;
   border-color: #555555;
 }
 .ui.inverted.steps .step .description {

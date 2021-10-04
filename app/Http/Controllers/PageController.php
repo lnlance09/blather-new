@@ -89,9 +89,16 @@ class PageController extends Controller
      * @param  String  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($network, $username)
     {
-        $page = Page::where('id', $id)
+        $page = Page::where([
+            'network' => $network,
+            'username' => $username
+        ])
+            ->withCount([
+                'fallacies',
+                'contradictions'
+            ])
             ->first();
 
         if (empty($page)) {

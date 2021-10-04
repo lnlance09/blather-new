@@ -2,7 +2,6 @@
 
 namespace App\Http\Resources;
 
-use App\Http\Resources\FallacyCollection as FallacyCollection;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class Page extends JsonResource
@@ -15,15 +14,25 @@ class Page extends JsonResource
      */
     public function toArray($request)
     {
+        $network = $this->network;
+        $username = $this->username;
+        $socialMediaId = $this->social_media_id;
+        $externalLink = 'https://twitter.com/' . $username;
+        if ($network === 'youtube') {
+            $externalLink = 'https://www.youtube.com/channel/' . $socialMediaId;
+        }
+    
         return [
             'id' => $this->id,
             'bio' => $this->bio,
-            // 'fallacies' => new FallacyCollection($this->fallacies),
-            'image' => $this->image,
+            'contradictionCount' => $this->contradictions_count,
+            'fallacyCount' => $this->fallacies_count, 
+            'externalLink' => $externalLink,
+            'image' => env('AWS_URL', 'https://s3.amazonaws.com/blather22/') . $this->image,
             'name' => $this->name,
-            'network' => $this->network,
-            'socialMediaId' => $this->social_media_id,
-            'username' => $this->username
+            'network' => $network,
+            'socialMediaId' => $socialMediaId,
+            'username' => $username
         ];
     }
 }

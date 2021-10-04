@@ -1,4 +1,4 @@
-@import "../../../../css/colors.scss";
+@import "../../scss/_colors.scss";
 
 .tweet {
 	line-height: 1.4;
@@ -12,21 +12,7 @@
 		margin-top: 0;
   	}
 
-  	.archivePopup {
-		border-radius: 0;
-		box-shadow: none;
-		padding: 0.8em;
-  	}
-
-  	.archiveMsg {
-		background: lighten($invertedBackgroundColor, 2%) !important;
-		border: solid 1px $twitterExtraExtraLightGrey1 !important;
-		color: $white;
-		margin-bottom: 0 !important;
-  	}
-
   	.retweetedText {
-		background: darken($invertedBackgroundColor, 2%) !important;
 		color: $lightGrey;
 		font-size: 13px;
 		padding: 6px 10px;
@@ -41,7 +27,6 @@
 	  		white-space: pre-line;
 
 	  		.description {
-				color: $white !important;
 				font-size: 16px !important;
 				line-height: 1.4;
 
@@ -55,7 +40,7 @@
 	  		}
 
 	  		&.extra {
-				border-top: solid 1px $twitterExtraExtraLightGrey1 !important;
+				border-top: solid 1px $twitterExtraLightGrey !important;
 				cursor: default;
 				padding: 1px 3px !important;
 
@@ -70,29 +55,18 @@
 						.label {
 			  				background: transparent;
 			  				border: none;
-			  				color: $white;
 						}
 
 						.icon {
 			  				cursor: default;
 			  				display: inline-block;
 			  				margin-right: 5px;
-						}
 
-						.icon.twitter {
-			  				color: $twitter;
-			  				cursor: pointer;
-			  				margin-right: 0;
-						}
-
-						.icon.sticky.note {
-			  				cursor: pointer;
-						}
-
-						&.archiveListItem {
-			  				.content {
-								padding-right: 0 !important;
-			  				}
+							  &.twitter {
+								color: $twitter;
+								cursor: pointer;
+								margin-right: 0;
+							  }
 						}
 
 						.content {
@@ -127,9 +101,17 @@
 		}
   	}
 
+	.extEntitiesWrapper {
+		margin-top: 10px;
+	}
+
   	.mediaPic {
 		display: inline-block;
 		margin-top: 8px;
+
+		.mediaImg {
+			margin-top: 10px;
+		}
   	}
 
   	.tweetUserImg {
@@ -155,14 +137,6 @@
 
   	.tweetTime {
 		margin-left: 4px;
-  	}
-
-  	.mediaImg {
-		margin-top: 10px;
-  	}
-
-  	.mediaVideo {
-		margin-top: 10px;
   	}
 
   	@media only screen and (max-width: 1025px) {

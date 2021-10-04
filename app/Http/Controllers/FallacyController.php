@@ -18,6 +18,16 @@ use Illuminate\Http\Request;
 
 class FallacyController extends Controller
 {
+    const DEFAULT_WITH = [
+        'page',
+        'reference',
+        'user',
+        'twitter.tweet',
+        'youtube.video',
+        'contradictionTwitter.tweet',
+        'contradictionYouTube.video'
+    ];
+
     /**
      * Instantiate a new controller instance.
      *
@@ -37,9 +47,12 @@ class FallacyController extends Controller
         $q = $request->input('q', null);
         $pageId = $request->input('pageId', null);
         $refId = $request->input('refId', null);
+        $refId = $request->input('refIds', null);
         $userId = $request->input('userId', null);
         $retracted = $request->input('retracted', null);
         $status = $request->input('status', null);
+        $includeContradictions = $request->input('includeContradictions', false);
+        $with = $request->input('with', self::DEFAULT_WITH);
 
         $sort = $request->input('sort', 'id');
         $dir = $request->input('dir', 'desc');
@@ -70,21 +83,15 @@ class FallacyController extends Controller
             $where['q'] = ['LIKE', '%' . $q . '%'];
         }
 
-        $fallacies = Fallacy::with([
-            'page',
-            'reference',
-            'user',
-            'twitter.tweet',
-            'youtube.video',
-            'contradictionTwitter.tweet',
-            'contradictionYouTube.video'
-        ])
+        $fallacies = Fallacy::with($with)
             ->where($where)
+            ->whereNotIn('ref_id', $includeContradictions ? [] : [21])
             // ->whereHas('youtube', function ($query) use ($q) {
                 // $query->where('coin_id', $coinId)->where('status', 'Correct');
             // })
             ->orderBy($sort, $dir)
             ->paginate(15);
+        // dd($fallacies);
         return new FallacyCollection($fallacies);
     }
 

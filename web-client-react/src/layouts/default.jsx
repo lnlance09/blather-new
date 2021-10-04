@@ -58,7 +58,7 @@ const DefaultLayout = ({
 								<Grid.Column width={12}>{children}</Grid.Column>
 							</Grid>
 						) : (
-							<>{children}</>
+							<div className="mainContent">{children}</div>
 						)}
 					</Container>
 

@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Models\FallacyTwitter;
+use App\Models\Tweet;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Notifications\Notifiable;
@@ -41,8 +43,18 @@ class Page extends Model
         
     ];
 
+    public function contradictions()
+    {
+        return $this->hasMany(Fallacy::class, 'page_id', 'id')->where('ref_id', 21);
+    }
+
     public function fallacies()
     {
-        return $this->hasMany(Fallacy::class, 'user_id', 'id');
+        return $this->hasMany(Fallacy::class, 'page_id', 'id')->where('ref_id', '!=', 21);
+    }
+
+    public function tweets()
+    {
+        return $this->hasMany(Tweet::class, 'page_id', 'id');
     }
 }

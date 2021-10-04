@@ -394,7 +394,7 @@
   color: rgba(0, 0, 0, 0.95) !important;
 }
 .ui.slider.checkbox input:checked ~ label:before {
-  background-color: #353b48 !important;
+  background-color: #34495e !important;
 }
 .ui.slider.checkbox input:checked ~ label:after {
   left: 2rem;
@@ -499,7 +499,7 @@
   color: rgba(0, 0, 0, 0.95) !important;
 }
 .ui.toggle.checkbox input:checked ~ label:before {
-  background-color: #e03997 !important;
+  background-color: #ffb8b8 !important;
 }
 .ui.toggle.checkbox input:checked ~ label:after {
   left: 2.15rem;
@@ -511,7 +511,7 @@
   color: rgba(0, 0, 0, 0.95) !important;
 }
 .ui.toggle.checkbox input:focus:checked ~ label:before {
-  background-color: #e10f85 !important;
+  background-color: #ff8f8f !important;
 }
 .ui.right.aligned.toggle.checkbox label {
   padding-left: 0;
@@ -609,7 +609,7 @@
   color: #ffffff !important;
 }
 .ui.inverted.toggle.checkbox input:checked ~ label:before {
-  background-color: #e03997 !important;
+  background-color: #ffb8b8 !important;
 }
 
 /* Toggle Active Focus */
@@ -617,7 +617,7 @@
   color: #ffffff !important;
 }
 .ui.inverted.toggle.checkbox input:focus:checked ~ label:before {
-  background-color: #e10f85 !important;
+  background-color: #ff8f8f !important;
 }
 
 /*--------------------

@@ -1,101 +1,101 @@
 import "./style.scss"
+import { Card, Icon, Image, Label, List, Popup } from "semantic-ui-react"
 import { getHighlightedText } from "utils/textFunctions"
 import { linkHashtags, linkMentions } from "utils/linkifyAdditions"
-import { Card, Icon, Image, Label, List, Popup } from "semantic-ui-react"
+import { tweetOptions } from "options/tweet"
 import ItemPic from "images/images/square-image.png"
 import Linkify from "react-linkify"
 import Moment from "react-moment"
 import NumberFormat from "react-number-format"
 import Parser from "html-react-parser"
 import PropTypes from "prop-types"
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import runes from "runes"
 
 const Tweet = ({
-	assignable,
-	color,
+	config = tweetOptions,
+	counts = {},
 	createdAt,
-	displayTextRange,
-	extendedEntities,
-	externalLink,
+	defaultUserImg = "",
+	entities,
+	extendedEntities = {
+		media: []
+	},
 	fullText,
-	handleHoverOn,
-	highlight,
-	highlightedText,
 	history,
-	imageSize,
 	id,
-	isQuoteStatus,
-	onClickCallback,
-	opacity,
-	profileImg,
-	quoted,
-	raised,
-	redirect,
-	retweeted,
-	showStats,
-	stats,
+	quoted = {
+		counts: {},
+		isQuoted: false
+	},
+	retweeted = {
+		counts: {},
+		isRetweeted: false
+	},
 	user
 }) => {
-	const { img } = this.state
+	const {
+		assignable,
+		crossOriginAnonymous,
+		displayTextRange,
+		externalLink,
+		handleHoverOn,
+		highlight,
+		highlightedText,
+		onClickCallback,
+		opacity,
+		raised,
+		redirect,
+		showStats
+	} = config
+	const { isRetweeted, rUser = user } = retweeted
+	const { isQuoted, qUser = user } = quoted
 
-	const className = `tweet${redirect || assignable ? " clickable" : ""}`
-	const extEntities = retweeted ? retweeted.extendedEntities : extendedEntities
+	const headerCreatedAt = isRetweeted ? retweeted.createdAt : createdAt
+	const headerName = isRetweeted ? rUser.name : user.name
+	const headerUsername = isRetweeted ? rUser.username : user.username
+	const headerImg = isRetweeted ? rUser.image : user.image
+	const headerFullText = isRetweeted ? retweeted.fullText : fullText
+	const favCount = isRetweeted ? retweeted.counts.favorites : counts.favorites
+	const rtCount = isRetweeted ? retweeted.counts.retweets : counts.retweets
 
-	const CardHeader = () => {
-		let name = user.name
-		let screenName = user.screen_name
+	let qExtEntities = quoted.extendedEntities
+	let qFullText = typeof quoted.fullText === "undefined" ? quoted.text : quoted.fullText
+	let qName = qUser.name
+	let qUsername = qUser.username
+	let qTweetId = quoted.tweetId
 
-		if (retweeted) {
-			createdAt = new Date(retweeted.createdAt)
-			name = retweeted.user.name
-			profileImg = retweeted.user.profile_image_url_https.replace("_normal", "")
-			screenName = retweeted.user.screen_name
-		}
-
-		profileImg += `?v=${new Date().getTime()}`
-
-		return (
-			<div>
-				<Image
-					bordered
-					circular
-					className="tweetUserImg"
-					crossOrigin="anonymous"
-					floated="left"
-					onError={(i) => {
-						if (img === profileImg) {
-							i.target.src = ItemPic
-						} else {
-							i.target.src = profileImg
-							this.setState({ img: profileImg })
-						}
-					}}
-					src={profileImg}
-				/>
-				<Card.Header
-					className={`tweetUserName ${externalLink ? "link" : ""}`}
-					onClick={(e) => {
-						if (externalLink) {
-							e.stopPropagation()
-							history.push(`/pages/twitter/${screenName}`)
-						}
-					}}
-				>
-					{name}
-				</Card.Header>
-				<Card.Meta className="tweetUserScreenName">
-					@{screenName} •
-					<span className="tweetTime">
-						<Moment date={createdAt} format="MMM DD, YYYY" />
-					</span>
-				</Card.Meta>
-			</div>
-		)
+	if (isRetweeted && typeof retweeted.quoted !== "undefined") {
+		const { quoted } = retweeted
+		qExtEntities = quoted.extendedEntities
+		qFullText = typeof quoted.fullText === "undefined" ? quoted.text : quoted.fullText
+		qName = quoted.user.name
+		qUsername = quoted.user.screen_name
+		qTweetId = quoted.tweetId
 	}
 
-	const ParseMedia = () =>
-		extEntities.media.map((item, i) => {
+	const className = `tweet${redirect || assignable ? " clickable" : ""}`
+	const extEntities = retweeted ? JSON.parse(retweeted.extendedEntities) : extendedEntities
+
+	const onClickTweet = (e) => {
+		e.stopPropagation()
+
+		if (redirect) {
+			history.push(`/tweet/${id}`)
+		}
+
+		if (assignable) {
+			const url = `/assign?url=https://twitter.com/${user.username}/status/${id}`
+			if (e.metaKey) {
+				window.open(url, "_blank").focus()
+			} else {
+				history.push(url)
+			}
+		}
+	}
+
+	const parseMedia = (entities) =>
+		entities.media.map((item, i) => {
 			if (item.type === "photo" || item.type === "video") {
 				return (
 					<div className="mediaPic" key={`embed${i}`}>
@@ -103,9 +103,10 @@ const Tweet = ({
 							bordered
 							className="mediaImg"
 							crossOrigin="anonymous"
+							fluid
 							onError={(i) => (i.target.src = ItemPic)}
 							rounded
-							size={imageSize}
+							// size={imageSize}
 							src={item.media_url_https}
 						/>
 					</div>
@@ -114,109 +115,107 @@ const Tweet = ({
 			return null
 		})
 
-	const QuotedTweet = () => {
-		let quotedExtEntities = quoted.extendedEntities
-		let quotedFullText = typeof quoted.fullText === "undefined" ? quoted.text : quoted.fullFext
-		let quotedName = user.name
-		let quotedScreenName = quoted.user.screen_name
-		let quotedTweetId = quoted.id_str
-		if (retweeted && typeof retweeted.quoted !== "undefined") {
-			quotedExtEntities = retweeted.quoted.extendedEntities
-			quotedFullText =
-				typeof retweeted.quoted.fullText === "undefined"
-					? retweeted.quoted.text
-					: retweeted.quoted.fullText
-			quotedName = retweeted.quoted.user.name
-			quotedScreenName = retweeted.quoted.user.screen_name
-			quotedTweetId = retweeted.quoted.id_str
-		}
-
-		return (
-			<Card className={`quotedTweet ${!redirect && !assignable ? " clickable" : ""}`} fluid>
-				<Card.Content
-					className="quotedTweetContent"
-					onClick={(e) => {
-						if (!redirect) {
-							e.stopPropagation()
-							history.push(`/tweet/${quotedTweetId}`)
-						}
-					}}
-				>
-					<Card.Header className="quotedHeader">
-						{quotedName} <span className="quotedScreenName">@{quotedScreenName}</span>
-					</Card.Header>
-					<Card.Description className="quotedTextTweet">
-						<Linkify
-							properties={{
-								target: "_blank"
-							}}
-						>
-							{quotedFullText}
-						</Linkify>
-						{quotedExtEntities && <>{ParseMedia(quotedExtEntities)}</>}
-					</Card.Description>
-				</Card.Content>
-			</Card>
-		)
-	}
-
-	const TweetText = () => {
+	const formatTweetText = (text) => {
 		const start = displayTextRange[0]
 		const end = displayTextRange[1]
 		const length = parseInt(end, 10) - parseInt(start, 10)
-		const retweetedText =
-			typeof retweeted.fullText === "undefined" ? retweeted.text : retweeted.fullText
-		return Parser(
-			retweeted
-				? runes.substr(retweetedText, start, length)
-				: runes.substr(fullText, start, length)
-		)
+		return Parser(runes.substr(text, start, length))
 	}
 
-	const LinkifiedTweet = (
-		<Linkify
-			properties={{
-				target: "_blank"
-			}}
-			sanitize
-		>
-			{highlight && id ? getHighlightedText(TweetText(), highlightedText) : TweetText()}
-		</Linkify>
-	)
+	const tweetText = formatTweetText(headerFullText)
 
 	return (
 		<div className={className} onClick={() => onClickCallback()} style={{ opacity }}>
-			<Card color={color} fluid raised={raised}>
-				{retweeted && (
+			<Card fluid raised={raised}>
+				{isRetweeted && (
 					<div className="retweetedText">
 						<Icon name="retweet" /> {user.name} Retweeted
 					</div>
 				)}
-				<Card.Content
-					onClick={(e) => {
-						if (redirect) {
-							e.stopPropagation()
-							history.push(`/tweet/${id}`)
-						}
-
-						if (assignable) {
-							e.stopPropagation()
-							const url = `/assign?url=https://twitter.com/${user.screen_name}/status/${id}`
-							if (!e.metaKey) {
-								history.push(url)
-							} else {
-								window.open(url, "_blank").focus()
+				<Card.Content onClick={onClickTweet}>
+					<Image
+						bordered
+						circular
+						className="tweetUserImg"
+						crossOrigin={crossOriginAnonymous ? "anonymous" : null}
+						floated="left"
+						onError={(i) => {
+							const newImg = headerImg !== defaultUserImg ? defaultUserImg : ItemPic
+							i.target.src = newImg
+						}}
+						src={headerImg}
+					/>
+					<Card.Header
+						className={`tweetUserName ${externalLink ? "link" : ""}`}
+						onClick={(e) => {
+							if (externalLink) {
+								e.stopPropagation()
+								history.push(`/pages/twitter/${headerUsername}`)
 							}
-						}
-					}}
-				>
-					{CardHeader()}
+						}}
+					>
+						{headerName}
+					</Card.Header>
+					<Card.Meta className="tweetUserScreenName">
+						@{headerUsername} •
+						<span className="tweetTime">
+							<Moment date={headerCreatedAt} format="MMM DD, YYYY" />
+						</span>
+					</Card.Meta>
 					<Card.Description className="linkifyTweet" onMouseUp={handleHoverOn}>
-						{LinkifiedTweet}
-						{extEntities && <>{ParseMedia()}</>}
+						<Linkify
+							properties={{
+								target: "_blank"
+							}}
+							sanitize
+						>
+							{highlight ? (
+								<>{getHighlightedText(tweetText, highlightedText)}</>
+							) : (
+								<>{tweetText}</>
+							)}
+						</Linkify>
+						{extEntities && (
+							<div className="extEntitiesWrapper">{parseMedia(extEntities)}</div>
+						)}
 					</Card.Description>
-					{isQuoteStatus && QuotedTweet()}
+					{isQuoted && (
+						<>
+							<Card
+								className={`quotedTweet ${
+									!redirect && !assignable ? " clickable" : ""
+								}`}
+								fluid
+							>
+								<Card.Content
+									className="quotedTweetContent"
+									onClick={(e) => {
+										if (!redirect) {
+											e.stopPropagation()
+											history.push(`/tweet/${qTweetId}`)
+										}
+									}}
+								>
+									<Card.Header className="quotedHeader">
+										{qName}{" "}
+										<span className="quotedScreenName">@{qUsername}</span>
+									</Card.Header>
+									<Card.Description className="quotedTextTweet">
+										<Linkify
+											properties={{
+												target: "_blank"
+											}}
+										>
+											{qFullText}
+										</Linkify>
+										{qExtEntities && <>{parseMedia(qExtEntities)}</>}
+									</Card.Description>
+								</Card.Content>
+							</Card>
+						</>
+					)}
 				</Card.Content>
+
 				{showStats && (
 					<Card.Content extra>
 						<List floated="left" horizontal>
@@ -226,7 +225,7 @@ const Tweet = ({
 									<NumberFormat
 										displayType={"text"}
 										thousandSeparator={true}
-										value={retweeted ? retweeted.favorites : stats.favorites}
+										value={favCount}
 									/>
 								</Label>
 							</List.Item>
@@ -236,7 +235,7 @@ const Tweet = ({
 									<NumberFormat
 										displayType={"text"}
 										thousandSeparator={true}
-										value={retweeted ? retweeted.retweets : stats.retweets}
+										value={rtCount}
 									/>
 								</Label>
 							</List.Item>
@@ -276,94 +275,67 @@ const Tweet = ({
 }
 
 Tweet.propTypes = {
-	assignable: PropTypes.bool,
-	bearer: PropTypes.string,
-	color: PropTypes.oneOfType([PropTypes.bool, PropTypes.string]),
+	config: PropTypes.shape({
+		assignable: PropTypes.bool,
+		crossOriginAnonymous: PropTypes.bool,
+		displayTextRange: PropTypes.array,
+		externalLink: PropTypes.bool,
+		handleHoverOn: PropTypes.func,
+		highlight: PropTypes.bool,
+		highlightedText: PropTypes.string,
+		imageSize: PropTypes.string,
+		onClickCallback: PropTypes.func,
+		opacity: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+		raised: PropTypes.bool,
+		redirect: PropTypes.bool,
+		showStats: PropTypes.bool
+	}),
 	createdAt: PropTypes.string,
-	displayTextRange: PropTypes.array,
+	entities: PropTypes.string,
 	extendedEntities: PropTypes.shape({
 		media: PropTypes.array
 	}),
-	externalLink: PropTypes.bool,
 	fullText: PropTypes.string,
-	handleHoverOn: PropTypes.func,
-	highlight: PropTypes.bool,
-	highlightedText: PropTypes.string,
-	id: PropTypes.string,
-	imageSize: PropTypes.string,
-	isQuoteStatus: PropTypes.bool,
-	key: PropTypes.string,
-	onClickCallback: PropTypes.func,
-	opacity: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
-	profileImg: PropTypes.string,
-	quoted: PropTypes.oneOfType([
-		PropTypes.bool,
-		PropTypes.shape({
-			counts: PropTypes.shape({
-				favorites: PropTypes.number,
-				retweets: PropTypes.number
-			}),
-			entities: PropTypes.string,
-			extendedEntities: PropTypes.string,
-			fullText: PropTypes.string,
-			tweetId: PropTypes.number
+	id: PropTypes.number,
+	quoted: PropTypes.shape({
+		counts: PropTypes.shape({
+			favorites: PropTypes.number,
+			retweets: PropTypes.number
+		}),
+		entities: PropTypes.string,
+		extendedEntities: PropTypes.string,
+		fullText: PropTypes.string,
+		tweetId: PropTypes.number,
+		user: PropTypes.shape({
+			img: PropTypes.string,
+			name: PropTypes.string,
+			username: PropTypes.string
 		})
-	]),
-	raised: PropTypes.bool,
-	redirect: PropTypes.bool,
-	retweeted: PropTypes.oneOfType([
-		PropTypes.bool,
-		PropTypes.shape({
-			counts: PropTypes.shape({
-				favorites: PropTypes.number,
-				retweets: PropTypes.number
-			}),
-			entities: PropTypes.string,
-			extendedEntities: PropTypes.string,
-			fullText: PropTypes.string,
-			tweetId: PropTypes.number
+	}),
+	retweeted: PropTypes.shape({
+		counts: PropTypes.shape({
+			favorites: PropTypes.number,
+			retweets: PropTypes.number
+		}),
+		entities: PropTypes.string,
+		extendedEntities: PropTypes.string,
+		fullText: PropTypes.string,
+		tweetId: PropTypes.number,
+		user: PropTypes.shape({
+			img: PropTypes.string,
+			name: PropTypes.string,
+			username: PropTypes.string
 		})
-	]),
-	showStats: PropTypes.bool,
+	}),
 	stats: PropTypes.shape({
 		favorites: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
 		retweets: PropTypes.oneOfType([PropTypes.number, PropTypes.string])
 	}),
 	user: PropTypes.shape({
-		description: PropTypes.string,
-		id: PropTypes.number,
-		location: PropTypes.string,
+		img: PropTypes.string,
 		name: PropTypes.string,
-		profile_image_url: PropTypes.string,
-		screen_name: PropTypes.string
+		username: PropTypes.string
 	})
-}
-
-Tweet.defaultProps = {
-	assignable: false,
-	color: null,
-	displayTextRange: [0, 280],
-	extendedEntities: {
-		media: []
-	},
-	externalLink: false,
-	fullText: "",
-	highlight: false,
-	imageSize: "tiny",
-	isQuoteStatus: false,
-	onClickCallback: () => null,
-	opacity: 1,
-	quoted: {
-		user: {}
-	},
-	raised: false,
-	redirect: false,
-	retweeted: {
-		user: {}
-	},
-	showStats: true,
-	stats: {},
-	user: {}
 }
 
 export default Tweet

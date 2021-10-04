@@ -82,7 +82,7 @@
 
 /* Whole Page */
 body.pushable {
-  background: #353b48;
+  background: #34495e;
 }
 body.pushable.dimmed {
   background: inherit;

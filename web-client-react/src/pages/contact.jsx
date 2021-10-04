@@ -1,4 +1,4 @@
-import { Button, Form, Grid, Header, List, TextArea } from "semantic-ui-react"
+import { Button, Form, Header, TextArea } from "semantic-ui-react"
 import { useContext, useState } from "react"
 import { DisplayMetaTags } from "utils/metaFunctions"
 import { getConfig } from "options/toast"
@@ -61,42 +61,20 @@ const Contact = ({ history }) => {
 
 			<Header as="h1" content="Contact Us" inverted={inverted} />
 
-			<Grid stackable>
-				<Grid.Column width={10}>
-					<Header
-						as="p"
-						content="Let us know what's on your mind or if you have any suggestions"
-						inverted={inverted}
-						style={{ fontWeight: "normal" }}
-					/>
-					<Form inverted={inverted} size="large">
-						<Form.Field>
-							<TextArea onChange={onChangeMsg} placeholder="What's up?" value={msg} />
-						</Form.Field>
-						<Form.Field>
-							<Button
-								color="blue"
-								content="Send"
-								fluid
-								onClick={sendMsg}
-								size="large"
-							/>
-						</Form.Field>
-					</Form>
-				</Grid.Column>
-				<Grid.Column width={6}>
-					<List inverted={inverted} size="big">
-						<List.Item
-							onClick={() =>
-								window.open(`https://twitter.com/preditcapp`, "_blank").focus()
-							}
-						>
-							<List.Icon className="twitterIcon" name="twitter" />
-							<List.Content>Twitter</List.Content>
-						</List.Item>
-					</List>
-				</Grid.Column>
-			</Grid>
+			<Header
+				as="p"
+				content="Let us know what's on your mind or if you have any suggestions"
+				inverted={inverted}
+				style={{ fontWeight: "normal" }}
+			/>
+			<Form inverted={inverted} size="large">
+				<Form.Field>
+					<TextArea onChange={onChangeMsg} placeholder="What's up?" value={msg} />
+				</Form.Field>
+				<Form.Field>
+					<Button color="blue" content="Send" fluid onClick={sendMsg} size="large" />
+				</Form.Field>
+			</Form>
 		</DefaultLayout>
 	)
 }

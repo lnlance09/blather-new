@@ -6,7 +6,7 @@ import NumberFormat from "react-number-format"
 import PlaceholderPic from "images/images/image.png"
 import PropTypes from "prop-types"
 
-const FallacyList = ({ inverted, loading, loadingMore, onClickFallacy, predictions }) => {
+const FallacyList = ({ fallacies, inverted, loading, loadingMore, onClickFallacy }) => {
 	const PlaceholderSegment = (
 		<>
 			<Placeholder className="placeholderPicWrapper" inverted={inverted}>
@@ -25,21 +25,12 @@ const FallacyList = ({ inverted, loading, loadingMore, onClickFallacy, predictio
 	)
 
 	return (
-		<div className="predictionList">
+		<div className="fallacyList">
 			<Item.Group className={inverted ? "inverted" : ""} divided link>
-				{predictions.map((prediction, i) => {
-					const {
-						coin,
-						createdAt,
-						explanation,
-						id,
-						margin,
-						predictionPrice,
-						status,
-						targetDate
-					} = prediction
+				{fallacies.map((fallacy, i) => {
+					const { createdAt, explanation, id, page, reference, user } = fallacy
 					return (
-						<Item key={`prediction${i}`} onClick={(e) => onClickFallacy(e, id)}>
+						<Item key={`fallacy${i}`} onClick={(e) => onClickFallacy(e, id)}>
 							{loading ? (
 								<>{PlaceholderSegment}</>
 							) : (
@@ -48,42 +39,17 @@ const FallacyList = ({ inverted, loading, loadingMore, onClickFallacy, predictio
 										className="itemImg"
 										onError={(i) => (i.target.src = PlaceholderPic)}
 										size="tiny"
-										src={coin.logo}
+										src={page.image}
 									/>
 									<Item.Content>
 										<Item.Header>
-											{coin.name} to{" "}
-											<NumberFormat
-												decimalScale={predictionPrice > 1 ? 2 : 6}
-												displayType={"text"}
-												prefix={"$"}
-												thousandSeparator
-												value={predictionPrice}
-											/>
-											<Image
-												avatar
-												floated="right"
-												src={coin.logo}
-												style={{ bottom: 8 }}
-											/>
+											{reference.name} #{id}
 										</Item.Header>
 										<Item.Meta>
-											On <Moment date={targetDate} format="MMM D, YYYY" />•{" "}
-											Predicted <Moment date={createdAt} fromNow />
+											<Moment date={createdAt} fromNow /> • {user.name}
 										</Item.Meta>
-										{status !== "Pending" && (
-											<Item.Meta>{margin}% margin</Item.Meta>
-										)}
 										<Item.Description>{explanation}</Item.Description>
-										<Item.Extra>
-											<Label
-												className={inverted ? "inverted" : ""}
-												color={setIconColor(status)}
-												content={status}
-												icon={setIconName(status)}
-												size="tiny"
-											/>
-										</Item.Extra>
+										<Item.Extra></Item.Extra>
 									</Item.Content>
 								</>
 							)}

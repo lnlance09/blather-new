@@ -1,99 +1,291 @@
 import {
 	Button,
-	Card,
-	Divider,
+	Grid,
 	Header,
-	Icon,
 	Image,
 	Label,
-	List,
 	Loader,
-	Segment
+	Menu,
+	Segment,
+	Visibility
 } from "semantic-ui-react"
-import { useContext, useEffect, useReducer } from "react"
+import { useContext, useEffect, useReducer, useState } from "react"
 import { DisplayMetaTags } from "utils/metaFunctions"
-import { RedditShareButton, TwitterShareButton } from "react-share"
 import { getConfig } from "options/toast"
-import { Link } from "react-router-dom"
 import { toast } from "react-toastify"
-import { dateDiff } from "utils/dateFunctions"
-import { setIconColor, setIconName } from "utils/textFunctions"
 import axios from "axios"
+import ContradictionList from "components/ContradictionList"
 import DefaultLayout from "layouts/default"
+import FallacyList from "components/FallacyList"
 import initialState from "states/page"
 import logger from "use-reducer-logger"
-import moment from "moment"
-import Moment from "react-moment"
-import NumberFormat from "react-number-format"
 import PlaceholderPic from "images/images/image-square.png"
 import PropTypes from "prop-types"
 import reducer from "reducers/page"
 import ThemeContext from "themeContext"
-import UserPic from "images/avatar/large/steve.jpg"
 
 const toastConfig = getConfig()
 toast.configure(toastConfig)
 
 const Page = ({ history, match }) => {
-	const { dispatch, state } = useContext(ThemeContext)
+	const { state } = useContext(ThemeContext)
 	const { inverted } = state
-	const { slug } = match.params
-	const params = new URLSearchParams(window.location.search)
-	const clear = params.get("clear")
+	const { network, slug } = match.params
 
 	const [internalState, dispatchInternal] = useReducer(
 		process.env.NODE_ENV === "development" ? logger(reducer) : reducer,
 		initialState
 	)
-	const { loaded, prediction } = internalState
+	const { contradictions, fallacies, loaded, page } = internalState
+
+	const [activeItem, setActiveItem] = useState("contradictions")
+	const [hasMore, setHasMore] = useState(false)
+	const [hasMoreC, setHasMoreC] = useState(false)
+	const [loading, setLoading] = useState(true)
+	const [loadingC, setLoadingC] = useState(true)
+	const [loadingMore, setLoadingMore] = useState(false)
+	const [loadingMoreC, setLoadingMoreC] = useState(false)
+	const [imageLoaded, setImageLoaded] = useState(false)
+	const [pageNumber, setPageNumber] = useState(1)
+	const [pageNumberC, setPageNumberC] = useState(1)
 
 	useEffect(() => {
-		const getPrediction = async (slug) => {
+		const getPage = async (slug) => {
 			await axios
-				.get(`${process.env.REACT_APP_BASE_URL}predictions/${slug}`)
+				.get(`${process.env.REACT_APP_BASE_URL}pages/${network}/${slug}`)
 				.then(async (response) => {
-					const prediction = response.data.data
+					const page = response.data.data
 					dispatchInternal({
-						type: "GET_PREDICTION",
-						prediction
+						type: "GET_PAGE",
+						page
 					})
+					getFallacies(page.id)
+					getContradictions(page.id)
 				})
 				.catch(() => {
 					toast.error("There was an error")
 				})
 		}
 
-		if (clear === "1") {
-			clearNotification(slug)
-		}
-
-		getPrediction(slug)
+		getPage(slug)
 		// eslint-disable-next-line
 	}, [slug])
 
-	const clearNotification = (slug) => {
-		dispatch({
-			type: "CLEAR_NOTIFICATION",
-			id: parseInt(slug, 10)
-		})
+	const getContradictions = async (pageId, page = 1) => {
+		if (page === 1) {
+			setLoadingC(true)
+		} else {
+			setLoadingMoreC(true)
+		}
+
+		await axios
+			.get(`${process.env.REACT_APP_BASE_URL}fallacies`, {
+				params: {
+					with: [
+						"contradictionTwitter.tweet",
+						"contradictionYouTube.video",
+						"twitter.tweet",
+						"youtube.video"
+					],
+					includeContradictions: true,
+					page,
+					pageId,
+					refId: 21
+				}
+			})
+			.then(async (response) => {
+				const { data, meta } = response.data
+				dispatchInternal({
+					type: "GET_CONTRADICTIONS",
+					contradictions: data,
+					page
+				})
+				setPageNumberC(pageNumberC + 1)
+				setHasMoreC(meta.current_page < meta.last_page)
+				if (pageNumberC === 1) {
+					setLoadingC(false)
+				} else {
+					setLoadingMoreC(false)
+				}
+			})
+			.catch(() => {
+				toast.error("There was an error")
+			})
 	}
 
-	const { coin, createdAt, currentPrice, predictionPrice, status, targetDate, user } = prediction
-	const showCardPic = status === "Correct" && user.predictionsReserved
-	const title = loaded
-		? `${coin.symbol} to ${predictionPrice} on ${moment(targetDate).format("MMM D, YYYY")}`
-		: ""
+	const getFallacies = async (pageId, page = 1) => {
+		if (page === 1) {
+			setLoading(true)
+		} else {
+			setLoadingMore(true)
+		}
+
+		await axios
+			.get(`${process.env.REACT_APP_BASE_URL}fallacies`, {
+				params: {
+					with: ["reference", "user", "twitter.tweet", "youtube.video"],
+					page,
+					pageId
+				}
+			})
+			.then(async (response) => {
+				const { data, meta } = response.data
+				dispatchInternal({
+					type: "GET_FALLACIES",
+					fallacies: data,
+					page
+				})
+				setPageNumber(pageNumber + 1)
+				setHasMore(meta.current_page < meta.last_page)
+				if (pageNumber === 1) {
+					setLoading(false)
+				} else {
+					setLoadingMore(false)
+				}
+			})
+			.catch(() => {
+				toast.error("There was an error")
+			})
+	}
+
+	const handleItemClick = (e, { name }) => {
+		setActiveItem(name)
+	}
+
+	const onClickFallacy = (e, slug) => {
+		if (e.metaKey) {
+			window.open(`/fallacies/${slug}`, "_blank").focus()
+		} else {
+			history.push(`/fallacies/${slug}`)
+		}
+	}
 
 	return (
 		<DefaultLayout
-			activeItem="search"
+			activeItem=""
 			containerClassName="socialMediaPage"
 			history={history}
 			inverted={inverted}
 		>
 			<DisplayMetaTags page="page" state={internalState} />
 			{loaded ? (
-				<></>
+				<>
+					<Grid stackable>
+						<Grid.Row>
+							<Grid.Column className="imgColumn" width={2}>
+								<Segment>
+									<Image
+										bordered
+										className={`inverted smooth-image image-${
+											imageLoaded ? "visible" : "hidden"
+										}`}
+										fluid
+										onError={(i) => (i.target.src = PlaceholderPic)}
+										onLoad={() => setImageLoaded(true)}
+										src={page.image}
+									/>
+								</Segment>
+							</Grid.Column>
+							<Grid.Column width={14}>
+								<Header as="h1" inverted={inverted}>
+									<Header.Content>
+										{page.name}
+										<Header.Subheader>@{page.username}</Header.Subheader>
+									</Header.Content>
+									<Button
+										circular
+										className={`networkBtn ${inverted ? "inverted" : null}`}
+										color={network}
+										compact
+										icon={network}
+										onClick={() => {
+											window.open(page.externalLink, "_blank").focus()
+										}}
+										size="small"
+									/>
+								</Header>
+								<Header
+									as="p"
+									inverted={inverted}
+									size="small"
+									style={{ marginTop: 0 }}
+								></Header>
+								<Header
+									as="p"
+									inverted={inverted}
+									size="small"
+									style={{ marginTop: 0 }}
+								>
+									{page.bio}
+								</Header>
+							</Grid.Column>
+						</Grid.Row>
+					</Grid>
+
+					<Menu attached="top" tabular size="large">
+						<Menu.Item
+							active={activeItem === "fallacies"}
+							name="fallacies"
+							onClick={handleItemClick}
+						>
+							Fallacies
+							<Label color="red">{page.fallacyCount}</Label>
+						</Menu.Item>
+						<Menu.Item
+							active={activeItem === "contradictions"}
+							name="contradictions"
+							onClick={handleItemClick}
+						>
+							Contradictions
+							<Label color="red">{page.contradictionCount}</Label>
+						</Menu.Item>
+					</Menu>
+
+					<Segment attached>
+						{activeItem === "fallacies" && (
+							<Visibility
+								continuous
+								offset={[50, 50]}
+								onBottomVisible={() => {
+									if (!loading && !loadingMore && hasMore) {
+										getFallacies(page.id, pageNumber)
+									}
+								}}
+							>
+								<FallacyList
+									fallacies={fallacies.data}
+									history={history}
+									inverted={inverted}
+									loading={!fallacies.loaded}
+									loadingMore={loadingMore}
+									onClickFallacy={onClickFallacy}
+								/>
+							</Visibility>
+						)}
+
+						{activeItem === "contradictions" && (
+							<Visibility
+								continuous
+								offset={[50, 50]}
+								onBottomVisible={() => {
+									if (!loadingC && !loadingMoreC && hasMoreC) {
+										getContradictions(page.id, pageNumberC)
+									}
+								}}
+							>
+								<ContradictionList
+									contradictions={contradictions.data}
+									defaultUserImg={page.image}
+									history={history}
+									inverted={inverted}
+									loading={!contradictions.loaded}
+									loadingMore={loadingMoreC}
+									onClickContradiction={onClickFallacy}
+								/>
+							</Visibility>
+						)}
+					</Segment>
+				</>
 			) : (
 				<div className="centeredLoader">
 					<Loader active inverted={inverted} size="big" />

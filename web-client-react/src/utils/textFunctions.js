@@ -21,34 +21,23 @@ export const formatExponent = (exp, precision = 8) => {
 	return parseFloat(Number(exp).toFixed(20), 20)
 }
 
-export const setIcon = (value) => {
-	return value === "asc" ? "arrow up" : value === "desc" ? "arrow down" : false
-}
-
-export const setIconColor = (status) => {
-	switch (status) {
-		case "Correct":
-			return "green"
-		case "Incorrect":
-			return "red"
-		default:
-			return "orange"
-	}
-}
-
-export const setIconName = (status) => {
-	switch (status) {
-		case "Correct":
-			return "check"
-		case "Incorrect":
-			return "close"
-		default:
-			return "hourglass"
-	}
-}
-
 export const setImage = (img) => img.replace("64x64", "128x128")
 
 export const hyphenateText = (text) => text.toLowerCase().split(" ").join("-")
 
 export const isValidTxCode = (addr) => /^0x([A-Fa-f0-9]{64})$/.test(addr)
+
+export const getHighlightedText = (text, higlight, className = "") => {
+	if (typeof text !== "string") {
+		return
+	}
+
+	const parts = text.split(new RegExp(`(${higlight.replace(/[()]/g, "")})`, "gi"))
+	return parts.map((part, i) =>
+		part.toLowerCase() === higlight.toLowerCase() ? (
+			<b key={`${className}_highlighted_${i}_${part}`}>{part}</b>
+		) : (
+			part
+		)
+	)
+}

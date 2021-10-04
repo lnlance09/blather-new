@@ -1352,7 +1352,7 @@
   width: 3em;
   height: 3em;
   animation: loader 0.6s infinite linear;
-  border: 0.2em solid #dcdde1;
+  border: 0.2em solid #7f8c8d;
   border-radius: 500rem;
   box-shadow: 0 0 0 1px transparent;
   visibility: visible;
@@ -1377,7 +1377,7 @@
 .ui.form label.required:after {
   margin: -0.2em 0 0 0.2em;
   content: '*';
-  color: #c23616;
+  color: #c0392b;
 }
 .ui.form .required.fields:not(.grouped) > .field > label:after,
 .ui.form .required.fields.grouped > label:after,

@@ -1,5 +1,6 @@
 const initialState = {
-	reference: [{}, {}, {}]
+	reference: [{}, {}, {}],
+	loaded: false
 }
 
 export default initialState

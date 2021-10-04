@@ -25,6 +25,7 @@ const PageHeader = ({ activeItem, history, q, simple }) => {
 	const [sidebarVisible, setSidebarVisible] = useState(false)
 
 	useEffect(() => {
+		/*
 		if (typeof window.Echo === "undefined") {
 			if (auth) {
 				window.Echo = new Echo({
@@ -57,6 +58,7 @@ const PageHeader = ({ activeItem, history, q, simple }) => {
 				addNotification(prediction)
 			})
 		}
+		*/
 		// eslint-disable-next-line
 	}, [])
 
