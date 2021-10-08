@@ -45,27 +45,19 @@ class FallacyController extends Controller
     public function index(Request $request)
     {
         $q = $request->input('q', null);
-        $pageId = $request->input('pageId', null);
-        $refId = $request->input('refId', null);
-        $refId = $request->input('refIds', null);
+        $pageIds = $request->input('pageIds', null);
+        $refIds = $request->input('refIds', null);
         $userId = $request->input('userId', null);
         $retracted = $request->input('retracted', null);
         $status = $request->input('status', null);
         $includeContradictions = $request->input('includeContradictions', false);
+        $tweetId = $request->input('tweetId', null);
         $with = $request->input('with', self::DEFAULT_WITH);
 
         $sort = $request->input('sort', 'id');
         $dir = $request->input('dir', 'desc');
 
         $where = [];
-
-        if ($pageId) {
-            $where['page_id'] = $pageId;
-        }
-
-        if ($refId) {
-            $where['ref_id'] = $refId;
-        }
 
         if ($userId) {
             $where['user_id'] = $userId;
@@ -80,18 +72,31 @@ class FallacyController extends Controller
         }
 
         if (!empty($q)) {
-            $where['q'] = ['LIKE', '%' . $q . '%'];
+            $where['explanation'] = ['LIKE', '%' . $q . '%'];
         }
 
-        $fallacies = Fallacy::with($with)
-            ->where($where)
-            ->whereNotIn('ref_id', $includeContradictions ? [] : [21])
-            // ->whereHas('youtube', function ($query) use ($q) {
-                // $query->where('coin_id', $coinId)->where('status', 'Correct');
-            // })
-            ->orderBy($sort, $dir)
+        $fallacies = Fallacy::with($with)->where($where);
+
+        if (!$includeContradictions) {
+            $fallacies = $fallacies->whereNotIn('ref_id', [21]);
+        }
+
+        if (is_array($pageIds)) {
+            $fallacies = $fallacies->whereIn('page_id', $pageIds);
+        }
+
+        if (is_array($refIds)) {
+            $fallacies = $fallacies->whereIn('ref_id', $refIds);
+        }
+
+        if ($tweetId) {
+            $fallacies = $fallacies->whereHas('twitter', function ($query) use ($tweetId) {
+                $query->where('tweet_id', 4079);
+            });
+        }
+
+        $fallacies = $fallacies->orderBy($sort, $dir)
             ->paginate(15);
-        // dd($fallacies);
         return new FallacyCollection($fallacies);
     }
 
@@ -176,11 +181,35 @@ class FallacyController extends Controller
 
     public function migrate()
     {
-        $all = FallacyEntry::all()->toArray();
+        $all = Tweet::all()->toArray();
         for ($i = 0; $i < count($all); $i++) {
             $entry = $all[$i];
             // dump($entry);
 
+            $data = [];
+            $tweetJson = @json_decode($entry['tweet_json'], true);
+            $realFullText = $tweetJson['full_text'];
+            // dd($tweetJson);
+
+            $data['full_text'] = $realFullText;
+            $data['tweet_id'] = $tweetJson['id_str'];
+
+            if ($entry['retweeted_tweet_id'] && array_key_exists('retweeted_status', $tweetJson)) {
+                $realRtText = $tweetJson['retweeted_status']['full_text'];
+                $data['retweeted_full_text'] = $realRtText;
+                $data['retweeted_tweet_id'] = $tweetJson['retweeted_status']['id_str'];
+            }
+
+            if ($entry['quoted_tweet_id'] && array_key_exists('quoted_status', $tweetJson)) {
+                $realQtText = $tweetJson['quoted_status']['full_text'];
+                $data['quoted_full_text'] = $realQtText;
+                $data['quoted_tweet_id'] = $tweetJson['quoted_status']['id_str'];
+            }
+
+            // dump($data);
+            Tweet::where('id', $entry['id'])->update($data);
+
+            /*
             // $contradiction = $entry['contradiction'];
             $pageId = $entry['page_id'];
             $startTime = $entry['start_time'];
@@ -188,6 +217,7 @@ class FallacyController extends Controller
             $highlightedText = $entry['highlighted_text'];
             $mediaId = $entry['media_id'];
             $network = $entry['network'];
+            */
 
             /*
             unset($entry['contradiction']);
@@ -207,7 +237,8 @@ class FallacyController extends Controller
             $fallacy = Fallacy::create($entry);
             $fallacy->refresh();
             */
-            
+
+            /*
             if ($network === 'twitter') {
                 $twitter = Tweet::where('tweet_id', $mediaId)->first();
                 if (empty($twitter)) {
@@ -234,6 +265,7 @@ class FallacyController extends Controller
                     'video_id' => $video['id'],
                 ]);
             }
+            */
 
             /*
             if ($contradiction) {

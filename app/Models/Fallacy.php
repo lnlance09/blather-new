@@ -51,12 +51,11 @@ class Fallacy extends Model
      *
      * @var array
      */
-    protected $casts = [
-        
-    ];
+    protected $casts = [];
 
     public function page()
     {
+
         return $this->hasOne(Page::class, 'id', 'page_id');
     }
 

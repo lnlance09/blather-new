@@ -15,25 +15,25 @@ class Tweet extends JsonResource
      */
     public function toArray($request)
     {
-        dump($this);
         $tweetJson = $this->tweet_json;
         $tweet = @json_decode($tweetJson, true);
 
         $userName = '';
         $userUsername = '';
         $userImg = '';
+        $text = $tweet['full_text'];
 
         if (array_key_exists('user', $tweet)) {
             $userName = $tweet['user']['name'];
             $userUsername = $tweet['user']['screen_name'];
-            $userImg = $tweet['user']['profile_image_url_https'];
+            $userImg = env('AWS_URL', 'https://s3.amazonaws.com/blather22/') . $this->page->image;
         }
 
         $isQuoted = false;
         $userNameQ = '';
         $userUsernameQ = '';
         $userImgQ = '';
-        
+
         if ($this->quoted_tweet_id) {
             $isQuoted = true;
             $hasQUser = array_key_exists('user', $tweet['quoted_status']);
@@ -61,7 +61,9 @@ class Tweet extends JsonResource
 
         return [
             'id' => $this->id,
+            'contradictionCount' => $this->contradictions_count,
             'counts' => [
+                'fallacies' => $this->fallacies_count,
                 'favorites' => $this->favorite_count,
                 'retweets' => $this->retweet_count
             ],
@@ -69,6 +71,7 @@ class Tweet extends JsonResource
             'extendedEntities' => $this->extended_entities,
             'fallacyCount' => $this->fallacies_count,
             'fullText' => $this->full_text,
+            'text' => $text,
             'page' => new PageResource($this->page),
             'quoted' => [
                 'counts' => [

@@ -41,6 +41,27 @@ const reducer = (state, action) => {
 					loaded: true
 				}
 			}
+		case "SET_PAGE_OPTIONS":
+			return {
+				...state,
+				pageOptions: action.options
+			}
+		case "TOGGLE_FALLACIES_LOADED":
+			return {
+				...state,
+				fallacies: {
+					...state.fallacies,
+					loaded: !state.fallacies.loaded
+				}
+			}
+		case "TOGGLE_TWEETS_LOADED":
+			return {
+				...state,
+				tweets: {
+					...state.tweets,
+					loaded: !state.tweets.loaded
+				}
+			}
 		default:
 			throw new Error()
 	}

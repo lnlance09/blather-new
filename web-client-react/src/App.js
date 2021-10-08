@@ -21,7 +21,9 @@ import ScrollToTop from "react-router-scroll-top"
 import Search from "pages/search"
 import Settings from "pages/settings"
 import ThemeProvider from "components/ThemeProvider"
+import Tweet from "pages/tweets"
 import User from "pages/users"
+import Video from "pages/videos"
 
 const App = () => {
 	return (
@@ -81,24 +83,7 @@ const App = () => {
 							<Route component={Rules} exact path="/rules" />
 
 							<Route
-								exact
 								path="/search"
-								render={(props) => (
-									<Search key={window.location.pathname} {...props} />
-								)}
-							/>
-
-							<Route
-								exact
-								path="/search/:type"
-								render={(props) => (
-									<Search key={window.location.pathname} {...props} />
-								)}
-							/>
-
-							<Route
-								exact
-								path="/search/:item"
 								render={(props) => (
 									<Search key={window.location.pathname} {...props} />
 								)}
@@ -107,10 +92,24 @@ const App = () => {
 							<Route component={Settings} exact path="/settings" />
 
 							<Route
+								path="/tweets/:id"
+								render={(props) => (
+									<Tweet key={window.location.pathname} {...props} />
+								)}
+							/>
+
+							<Route
 								exact
 								path="/:username"
 								render={(props) => (
 									<User key={window.location.pathname} {...props} />
+								)}
+							/>
+
+							<Route
+								path="/videos/:id"
+								render={(props) => (
+									<Video key={window.location.pathname} {...props} />
 								)}
 							/>
 

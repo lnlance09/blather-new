@@ -17,15 +17,7 @@ export const formatPlural = (count, term) => {
 	return parseInt(count, 10) === 1 ? term : `${term}s`
 }
 
-export const formatExponent = (exp, precision = 8) => {
-	return parseFloat(Number(exp).toFixed(20), 20)
-}
-
-export const setImage = (img) => img.replace("64x64", "128x128")
-
 export const hyphenateText = (text) => text.toLowerCase().split(" ").join("-")
-
-export const isValidTxCode = (addr) => /^0x([A-Fa-f0-9]{64})$/.test(addr)
 
 export const getHighlightedText = (text, higlight, className = "") => {
 	if (typeof text !== "string") {
@@ -33,11 +25,17 @@ export const getHighlightedText = (text, higlight, className = "") => {
 	}
 
 	const parts = text.split(new RegExp(`(${higlight.replace(/[()]/g, "")})`, "gi"))
-	return parts.map((part, i) =>
-		part.toLowerCase() === higlight.toLowerCase() ? (
-			<b key={`${className}_highlighted_${i}_${part}`}>{part}</b>
-		) : (
-			part
-		)
-	)
+	let newText = ""
+	for (let i = 0; i < parts.length; i++) {
+		const part = parts[i]
+		if (part.toLowerCase() === higlight.toLowerCase()) {
+			newText += `<b key="${className}Highlighted${i}${part}">${part}</b>`
+		} else {
+			newText += part
+		}
+	}
+
+	return newText
 }
+
+export const setImage = (img) => img.replace("64x64", "128x128")

@@ -1,4 +1,4 @@
-import { Card, Divider, Grid, Header, Image, Menu, Placeholder, Segment } from "semantic-ui-react"
+import { Card, Divider, Grid, Header, Image, Menu, Segment } from "semantic-ui-react"
 import { useContext, useState } from "react"
 import { DisplayMetaTags } from "utils/metaFunctions"
 import { grifters } from "options/grifters"
@@ -30,72 +30,7 @@ const Grifters = ({ history }) => {
 			<DisplayMetaTags page="grifters" />
 
 			<Grid>
-				<Grid.Column width={3}>
-					<Menu fluid size="large" vertical>
-						<Menu.Item
-							active={activeItem === "what"}
-							name="what"
-							onClick={handleItemClick}
-						>
-							What is a Grifter?
-						</Menu.Item>
-						<Menu.Item active={false}>
-							<Menu.Header>Types of Grifters</Menu.Header>
-							<Menu.Menu>
-								<Menu.Item
-									active={activeItem === "maga"}
-									name="maga"
-									onClick={handleItemClick}
-								>
-									MAGA
-								</Menu.Item>
-								<Menu.Item
-									active={activeItem === "mlm"}
-									name="mlm"
-									onClick={handleItemClick}
-								>
-									MLM
-								</Menu.Item>
-								<Menu.Item
-									active={activeItem === "vaxx"}
-									name="vaxx"
-									onClick={handleItemClick}
-								>
-									Anti-Vaxx
-								</Menu.Item>
-								<Menu.Item
-									active={activeItem === "crypto"}
-									name="crypto"
-									onClick={handleItemClick}
-								>
-									Cryptocurrency
-								</Menu.Item>
-								<Menu.Item
-									active={activeItem === "evangelical"}
-									name="evangelical"
-									onClick={handleItemClick}
-								>
-									Evangelical
-								</Menu.Item>
-								<Menu.Item
-									active={activeItem === "blue"}
-									name="blue"
-									onClick={handleItemClick}
-								>
-									Blue Checkmark
-								</Menu.Item>
-							</Menu.Menu>
-						</Menu.Item>
-						<Menu.Item
-							active={activeItem === "summary"}
-							name="summary"
-							onClick={handleItemClick}
-						>
-							Summary
-						</Menu.Item>
-					</Menu>
-				</Grid.Column>
-				<Grid.Column width={13}>
+				<Grid.Column width={16}>
 					<Header as="h1">What is a Grifter?</Header>
 
 					<p>

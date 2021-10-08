@@ -3,6 +3,7 @@ const initialState = {
 		data: [{}, {}, {}],
 		loaded: false
 	},
+	error: false,
 	fallacies: {
 		data: [{}, {}, {}],
 		loaded: false

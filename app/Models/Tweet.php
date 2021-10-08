@@ -6,6 +6,8 @@ use App\Models\FallacyTwitter;
 use App\Models\Page;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class Tweet extends Model
 {
@@ -26,20 +28,22 @@ class Tweet extends Model
         'retweet_count',
 
         'quoted_full_text',
-        'quoted_fpage_id',
-        'quoted_ftweet_id',
-        'quoted_fentities',
-        'quoted_fextended_entities',
-        'quoted_ffavorite_count',
-        'quoted_fretweet_count',
+        'quoted_page_id',
+        'quoted_tweet_id',
+        'quoted_entities',
+        'quoted_extended_entities',
+        'quoted_favorite_count',
+        'quoted_retweet_count',
+        'quoted_created_at',
 
         'retweeted_full_text',
-        'retweeted_fpage_id',
-        'retweeted_ftweet_id',
-        'retweeted_fentities',
-        'retweeted_fextended_entities',
-        'retweeted_ffavorite_count',
-        'retweeted_fretweet_count',
+        'retweeted_page_id',
+        'retweeted_tweet_id',
+        'retweeted_entities',
+        'retweeted_extended_entities',
+        'retweeted_favorite_count',
+        'retweeted_retweet_count',
+        'retweeted_created_at',
 
         'tweet_json'
     ];
@@ -56,7 +60,10 @@ class Tweet extends Model
      *
      * @var array
      */
-    protected $casts = [];
+    protected $casts = [
+        'quoted_created_at' => 'datetime',
+        'retweeted_created_at' => 'datetime'
+    ];
 
     public function fallacies()
     {

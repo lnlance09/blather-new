@@ -7,6 +7,7 @@ const initialState = {
 		data: [{}, {}, {}],
 		loaded: false
 	},
+	pageOptions: [],
 	pages: {
 		data: [{}, {}, {}],
 		loaded: false

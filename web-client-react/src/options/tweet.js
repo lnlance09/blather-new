@@ -10,6 +10,5 @@ export const tweetOptions = {
 	onClickCallback: () => null,
 	opacity: 1,
 	raised: false,
-	redirect: false,
 	showStats: true
 }

@@ -1,19 +1,6 @@
-import {
-	Button,
-	Container,
-	Divider,
-	Grid,
-	Header,
-	Image,
-	Label,
-	List,
-	Loader,
-	Segment,
-	Transition,
-	Visibility
-} from "semantic-ui-react"
+import { Image, Loader } from "semantic-ui-react"
 import { useContext, useEffect, useReducer, useState } from "react"
-import { CopyToClipboard } from "react-copy-to-clipboard"
+// import { CopyToClipboard } from "react-copy-to-clipboard"
 import { DisplayMetaTags } from "utils/metaFunctions"
 import { getConfig } from "options/toast"
 import { toast } from "react-toastify"
@@ -41,8 +28,7 @@ const Member = ({ history, match }) => {
 	)
 	const { loaded, internalUser } = internalState
 
-	const [activeItem, setActiveItem] = useState(null)
-	const [applicationVisible, setApplicationVisible] = useState(false)
+	// const [activeItem, setActiveItem] = useState(null)
 	const [hasMore, setHasMore] = useState(false)
 	const [imageLoaded, setImageLoaded] = useState(false)
 	const [loadingMore, setLoadingMore] = useState(false)

@@ -1,8 +1,6 @@
 import "./style.scss"
 import { Grid, Header, Placeholder, Segment } from "semantic-ui-react"
 import { tweetOptions } from "options/tweet"
-import Moment from "react-moment"
-import PlaceholderPic from "images/images/image.png"
 import PropTypes from "prop-types"
 import Tweet from "components/Tweet"
 
@@ -29,12 +27,20 @@ const ContradictionList = ({
 		<div className="contradictionList">
 			<Grid>
 				{contradictions.map((contradiction, i) => {
-					const { contradictionTwitter, contradictionYouTube, id, twitter, youtube } =
-						contradiction
-					let tweet, cTweet
+					const { contradictionTwitter, id, twitter } = contradiction
+					let tweet = null
+					let cTweet = null
+
 					if (!loading) {
-						tweet = twitter.tweet
-						cTweet = contradictionTwitter.tweet
+						if (typeof twitter !== "undefined") {
+							tweet = twitter.tweet
+						}
+						if (
+							typeof contradictionTwitter !== "undefined" &&
+							contradictionTwitter !== null
+						) {
+							cTweet = contradictionTwitter.tweet
+						}
 					}
 
 					return (

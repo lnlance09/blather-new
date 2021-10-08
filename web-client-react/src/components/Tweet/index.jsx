@@ -1,16 +1,14 @@
 import "./style.scss"
+import linkifyHtml from "linkify-html"
+import "linkify-plugin-hashtag"
+import "linkify-plugin-mention"
 import { Card, Icon, Image, Label, List, Popup } from "semantic-ui-react"
 import { getHighlightedText } from "utils/textFunctions"
-import { linkHashtags, linkMentions } from "utils/linkifyAdditions"
 import { tweetOptions } from "options/tweet"
 import ItemPic from "images/images/square-image.png"
-import Linkify from "react-linkify"
 import Moment from "react-moment"
 import NumberFormat from "react-number-format"
-import Parser from "html-react-parser"
 import PropTypes from "prop-types"
-import React, { useEffect, useState } from "react"
-import runes from "runes"
 
 const Tweet = ({
 	config = tweetOptions,
@@ -37,7 +35,6 @@ const Tweet = ({
 	const {
 		assignable,
 		crossOriginAnonymous,
-		displayTextRange,
 		externalLink,
 		handleHoverOn,
 		highlight,
@@ -45,7 +42,6 @@ const Tweet = ({
 		onClickCallback,
 		opacity,
 		raised,
-		redirect,
 		showStats
 	} = config
 	const { isRetweeted, rUser = user } = retweeted
@@ -74,24 +70,31 @@ const Tweet = ({
 		qTweetId = quoted.tweetId
 	}
 
-	const className = `tweet${redirect || assignable ? " clickable" : ""}`
+	const className = `tweet${!assignable ? " clickable" : ""}`
 	const extEntities = retweeted ? JSON.parse(retweeted.extendedEntities) : extendedEntities
 
-	const onClickTweet = (e) => {
-		e.stopPropagation()
-
-		if (redirect) {
-			history.push(`/tweet/${id}`)
+	const tweetText = highlight
+		? getHighlightedText(headerFullText, highlightedText)
+		: headerFullText
+	const linkifiedTweetText = linkifyHtml(tweetText, {
+		className: "linkify",
+		formatHref: {
+			mention: (val) => `/pages/twitter${val}`,
+			hashtag: (val) => val
 		}
+	})
 
-		if (assignable) {
-			const url = `/assign?url=https://twitter.com/${user.username}/status/${id}`
-			if (e.metaKey) {
-				window.open(url, "_blank").focus()
-			} else {
-				history.push(url)
+	let linkifiedQTweetText = ""
+	let qTweetText = ""
+	if (isQuoted) {
+		linkifiedQTweetText = linkifyHtml(qFullText, {
+			className: "linkify",
+			formatHref: {
+				mention: (val) => `/pages/twitter${val}`,
+				hashtag: (val) => val
 			}
-		}
+		})
+		qTweetText = getHighlightedText(linkifiedQTweetText, highlightedText)
 	}
 
 	const parseMedia = (entities) =>
@@ -115,24 +118,19 @@ const Tweet = ({
 			return null
 		})
 
-	const formatTweetText = (text) => {
-		const start = displayTextRange[0]
-		const end = displayTextRange[1]
-		const length = parseInt(end, 10) - parseInt(start, 10)
-		return Parser(runes.substr(text, start, length))
-	}
-
-	const tweetText = formatTweetText(headerFullText)
-
 	return (
-		<div className={className} onClick={() => onClickCallback()} style={{ opacity }}>
+		<div
+			className={`tweet ${className}`}
+			onClick={(e) => onClickCallback(e, history, id)}
+			style={{ opacity }}
+		>
 			<Card fluid raised={raised}>
 				{isRetweeted && (
 					<div className="retweetedText">
 						<Icon name="retweet" /> {user.name} Retweeted
 					</div>
 				)}
-				<Card.Content onClick={onClickTweet}>
+				<Card.Content>
 					<Image
 						bordered
 						circular
@@ -163,18 +161,11 @@ const Tweet = ({
 						</span>
 					</Card.Meta>
 					<Card.Description className="linkifyTweet" onMouseUp={handleHoverOn}>
-						<Linkify
-							properties={{
-								target: "_blank"
+						<div
+							dangerouslySetInnerHTML={{
+								__html: linkifiedTweetText
 							}}
-							sanitize
-						>
-							{highlight ? (
-								<>{getHighlightedText(tweetText, highlightedText)}</>
-							) : (
-								<>{tweetText}</>
-							)}
-						</Linkify>
+						/>
 						{extEntities && (
 							<div className="extEntitiesWrapper">{parseMedia(extEntities)}</div>
 						)}
@@ -182,18 +173,14 @@ const Tweet = ({
 					{isQuoted && (
 						<>
 							<Card
-								className={`quotedTweet ${
-									!redirect && !assignable ? " clickable" : ""
-								}`}
+								className={`quotedTweet ${!assignable ? " clickable" : ""}`}
 								fluid
 							>
 								<Card.Content
 									className="quotedTweetContent"
 									onClick={(e) => {
-										if (!redirect) {
-											e.stopPropagation()
-											history.push(`/tweet/${qTweetId}`)
-										}
+										e.stopPropagation()
+										history.push(`/tweet/${qTweetId}`)
 									}}
 								>
 									<Card.Header className="quotedHeader">
@@ -201,13 +188,11 @@ const Tweet = ({
 										<span className="quotedScreenName">@{qUsername}</span>
 									</Card.Header>
 									<Card.Description className="quotedTextTweet">
-										<Linkify
-											properties={{
-												target: "_blank"
+										<div
+											dangerouslySetInnerHTML={{
+												__html: qTweetText
 											}}
-										>
-											{qFullText}
-										</Linkify>
+										/>
 										{qExtEntities && <>{parseMedia(qExtEntities)}</>}
 									</Card.Description>
 								</Card.Content>
@@ -231,11 +216,21 @@ const Tweet = ({
 							</List.Item>
 							<List.Item className="favoriteItem">
 								<Label>
-									<Icon color="pink" inverted name="like" size="large" />{" "}
+									<Icon color="red" inverted name="like" size="large" />{" "}
 									<NumberFormat
 										displayType={"text"}
 										thousandSeparator={true}
 										value={rtCount}
+									/>
+								</Label>
+							</List.Item>
+							<List.Item className="fallacyItem">
+								<Label>
+									<Icon color="yellow" inverted name="sticky note" size="large" />{" "}
+									<NumberFormat
+										displayType={"text"}
+										thousandSeparator={true}
+										value={counts.fallacies}
 									/>
 								</Label>
 							</List.Item>
@@ -287,7 +282,6 @@ Tweet.propTypes = {
 		onClickCallback: PropTypes.func,
 		opacity: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
 		raised: PropTypes.bool,
-		redirect: PropTypes.bool,
 		showStats: PropTypes.bool
 	}),
 	createdAt: PropTypes.string,
@@ -296,7 +290,7 @@ Tweet.propTypes = {
 		media: PropTypes.array
 	}),
 	fullText: PropTypes.string,
-	id: PropTypes.number,
+	id: PropTypes.string,
 	quoted: PropTypes.shape({
 		counts: PropTypes.shape({
 			favorites: PropTypes.number,
@@ -305,7 +299,7 @@ Tweet.propTypes = {
 		entities: PropTypes.string,
 		extendedEntities: PropTypes.string,
 		fullText: PropTypes.string,
-		tweetId: PropTypes.number,
+		tweetId: PropTypes.string,
 		user: PropTypes.shape({
 			img: PropTypes.string,
 			name: PropTypes.string,
@@ -320,7 +314,7 @@ Tweet.propTypes = {
 		entities: PropTypes.string,
 		extendedEntities: PropTypes.string,
 		fullText: PropTypes.string,
-		tweetId: PropTypes.number,
+		tweetId: PropTypes.string,
 		user: PropTypes.shape({
 			img: PropTypes.string,
 			name: PropTypes.string,
@@ -328,6 +322,7 @@ Tweet.propTypes = {
 		})
 	}),
 	stats: PropTypes.shape({
+		fallacies: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
 		favorites: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
 		retweets: PropTypes.oneOfType([PropTypes.number, PropTypes.string])
 	}),

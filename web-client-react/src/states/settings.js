@@ -1,5 +1,3 @@
-const initialState = {
-	wallets: []
-}
+const initialState = {}
 
 export default initialState

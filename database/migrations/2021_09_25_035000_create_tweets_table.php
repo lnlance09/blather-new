@@ -16,9 +16,9 @@ class CreateTweetsTable extends Migration
         Schema::create('tweets', function (Blueprint $table) {
             $table->id();
 
-            $table->unsignedBigInteger('tweet_id');
+            $table->string('tweet_id')->unique();
             $table->unsignedBigInteger('page_id');
-            $table->string('full_text');
+            $table->text('full_text');
             $table->bigInteger('favorite_count')->nullable();
             $table->bigInteger('retweet_count')->nullable();
             $table->text('entities')->nullable();
@@ -26,28 +26,30 @@ class CreateTweetsTable extends Migration
             $table->integer('quoted_status')->nullable();
             $table->integer('retweeted_status')->nullable();
 
-            $table->timestamp('quoted_created_at');
-            $table->unsignedBigInteger('quoted_tweet_id')->nullable();
-            $table->unsignedBigInteger('quoted_page_id')->nullable();
-            $table->string('quoted_full_text')->nullable();
-            $table->bigInteger('quoted_favorite_count')->nullable();
-            $table->bigInteger('quoted_retweet_count')->nullable();
-            $table->text('quoted_entities')->nullable();
-            $table->text('quoted_extended_entities')->nullable();
+            $table->timestamp('quoted_created_at')->nullable()->default(null);
+            $table->string('quoted_tweet_id')->nullable()->default(null);
+            $table->unsignedBigInteger('quoted_page_id')->nullable()->default(null);
+            $table->text('quoted_full_text')->nullable()->default(null);
+            $table->bigInteger('quoted_favorite_count')->nullable()->default(null);
+            $table->bigInteger('quoted_retweet_count')->nullable()->default(null);
+            $table->text('quoted_entities')->nullable()->default(null);
+            $table->text('quoted_extended_entities')->nullable()->default(null);
 
-            $table->timestamp('retweeted_created_at');
-            $table->unsignedBigInteger('retweeted_tweet_id')->nullable();
-            $table->unsignedBigInteger('retweeted_page_id')->nullable();
-            $table->string('retweeted_full_text')->nullable();
-            $table->bigInteger('retweeted_favorite_count')->nullable();
-            $table->bigInteger('retweeted_retweet_count')->nullable();
-            $table->text('retweeted_entities')->nullable();
-            $table->text('retweeted_extended_entities')->nullable();
+            $table->timestamp('retweeted_created_at')->nullable()->default(null);
+            $table->string('retweeted_tweet_id')->nullable()->default(null);
+            $table->unsignedBigInteger('retweeted_page_id')->nullable()->default(null);
+            $table->text('retweeted_full_text')->nullable()->default(null);
+            $table->bigInteger('retweeted_favorite_count')->nullable()->default(null);
+            $table->bigInteger('retweeted_retweet_count')->nullable()->default(null);
+            $table->text('retweeted_entities')->nullable()->default(null);
+            $table->text('retweeted_extended_entities')->nullable()->default(null);
 
             $table->text('tweet_json');
             $table->timestamps();
 
-            $table->foreign('page_id')->references('social_media_id')->on('pages');
+            $table->foreign('page_id')->references('id')->on('pages');
+            $table->foreign('quoted_page_id')->references('id')->on('pages');
+            $table->foreign('retweeted_page_id')->references('id')->on('pages');
         });
     }
 

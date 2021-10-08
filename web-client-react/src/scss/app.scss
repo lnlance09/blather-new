@@ -36,6 +36,8 @@ body {
 }
 
 .appWrapper {
+	background: darken($offWhite, 3%);
+
 	a {
 		color: $blue;
 	}
@@ -114,10 +116,14 @@ body {
 	}
 
 	.mainContainer {
-		min-height: 860px;
+		background: $white;
+		border-left: solid 1px $twitterExtraLightGrey;
+		border-right: solid 1px $twitterExtraLightGrey;
+		min-height: 100vh;
+		padding: 0 12px 12px 12px;
 
 		.mainContent {
-			margin-top: 25px;
+			margin-top: 12px;
 
 			* {
 				// font-family: 'IBM Plex Serif', serif !important;
@@ -279,7 +285,7 @@ body {
 		}
 
 		&.socialMediaPage {
-			padding: 1.5em 0;
+			// padding: 1.5em 0;
 
 			.ui.grid {
 				.imgColumn {

@@ -22,12 +22,15 @@ use Illuminate\Support\Facades\Route;
 // Route::post('/contact', [ApplicationController::class, 'sendMsg']);
 Route::get('/fallacies/migrate', [FallacyController::class, 'migrate']);
 
+// Route::get('/fallacies/migrate', [FallacyController::class, 'migrate']);
 Route::get('/fallacies', [FallacyController::class, 'index']);
 Route::get('/fallacies/{id}', [FallacyController::class, 'show']);
 Route::post('/fallacies/create', [FallacyController::class, 'create']);
 
 Route::get('/reference', [ReferenceController::class, 'index']);
 
+Route::get('/pages', [PageController::class, 'index']);
+Route::get('/pages/showOptions', [PageController::class, 'showOptions']);
 Route::get('/pages/{network}/{username}', [PageController::class, 'show']);
 
 Route::get('/tweets', [TweetController::class, 'index']);

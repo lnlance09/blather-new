@@ -1,7 +1,6 @@
 import { Loader } from "semantic-ui-react"
 import { useContext, useEffect, useReducer, useState } from "react"
 import { DisplayMetaTags } from "utils/metaFunctions"
-import { formatNumber } from "utils/textFunctions"
 import { getConfig } from "options/toast"
 import { toast } from "react-toastify"
 import axios from "axios"
@@ -18,14 +17,14 @@ toast.configure(toastConfig)
 
 const Fallacy = ({ history, match }) => {
 	const { state } = useContext(ThemeContext)
-	const { auth, inverted } = state
+	const { inverted } = state
 	const { slug } = match.params
 
 	const [internalState, dispatch] = useReducer(
 		process.env.NODE_ENV === "development" ? logger(reducer) : reducer,
 		initialState
 	)
-	const { fallacy, loaded, relatedFallacies } = internalState
+	const { loaded } = internalState
 
 	const [hasMore, setHasMore] = useState(false)
 	const [loading, setLoading] = useState(true)

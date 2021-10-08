@@ -30,12 +30,8 @@
 				font-size: 16px !important;
 				line-height: 1.4;
 
-				span {
-		  			color: $twitterExtraLightGrey !important;
-
-		  			b {
-						border-bottom: solid 2px $red;
-		  			}
+				b {
+					border-bottom: solid 2px $red;
 				}
 	  		}
 

@@ -1,5 +1,12 @@
 @import "../../scss/_colors.scss";
 
-.tweetList {
-    
+.pageList {
+    .pageWrapper {
+        margin-top: 14px;
+
+        .segment {
+            margin-bottom: 0;
+            margin-top: 0;
+        }
+    }
 }

@@ -1,12 +1,14 @@
 import "./style.scss"
-import { Divider, Placeholder, Segment } from "semantic-ui-react"
+import { Header, Icon, Placeholder, Segment } from "semantic-ui-react"
 import { tweetOptions } from "options/tweet"
-import PlaceholderPic from "images/images/image.png"
+import { onClickRedirect } from "utils/linkFunctions"
 import PropTypes from "prop-types"
 import Tweet from "components/Tweet"
 
 const TweetList = ({
 	defaultUserImg,
+	emptyMsg = "No tweets...",
+	highlightedText,
 	history,
 	inverted,
 	loading,
@@ -14,6 +16,7 @@ const TweetList = ({
 	onClickTweet,
 	tweets
 }) => {
+	const showEmptyMsg = tweets.length === 0 && !loading
 	const PlaceholderSegment = (
 		<Placeholder inverted={inverted} fluid>
 			<Placeholder.Paragraph>
@@ -30,7 +33,7 @@ const TweetList = ({
 				const { id } = tweet
 				return (
 					<div
-						className={loading ? "loading" : null}
+						className={`tweetWrapper ${loading ? "loading" : null}`}
 						key={`tweet${i}`}
 						onClick={(e) => onClickTweet(e, id)}
 					>
@@ -39,7 +42,15 @@ const TweetList = ({
 							<>
 								<Tweet
 									config={{
-										...tweetOptions
+										...tweetOptions,
+										highlightedText,
+										onClickCallback: (e, history, id) => {
+											e.stopPropagation()
+											const isLink = e.target.classList.contains("linkify")
+											if (!isLink) {
+												onClickRedirect(e, history, `/tweets/${id}`)
+											}
+										}
 									}}
 									counts={tweet.counts}
 									createdAt={tweet.createdAt}
@@ -55,7 +66,6 @@ const TweetList = ({
 								/>
 							</>
 						)}
-						<Divider hidden />
 					</div>
 				)
 			})}
@@ -64,12 +74,22 @@ const TweetList = ({
 					<Segment fluid>{PlaceholderSegment}</Segment>
 				</div>
 			)}
+			{showEmptyMsg && (
+				<Segment placeholder>
+					<Header icon>
+						<Icon color="twitter" name="twitter" />
+						{emptyMsg}
+					</Header>
+				</Segment>
+			)}
 		</div>
 	)
 }
 
 TweetList.propTypes = {
 	defaultUserImg: PropTypes.string,
+	emptyMsg: PropTypes.string,
+	highlightedText: PropTypes.string,
 	inverted: PropTypes.bool,
 	loading: PropTypes.bool,
 	loadingMore: PropTypes.bool,

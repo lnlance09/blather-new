@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\Page as PageResource;
+use App\Http\Resources\PageOptionCollection;
 use App\Http\Resources\PageCollection;
 use App\Models\Page;
 use Illuminate\Http\Request;
@@ -26,26 +27,28 @@ class PageController extends Controller
     public function index(Request $request)
     {
         $q = $request->input('q', null);
-        $network = $request->input('network', null);
+        $network = $request->input('network', 'twitter');
         $fallacyCount = $request->input('fallacyCount', 0);
 
         $sort = $request->input('sort', 'id');
         $dir = $request->input('dir', 'desc');
 
-        $where = [];
+        $where = [
+            'network' => $network
+        ];
 
         if (!empty($q)) {
             $where['name'] = ['LIKE', '%' . $q . '%'];
         }
 
-        $pages = Page::with([
-            'page',
-            'tweet',
-            'user',
-            'video'
-        ])
-            ->where($where)
-            ->orderBy($sort, $dir)
+        $pages = Page::where($where);
+        if ($fallacyCount) {
+            $pages = $pages->withCount([
+                'fallacies',
+            ]);
+        }
+
+        $pages = $pages->orderBy($sort, $dir)
             ->paginate(15);
         return new PageCollection($pages);
     }
@@ -58,7 +61,6 @@ class PageController extends Controller
      */
     public function create(Request $request)
     {
-    
     }
 
     /**
@@ -108,6 +110,14 @@ class PageController extends Controller
         }
 
         return new PageResource($page);
+    }
+
+    public function showOptions(Request $request)
+    {
+        $coins = Page::withCount(['fallacies'])
+            ->orderBy('fallacies_count', 'desc')
+            ->get();
+        return new PageOptionCollection($coins);
     }
 
     /**

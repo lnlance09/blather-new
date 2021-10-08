@@ -11,6 +11,7 @@ import {
 } from "semantic-ui-react"
 import { useContext, useEffect, useReducer, useState } from "react"
 import { DisplayMetaTags } from "utils/metaFunctions"
+import { onClickRedirect } from "utils/linkFunctions"
 import { getConfig } from "options/toast"
 import { toast } from "react-toastify"
 import axios from "axios"
@@ -59,8 +60,8 @@ const Page = ({ history, match }) => {
 						type: "GET_PAGE",
 						page
 					})
-					getFallacies(page.id)
-					getContradictions(page.id)
+					getFallacies([page.id])
+					getContradictions([page.id])
 				})
 				.catch(() => {
 					toast.error("There was an error")
@@ -71,13 +72,8 @@ const Page = ({ history, match }) => {
 		// eslint-disable-next-line
 	}, [slug])
 
-	const getContradictions = async (pageId, page = 1) => {
-		if (page === 1) {
-			setLoadingC(true)
-		} else {
-			setLoadingMoreC(true)
-		}
-
+	const getContradictions = async (pageIds, page = 1) => {
+		page === 1 ? setLoadingC(true) : setLoadingMoreC(true)
 		await axios
 			.get(`${process.env.REACT_APP_BASE_URL}fallacies`, {
 				params: {
@@ -89,8 +85,8 @@ const Page = ({ history, match }) => {
 					],
 					includeContradictions: true,
 					page,
-					pageId,
-					refId: 21
+					pageIds,
+					refIds: [21]
 				}
 			})
 			.then(async (response) => {
@@ -102,30 +98,21 @@ const Page = ({ history, match }) => {
 				})
 				setPageNumberC(pageNumberC + 1)
 				setHasMoreC(meta.current_page < meta.last_page)
-				if (pageNumberC === 1) {
-					setLoadingC(false)
-				} else {
-					setLoadingMoreC(false)
-				}
+				pageNumberC === 1 ? setLoadingC(false) : setLoadingMoreC(false)
 			})
 			.catch(() => {
 				toast.error("There was an error")
 			})
 	}
 
-	const getFallacies = async (pageId, page = 1) => {
-		if (page === 1) {
-			setLoading(true)
-		} else {
-			setLoadingMore(true)
-		}
-
+	const getFallacies = async (pageIds, page = 1) => {
+		page === 1 ? setLoading(true) : setLoadingMore(true)
 		await axios
 			.get(`${process.env.REACT_APP_BASE_URL}fallacies`, {
 				params: {
 					with: ["reference", "user", "twitter.tweet", "youtube.video"],
 					page,
-					pageId
+					pageIds
 				}
 			})
 			.then(async (response) => {
@@ -137,11 +124,7 @@ const Page = ({ history, match }) => {
 				})
 				setPageNumber(pageNumber + 1)
 				setHasMore(meta.current_page < meta.last_page)
-				if (pageNumber === 1) {
-					setLoading(false)
-				} else {
-					setLoadingMore(false)
-				}
+				pageNumber === 1 ? setLoading(false) : setLoadingMore(false)
 			})
 			.catch(() => {
 				toast.error("There was an error")
@@ -153,11 +136,7 @@ const Page = ({ history, match }) => {
 	}
 
 	const onClickFallacy = (e, slug) => {
-		if (e.metaKey) {
-			window.open(`/fallacies/${slug}`, "_blank").focus()
-		} else {
-			history.push(`/fallacies/${slug}`)
-		}
+		onClickRedirect(e, history, `/fallacies/${slug}`)
 	}
 
 	return (
