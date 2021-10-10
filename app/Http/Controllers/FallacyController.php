@@ -7,6 +7,10 @@ use App\Models\Page;
 use App\Models\Tweet;
 use App\Models\Video;
 
+use App\Models\Argument;
+use App\Models\ArgumentContradiction;
+use App\Models\ArgumentExampleTweet;
+use App\Models\ArgumentImage;
 use App\Http\Resources\Fallacy as FallacyResource;
 use App\Http\Resources\FallacyCollection;
 use App\Models\ContradictionTwitter;
@@ -15,6 +19,8 @@ use App\Models\Fallacy;
 use App\Models\FallacyTwitter;
 use App\Models\FallacyYouTube;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class FallacyController extends Controller
 {
@@ -57,6 +63,7 @@ class FallacyController extends Controller
         $sort = $request->input('sort', 'id');
         $dir = $request->input('dir', 'desc');
 
+        $_q = $q;
         $where = [];
 
         if ($userId) {
@@ -69,10 +76,6 @@ class FallacyController extends Controller
 
         if ($retracted) {
             $where['retracted'] = $retracted;
-        }
-
-        if (!empty($q)) {
-            $where['explanation'] = ['LIKE', '%' . $q . '%'];
         }
 
         $fallacies = Fallacy::with($with)->where($where);
@@ -91,8 +94,12 @@ class FallacyController extends Controller
 
         if ($tweetId) {
             $fallacies = $fallacies->whereHas('twitter', function ($query) use ($tweetId) {
-                $query->where('tweet_id', 4079);
+                // $query->where('tweet_id', 4079);
             });
+        }
+
+        if (!empty($q)) {
+            $fallacies = $fallacies->where('explanation', 'LIKE', '%' . $q . '%');
         }
 
         $fallacies = $fallacies->orderBy($sort, $dir)
@@ -181,6 +188,99 @@ class FallacyController extends Controller
 
     public function migrate()
     {
+        /*
+        $json = Storage::disk('local')->get('public/arguments.json');
+        $json = json_decode($json, true);
+        // dd($json);
+
+        $tweetController = new TweetController;
+
+        for ($i = 0; $i < count($json); $i++) {
+            $item = $json[$i];
+
+            $description = $item['description'];
+            $explanation = implode('. ', $item['tips']);
+            $slug = $item['argument'];
+            $meme = $item['meme'];
+            $images = $item['images'];
+            $examples =  $item['examples'];
+            $contradictions = $item['contradictions'];
+
+            $argData = [
+                'description' => $description,
+                'explanation' => $explanation,
+                'slug' => $slug
+            ];
+            $arg = Argument::create($argData);
+            $arg->refresh();
+
+            if (is_array($meme)) {
+                $images = array_merge($images, $meme);
+            } else {
+                $image[] = $meme;
+            }
+
+            for ($x = 0; $x < count($images); $x++) {
+                $contents = file_get_contents($images[$x]);
+                $img = 'arguments/' . Str::random(24) . '.jpg';
+                Storage::disk('s3')->put($img, $contents);
+
+                ArgumentImage::create([
+                    'argument_id' => $arg->id,
+                    'caption' => '',
+                    's3_link' => $img
+                ]);
+            }
+
+            for ($x = 0; $x < count($examples); $x++) {
+                $url = parse_url($examples[$x]);
+                if (!array_key_exists('host', $url)) {
+                    continue;
+                }
+
+                if ($url['host'] === 'twitter.com') {
+                    $segs = explode('/', $url['path']);
+                    $tweetId = end($segs);
+                    $tweet = $tweetController->show($tweetId);
+
+                    if ($tweet) {
+                        ArgumentExampleTweet::create([
+                            'argument_id' => $arg->id,
+                            'tweet_id' => $tweet->id
+                        ]);
+                    }
+                }
+            }
+        }
+
+        for ($i = 0; $i < count($json); $i++) {
+            $item = $json[$i];
+            $slug = $item['argument'];
+            $contradictions = $item['contradictions'];
+
+            $arg = Argument::where('slug', $slug)->first();
+            if (empty($arg)) {
+                continue;
+            }
+
+            for ($x = 0; $x < count($contradictions); $x++) {
+                $c = $contradictions[$x];
+
+                $cArg = Argument::where('slug', $c['argument'])->first();
+                if (empty($cArg)) {
+                    continue;
+                }
+
+                ArgumentContradiction::create([
+                    'argument_id' => $arg->id,
+                    'contradicting_argument_id' => $cArg->id,
+                    'explanation' => $c['description']
+                ]);
+            }
+        }
+        */
+        die;
+
         $all = Tweet::all()->toArray();
         for ($i = 0; $i < count($all); $i++) {
             $entry = $all[$i];

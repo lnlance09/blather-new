@@ -4,3 +4,9 @@
 @invertedBackground: #050505;
 @invertedTextColor: #ffffff;
 @invertedActiveBackground: rgba(255, 255, 255, 0.15);
+
+@secondaryPointingBorderColor: #f0f0f0;
+@secondaryPointingActiveBorderColor: #000000;
+@secondaryPointingActiveFontWeight: 800;
+@secondaryPointingBorderWidth: 3px;
+// @secondaryPointingActiveTextColor;

@@ -42,15 +42,7 @@ const TweetPage = ({ history, match }) => {
 	useEffect(() => {
 		const getTweet = async (id) => {
 			await axios
-				.get(`${process.env.REACT_APP_BASE_URL}tweets/${id}`, {
-					params: {
-						with: [
-							"contradictionTwitter.tweet",
-							"contradictionYouTube.video",
-							"twitter.tweet"
-						]
-					}
-				})
+				.get(`${process.env.REACT_APP_BASE_URL}tweets/${id}`)
 				.then(async (response) => {
 					const { data } = response.data
 					dispatchInternal({
@@ -60,7 +52,8 @@ const TweetPage = ({ history, match }) => {
 					getFallacies(data.id)
 					getContradictions(data.id)
 				})
-				.catch(() => {
+				.catch((e) => {
+					console.error(e)
 					toast.error("There was an error")
 				})
 		}

@@ -1,4 +1,14 @@
-import { Divider, Dropdown, Header, Menu, Segment, Visibility } from "semantic-ui-react"
+import {
+	Button,
+	Divider,
+	Dropdown,
+	Header,
+	Icon,
+	Label,
+	Menu,
+	Segment,
+	Visibility
+} from "semantic-ui-react"
 import { useContext, useEffect, useReducer, useState } from "react"
 import { DebounceInput } from "react-debounce-input"
 import { DisplayMetaTags } from "utils/metaFunctions"
@@ -9,6 +19,7 @@ import DefaultLayout from "layouts/default"
 import FallacyList from "components/FallacyList"
 import initialState from "states/search"
 import logger from "use-reducer-logger"
+import NumberFormat from "react-number-format"
 import PageList from "components/PageList"
 import PropTypes from "prop-types"
 import qs from "query-string"
@@ -31,16 +42,15 @@ const Search = ({ history, match }) => {
 		initialState
 	)
 	const { contradictions, fallacies, pageOptions, pages, tweets } = internalState
+	const { twitterCount, youtubeCount } = pages
 
 	const [activeItem, setActiveItem] = useState(type)
 	const [q, setQ] = useState(_q)
 
-	/*
 	const [hasMoreC, setHasMoreC] = useState(false)
 	const [loadingC, setLoadingC] = useState(true)
 	const [loadingMoreC, setLoadingMoreC] = useState(false)
 	const [pageNumberC, setPageNumberC] = useState(1)
-	*/
 
 	const [hasMoreF, setHasMoreF] = useState(false)
 	const [loadingF, setLoadingF] = useState(true)
@@ -61,7 +71,26 @@ const Search = ({ history, match }) => {
 
 	const [pageIds, setPageIds] = useState([])
 	const [pageIdsF, setPageIdsF] = useState([])
-	const [pageIdsC, setPageIdC] = useState([])
+	const [pageIdsC, setPageIdsC] = useState([])
+
+	useEffect(() => {
+		if (activeItem === "contradictions" && !contradictions.loaded) {
+			getContradictions(q, pageIdsC)
+		}
+
+		if (activeItem === "fallacies" && !fallacies.loaded) {
+			getFallacies(q, refIds, pageIdsF)
+		}
+
+		if (activeItem === "pages" && !pages.loaded) {
+			getPages(q, network)
+		}
+
+		if (activeItem === "tweets" && !tweets.loaded) {
+			getTweets(q, pageIds)
+		}
+		// eslint-disable-next-line
+	}, [q, activeItem])
 
 	useEffect(() => {
 		const getPageOptions = async () => {
@@ -72,24 +101,8 @@ const Search = ({ history, match }) => {
 			})
 		}
 		getPageOptions()
-
-		if (activeItem === "contradictions") {
-			getFallacies(q, refIds, pageIdsC)
-		}
-
-		if (activeItem === "fallacies") {
-			getFallacies(q, refIds, pageIdsF)
-		}
-
-		if (activeItem === "pages") {
-			getPages(q, network)
-		}
-
-		if (activeItem === "tweets") {
-			getTweets(q, pageIds)
-		}
-		// eslint-disable-next-line
-	}, [q, activeItem])
+		getCounts("")
+	}, [])
 
 	const handleItemClick = (e, { name }) => {
 		setActiveItem(name)
@@ -102,6 +115,57 @@ const Search = ({ history, match }) => {
 		history.push(`/search/?${stringified}`)
 	}
 
+	const getCounts = async (q) => {
+		await axios
+			.get(`${process.env.REACT_APP_BASE_URL}search/counts`, {
+				params: {
+					q
+				}
+			})
+			.then((response) => {
+				dispatch({
+					type: "SET_COUNTS",
+					counts: response.data
+				})
+			})
+			.catch(() => {})
+	}
+
+	const getContradictions = async (q, pageIds, page = 1) => {
+		page === 1 ? setLoadingC(true) : setLoadingMoreC(true)
+		await axios
+			.get(`${process.env.REACT_APP_BASE_URL}fallacies`, {
+				params: {
+					with: [
+						"contradictionTwitter.tweet",
+						"contradictionYouTube.video",
+						"twitter.tweet",
+						"youtube.video",
+						"reference"
+					],
+					includeContradictions: true,
+					page,
+					q,
+					pageIds,
+					refIds: [21]
+				}
+			})
+			.then((response) => {
+				const { data, meta } = response.data
+				dispatch({
+					type: "SEARCH_CONTRADICTIONS",
+					contradictions: data,
+					page
+				})
+				setPageNumberC(pageNumberC + 1)
+				setHasMoreC(meta.current_page < meta.last_page)
+				page === 1 ? setLoadingC(false) : setLoadingMoreC(false)
+			})
+			.catch(() => {
+				console.error("There was an error")
+			})
+	}
+
 	const getFallacies = async (q, refIds, pageIds, page = 1) => {
 		page === 1 ? setLoadingF(true) : setLoadingMoreF(true)
 		await axios
@@ -110,7 +174,8 @@ const Search = ({ history, match }) => {
 					with: ["reference", "user", "twitter.tweet", "youtube.video"],
 					page,
 					pageIds,
-					refIds
+					refIds,
+					q
 				}
 			})
 			.then((response) => {
@@ -122,7 +187,7 @@ const Search = ({ history, match }) => {
 				})
 				setPageNumberF(pageNumberF + 1)
 				setHasMoreF(meta.current_page < meta.last_page)
-				pageNumberF === 1 ? setLoadingF(false) : setLoadingMoreF(false)
+				page === 1 ? setLoadingF(false) : setLoadingMoreF(false)
 			})
 			.catch(() => {
 				console.error("There was an error")
@@ -134,9 +199,12 @@ const Search = ({ history, match }) => {
 		await axios
 			.get(`${process.env.REACT_APP_BASE_URL}pages`, {
 				params: {
+					fallacyCount: true,
 					network,
 					q,
-					page
+					page,
+					sort: "fallacies_count",
+					dir: "desc"
 				}
 			})
 			.then((response) => {
@@ -148,11 +216,40 @@ const Search = ({ history, match }) => {
 				})
 				setPageNumberP(pageNumberP + 1)
 				setHasMoreP(meta.current_page < meta.last_page)
-				pageNumberP === 1 ? setLoadingP(false) : setLoadingMoreP(false)
+				page === 1 ? setLoadingP(false) : setLoadingMoreP(false)
+
+				getTwitterPages()
+				getYoutubePages()
 			})
 			.catch(() => {
 				console.error("There was an error")
 			})
+	}
+
+	const getTwitterPages = async () => {
+		await axios
+			.get(`${process.env.REACT_APP_BASE_URL}pages/twitterCount`)
+			.then((response) => {
+				const { count } = response.data
+				dispatch({
+					type: "SET_PAGES_TWITTER_COUNT",
+					count
+				})
+			})
+			.catch(() => {})
+	}
+
+	const getYoutubePages = async () => {
+		await axios
+			.get(`${process.env.REACT_APP_BASE_URL}pages/youtubeCount`)
+			.then((response) => {
+				const { count } = response.data
+				dispatch({
+					type: "SET_PAGES_YOUTUBE_COUNT",
+					count
+				})
+			})
+			.catch(() => {})
 	}
 
 	const getTweets = async (q, pageIds, page = 1) => {
@@ -170,20 +267,38 @@ const Search = ({ history, match }) => {
 				dispatch({
 					type: "SEARCH_TWEETS",
 					tweets: data,
-					page
+					page,
+					total: meta.total
 				})
 				setPageNumberT(pageNumberT + 1)
 				setHasMoreT(meta.current_page < meta.last_page)
-				pageNumberT === 1 ? setLoadingT(false) : setLoadingMoreT(false)
+				page === 1 ? setLoadingT(false) : setLoadingMoreT(false)
 			})
 			.catch(() => {
 				console.error("There was an error")
 			})
 	}
 
-	const onChangeQ = (e) => {
+	const onChangeQ = async (e) => {
 		const value = e.target.value
 		setQ(value)
+		getCounts(value)
+
+		if (activeItem === "contradictions") {
+			await getContradictions(value, pageIdsC)
+		}
+
+		if (activeItem === "fallacies") {
+			await getFallacies(value, refIds, pageIdsF)
+		}
+
+		if (activeItem === "pages") {
+			await getPages(value, network)
+		}
+
+		if (activeItem === "tweets") {
+			await getTweets(value, pageIds)
+		}
 	}
 
 	const onClickFallacy = (e, slug) => {
@@ -196,6 +311,14 @@ const Search = ({ history, match }) => {
 
 	const onClickTweet = (e, id) => {
 		onClickRedirect(e, history, `/tweets/${id}`)
+	}
+
+	const onChangeContradictionsUser = async (e, { value }) => {
+		dispatch({
+			type: "TOGGLE_CONTRADICTIONS_LOADED"
+		})
+		setPageIdsC(value)
+		getContradictions(q, value)
 	}
 
 	const onChangeFallaciesUser = async (e, { value }) => {
@@ -224,22 +347,21 @@ const Search = ({ history, match }) => {
 		>
 			<DisplayMetaTags page="search" />
 
-			<Header as="h1" content="Search" />
-			<div className={`ui labeled input large fluid ${inverted ? "inverted" : ""}`}>
+			<div className={`ui left icon input large fluid ${inverted ? "inverted" : ""}`}>
+				<i aria-hidden="true" class="search icon"></i>
 				<DebounceInput
-					debounceTimeout={800}
-					minLength={2}
+					debounceTimeout={400}
+					minLength={3}
 					onChange={onChangeQ}
 					placeholder="Search..."
 					value={q}
 				/>
 			</div>
 
-			<Divider />
-
-			<Menu attached="top" size="large" tabular>
+			<Menu secondary pointing size="huge">
 				<Menu.Item active={activeItem === "tweets"} name="tweets" onClick={handleItemClick}>
 					Tweets
+					<Label color="blue">{tweets.count}</Label>
 				</Menu.Item>
 				<Menu.Item
 					active={activeItem === "fallacies"}
@@ -247,6 +369,7 @@ const Search = ({ history, match }) => {
 					onClick={handleItemClick}
 				>
 					Fallacies
+					<Label color="blue">{fallacies.count}</Label>
 				</Menu.Item>
 				<Menu.Item
 					active={activeItem === "contradictions"}
@@ -254,124 +377,181 @@ const Search = ({ history, match }) => {
 					onClick={handleItemClick}
 				>
 					Contradictions
+					<Label color="blue">{contradictions.count}</Label>
 				</Menu.Item>
 				<Menu.Item active={activeItem === "pages"} name="pages" onClick={handleItemClick}>
 					Pages
+					<Label color="blue">{pages.count}</Label>
 				</Menu.Item>
 			</Menu>
 
-			<Segment attached>
-				{activeItem === "fallacies" && (
-					<>
-						<Dropdown
-							className="large"
-							fluid
-							multiple
-							onChange={onChangeFallaciesUser}
-							options={pageOptions}
-							placeholder="Filter by user"
-							search
-							selection
-							value={pageIdsF}
+			{activeItem === "fallacies" && (
+				<>
+					<Dropdown
+						className="large"
+						fluid
+						multiple
+						onChange={onChangeFallaciesUser}
+						options={pageOptions}
+						placeholder="Filter by page"
+						search
+						selection
+						value={pageIdsF}
+					/>
+
+					<Divider />
+
+					<Visibility
+						continuous
+						offset={[50, 50]}
+						onBottomVisible={() => {
+							if (!loadingF && !loadingMoreF && hasMoreF) {
+								getFallacies(q, refIds, pageIdsF, pageNumberF)
+							}
+						}}
+					>
+						<FallacyList
+							fallacies={fallacies.data}
+							history={history}
+							inverted={inverted}
+							loading={!fallacies.loaded}
+							loadingMore={loadingMoreF}
+							onClickFallacy={onClickFallacy}
 						/>
+					</Visibility>
+				</>
+			)}
 
-						<Divider />
+			{activeItem === "contradictions" && (
+				<>
+					<Dropdown
+						className="large"
+						fluid
+						multiple
+						onChange={onChangeContradictionsUser}
+						options={pageOptions}
+						placeholder="Filter by page"
+						search
+						selection
+						value={pageIdsC}
+					/>
 
-						<Visibility
-							continuous
-							offset={[50, 50]}
-							onBottomVisible={() => {
-								if (!loadingF && !loadingMoreF && hasMoreF) {
-									getFallacies(q, refIds, pageIdsF, pageNumberF)
-								}
-							}}
-						>
-							<FallacyList
-								fallacies={fallacies.data}
-								history={history}
-								inverted={inverted}
-								loading={!fallacies.loaded}
-								loadingMore={loadingMoreF}
-								onClickFallacy={onClickFallacy}
-							/>
-						</Visibility>
-					</>
-				)}
+					<Divider />
 
-				{activeItem === "pages" && (
-					<>
-						<Dropdown
-							className="large"
-							fluid
-							multiple
-							onChange={onChangeTwitterUser}
-							options={pageOptions}
-							placeholder="Filter by user"
-							search
-							selection
+					<Visibility
+						continuous
+						offset={[50, 50]}
+						onBottomVisible={() => {
+							if (!loadingC && !loadingMoreC && hasMoreC) {
+								getContradictions(q, pageIdsC, pageNumberC)
+							}
+						}}
+					>
+						<FallacyList
+							fallacies={contradictions.data}
+							history={history}
+							inverted={inverted}
+							loading={!contradictions.loaded}
+							loadingMore={loadingMoreC}
+							onClickFallacy={onClickFallacy}
 						/>
+					</Visibility>
+				</>
+			)}
 
-						<Divider />
+			{activeItem === "pages" && (
+				<>
+					<Divider />
 
-						<Visibility
-							continuous
-							offset={[50, 50]}
-							onBottomVisible={() => {
-								if (!loadingP && !loadingMoreP && hasMoreP) {
-									getPages(q, network, pageNumberP)
-								}
-							}}
-						>
-							<PageList
-								history={history}
-								inverted={inverted}
-								loading={!pages.loaded}
-								loadingMore={loadingMoreP}
-								onClickPage={onClickPage}
-								pages={pages.data}
+					<Button as="div" labelPosition="right">
+						<Button active color="twitter">
+							<Icon name="twitter" />
+							Twitter
+						</Button>
+						<Label basic pointing="left">
+							<NumberFormat
+								displayType={"text"}
+								thousandSeparator
+								value={twitterCount}
 							/>
-						</Visibility>
-					</>
-				)}
+						</Label>
+					</Button>
+					<Button as="div" labelPosition="right">
+						<Button color="youtube">
+							<Icon name="youtube" />
+							YouTube
+						</Button>
+						<Label basic pointing="left">
+							<NumberFormat
+								displayType={"text"}
+								thousandSeparator
+								value={youtubeCount}
+							/>
+						</Label>
+					</Button>
 
-				{activeItem === "tweets" && (
-					<>
-						<Dropdown
-							className="large"
-							fluid
-							multiple
-							onChange={onChangeTwitterUser}
-							options={pageOptions}
-							placeholder="Filter by user"
-							search
-							selection
-							value={pageIds}
+					<Divider />
+
+					<Visibility
+						continuous
+						offset={[50, 50]}
+						onBottomVisible={() => {
+							if (!loadingP && !loadingMoreP && hasMoreP) {
+								getPages(q, network, pageNumberP)
+							}
+						}}
+					>
+						<PageList
+							history={history}
+							inverted={inverted}
+							loading={!pages.loaded}
+							loadingMore={loadingMoreP}
+							onClickPage={onClickPage}
+							pages={pages.data}
 						/>
+					</Visibility>
+				</>
+			)}
 
-						<Divider />
+			{activeItem === "tweets" && (
+				<>
+					<Dropdown
+						className="large"
+						fluid
+						multiple
+						onChange={onChangeTwitterUser}
+						options={pageOptions}
+						placeholder="Filter by page"
+						search
+						selection
+						value={pageIds}
+					/>
 
-						<Visibility
-							continuous
-							offset={[50, 50]}
-							onBottomVisible={() => {
-								if (!loadingT && !loadingMoreT && hasMoreT) {
-									getTweets(q, pageId, pageNumberT)
-								}
-							}}
-						>
-							<TweetList
-								highlightedText={q}
-								history={history}
-								inverted={inverted}
-								loading={!tweets.loaded}
-								loadingMore={loadingMoreT}
-								onClickPage={onClickTweet}
-								tweets={tweets.data}
-							/>
-						</Visibility>
-					</>
-				)}
-			</Segment>
+					<Divider />
+
+					<Visibility
+						continuous
+						offset={[50, 50]}
+						onBottomVisible={() => {
+							if (!loadingT && !loadingMoreT && hasMoreT) {
+								getTweets(q, pageId, pageNumberT)
+							}
+						}}
+					>
+						<TweetList
+							highlightedText={q}
+							history={history}
+							inverted={inverted}
+							loading={!tweets.loaded}
+							loadingMore={loadingMoreT}
+							onClickPage={onClickTweet}
+							tweets={tweets.data}
+						/>
+					</Visibility>
+				</>
+			)}
+
+			<Divider hidden section />
 		</DefaultLayout>
 	)
 }

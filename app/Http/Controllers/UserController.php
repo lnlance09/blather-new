@@ -285,14 +285,8 @@ class UserController extends Controller
 
         $user = User::where([
             'email' => $request->input('email'),
-            'password' => $request->input('password')
+            'password' => sha1($request->input('password'))
         ])
-            ->withCount([
-                'comments',
-                'fallacies',
-                'likes',
-                'responses'
-            ])
             ->first();
 
         if (!$user) {

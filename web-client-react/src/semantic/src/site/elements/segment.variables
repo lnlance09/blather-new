@@ -3,3 +3,5 @@
 *******************************/
 @invertedBackground: #050505;
 @invertedTextColor: #ffffff;
+@boxShadow: none;
+@borderRadius: 0;

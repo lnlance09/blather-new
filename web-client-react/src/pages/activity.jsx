@@ -21,11 +21,7 @@ const Activity = ({ history }) => {
 		>
 			<DisplayMetaTags page="activity" />
 
-			<Header as="h1" content="About" inverted={inverted} />
-
-			<Header as="p" inverted={inverted}></Header>
-
-			<Header as="h2" content="Supported Coins" inverted={inverted} />
+			<Header as="h1" content="Activity" inverted={inverted} />
 
 			<Divider hidden />
 		</DefaultLayout>

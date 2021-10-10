@@ -1,48 +1,57 @@
 @import "../../scss/_colors.scss";
 
 .fallacyList {
-    .ui.items {
-        .item {
-            @media only screen and (max-width: 1025px) {
-                .itemImg {
-                    display: none !important;
+    .ui.grid {
+        margin: 0;
+
+        .row {
+            &:not(.loading) {
+                margin-bottom: 10px;
+                margin-top: 10px;
+                padding-bottom: 0;
+                padding-top: 0;
+            }
+
+            &:first-of-type {
+                border-top-left-radius: 3px;
+                border-top-right-radius: 3px;
+            }
+
+            .segment {
+                p {
+                    font-size: 16px;
                 }
 
-                .placeholderPicWrapper {
-                    display: none !important;
-                }
+                .ui.grid {
+                    margin-bottom: 0;
+                    margin-top: 0;
+                } 
+            }
 
-                .content {
-                    width: 100% !important;
+            &:not(.loading) {
+                .segment {
+                    // border-bottom:  1px $twitterLightGrey !important;
 
-                    .header {
-                        width: 100% !important;
+                    .label.ribbon {
+                        text-transform: capitalize;
                     }
                 }
             }
-        
-            @media only screen and (min-width: 1025px) {
-                .placeholderPicWrapper {
-                    height: 90px;
-                    width: 90px;
-                }
 
-                .content .header .ui.image.avatar {
-                    display: none;
+            .eight.wide.column, .sixteen.wide.column {
+                padding-bottom: 0;
+                padding-left: 0;
+
+                &:last-of-type {
+                    padding-right: 0;
                 }
             }
+        }
+    }
 
-            .placeholderPicWrapper {
-                margin-right: 1em;
-            }
-
-            .extra {
-                .ui.red.label {
-                    .close.icon {
-                        margin: 0 .75em 0 0;
-                    }
-                }
-            }
+    .card {
+        .explanation {
+            font-size: 16px;
         }
     }
 }

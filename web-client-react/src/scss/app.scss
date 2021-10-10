@@ -36,8 +36,6 @@ body {
 }
 
 .appWrapper {
-	background: darken($offWhite, 3%);
-
 	a {
 		color: $blue;
 	}
@@ -91,6 +89,10 @@ body {
 		opacity: 0;
 	}
 
+	.clearfix {
+		clear: both;
+	}
+
 	&.inverted {
 		background: $invertedBackgroundColor;
 
@@ -116,14 +118,14 @@ body {
 	}
 
 	.mainContainer {
-		background: $white;
-		border-left: solid 1px $twitterExtraLightGrey;
-		border-right: solid 1px $twitterExtraLightGrey;
+		background: transparent;
+		// border-left: solid 1px $twitterExtraLightGrey;
+		// border-right: solid 1px $twitterExtraLightGrey;
 		min-height: 100vh;
 		padding: 0 12px 12px 12px;
 
 		.mainContent {
-			margin-top: 12px;
+			margin-top: 18px;
 
 			* {
 				// font-family: 'IBM Plex Serif', serif !important;
@@ -189,7 +191,9 @@ body {
 		}
 
 		&.argumentsPage {
-			
+			p.header {
+				font-weight: normal;
+			}
 		}
 
 		&.assignPage {
@@ -205,14 +209,8 @@ body {
 		}
 
 		&.griftersPage {
-			.cards {
-				.card {
-					box-shadow: none;
-
-					img {
-						// border-radius: 0 !important;
-					}
-				}
+			.ui.header + p {
+				font-size: 17px;
 			}
 		}
 
@@ -246,7 +244,9 @@ body {
 		}
 
 		&.searchPage {
-			
+			.right.labeled.button {
+				margin-left: 10px !important;
+			}
 		}
 
 		&.settingsPage {

@@ -3,6 +3,7 @@ import { useContext, useState } from "react"
 import { DisplayMetaTags } from "utils/metaFunctions"
 import { grifters } from "options/grifters"
 import DefaultLayout from "layouts/default"
+import Gallery from "react-grid-gallery"
 import PropTypes from "prop-types"
 import ReactTooltip from "react-tooltip"
 import ThemeContext from "themeContext"
@@ -52,22 +53,10 @@ const Grifters = ({ history }) => {
 						Extra points in one is a member of a marginalized group.
 					</p>
 
-					<Segment basic>
-						<Card.Group itemsPerRow={8}>
-							{maga.map((item, i) => (
-								<Card
-									data-tip
-									data-for={`itemMaga${i}`}
-									onClick={() => history.push(`/pages/twitter/${item.username}`)}
-								>
-									<Image rounded={false} src={item.img} />
-									<ReactTooltip id={`itemMaga${i}`} effect="float" type="dark">
-										<span>{item.name}</span>
-									</ReactTooltip>
-								</Card>
-							))}
-						</Card.Group>
-					</Segment>
+					<div className="gallery-wrapper">
+						<Gallery images={maga} />
+						<div className="clearfix" />
+					</div>
 
 					<Header as="h1">MLM Grifters</Header>
 					<p></p>

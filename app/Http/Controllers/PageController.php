@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\Page as PageResource;
-use App\Http\Resources\PageOptionCollection;
 use App\Http\Resources\PageCollection;
+use App\Http\Resources\PageOptionCollection;
 use App\Models\Page;
 use Illuminate\Http\Request;
 
@@ -27,21 +27,31 @@ class PageController extends Controller
     public function index(Request $request)
     {
         $q = $request->input('q', null);
-        $network = $request->input('network', 'twitter');
+        $network = $request->input('network', 'all');
         $fallacyCount = $request->input('fallacyCount', 0);
 
         $sort = $request->input('sort', 'id');
         $dir = $request->input('dir', 'desc');
 
-        $where = [
-            'network' => $network
-        ];
-
-        if (!empty($q)) {
-            $where['name'] = ['LIKE', '%' . $q . '%'];
+        $_q = $q;
+        $where = [];
+        if ($network !== 'all') {
+            $where = [
+                'network' => $network
+            ];
         }
 
-        $pages = Page::where($where);
+        $pages = Page::where(function ($q) use ($_q) {
+            $q->where(function ($query) use ($_q) {
+                $query->where('name', 'LIKE', '%' . $_q . '%');
+            })->orWhere(function ($query) use ($_q) {
+                $query->where('username', 'LIKE', '%' . $_q . '%');
+            })->orWhere(function ($query) use ($_q) {
+                $query->where('bio', 'LIKE', '%' . $_q . '%');
+            });
+        })
+            ->where($where);
+
         if ($fallacyCount) {
             $pages = $pages->withCount([
                 'fallacies',
@@ -114,10 +124,10 @@ class PageController extends Controller
 
     public function showOptions(Request $request)
     {
-        $coins = Page::withCount(['fallacies'])
+        $pages = Page::withCount(['fallacies'])
             ->orderBy('fallacies_count', 'desc')
             ->get();
-        return new PageOptionCollection($coins);
+        return new PageOptionCollection($pages);
     }
 
     /**
@@ -129,6 +139,22 @@ class PageController extends Controller
     public function store(Request $request)
     {
         //
+    }
+
+    public function twitterCount()
+    {
+        $count = Page::where('network', 'twitter')->count();
+        return response([
+            'count' => $count
+        ]);
+    }
+
+    public function youtubeCount()
+    {
+        $count = Page::where('network', 'youtube')->count();
+        return response([
+            'count' => $count
+        ]);
     }
 
     /**

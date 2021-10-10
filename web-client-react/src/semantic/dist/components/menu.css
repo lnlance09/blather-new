@@ -912,16 +912,16 @@ Floated Menu / Item
 .ui.secondary.pointing.menu {
   margin-left: 0;
   margin-right: 0;
-  border-bottom: 2px solid rgba(34, 36, 38, 0.15);
+  border-bottom: 3px solid #f0f0f0;
 }
 .ui.secondary.pointing.menu .item {
   border-bottom-color: transparent;
   border-bottom-style: solid;
   border-radius: 0;
   align-self: flex-end;
-  margin: 0 0 -2px;
+  margin: 0 0 -3px;
   padding: 0.85714286em 1.14285714em;
-  border-bottom-width: 2px;
+  border-bottom-width: 3px;
   transition: color 0.1s ease;
 }
 .ui.secondary.pointing.menu .ui.dropdown .menu .item {
@@ -960,21 +960,21 @@ Floated Menu / Item
 .ui.secondary.pointing.menu .link.item:active,
 .ui.secondary.pointing.menu a.item:active {
   background-color: transparent;
-  border-color: rgba(34, 36, 38, 0.15);
+  border-color: #f0f0f0;
 }
 
 /* Active */
 .ui.secondary.pointing.menu .active.item {
   background-color: transparent;
   box-shadow: none;
-  border-color: currentColor;
-  font-weight: bold;
+  border-color: #000000;
+  font-weight: 800;
   color: rgba(0, 0, 0, 0.95);
 }
 
 /* Active Hover */
 .ui.secondary.pointing.menu .active.item:hover {
-  border-color: currentColor;
+  border-color: #000000;
   color: rgba(0, 0, 0, 0.95);
 }
 
@@ -986,22 +986,22 @@ Floated Menu / Item
 /* Vertical Pointing */
 .ui.secondary.vertical.pointing.menu {
   border-bottom-width: 0;
-  border-right-width: 2px;
+  border-right-width: 3px;
   border-right-style: solid;
-  border-right-color: rgba(34, 36, 38, 0.15);
+  border-right-color: #f0f0f0;
 }
 .ui.secondary.vertical.pointing.menu .item {
   border-bottom: none;
   border-right-style: solid;
   border-right-color: transparent;
   border-radius: 0 !important;
-  margin: 0 -2px 0 0;
-  border-right-width: 2px;
+  margin: 0 -3px 0 0;
+  border-right-width: 3px;
 }
 
 /* Vertical Active */
 .ui.secondary.vertical.pointing.menu .active.item {
-  border-color: currentColor;
+  border-color: #000000;
 }
 
 /* Inverted */
@@ -1286,71 +1286,85 @@ Floated Menu / Item
 .ui.ui.ui.menu .primary.active.item,
 .ui.ui.primary.menu .active.item:hover,
 .ui.ui.primary.menu .active.item {
+  border-color: #ffb8b8;
   color: #ffb8b8;
 }
 .ui.ui.ui.menu .red.active.item,
 .ui.ui.red.menu .active.item:hover,
 .ui.ui.red.menu .active.item {
+  border-color: #c0392b;
   color: #c0392b;
 }
 .ui.ui.ui.menu .orange.active.item,
 .ui.ui.orange.menu .active.item:hover,
 .ui.ui.orange.menu .active.item {
+  border-color: #d35400;
   color: #d35400;
 }
 .ui.ui.ui.menu .yellow.active.item,
 .ui.ui.yellow.menu .active.item:hover,
 .ui.ui.yellow.menu .active.item {
+  border-color: #f39c12;
   color: #f39c12;
 }
 .ui.ui.ui.menu .olive.active.item,
 .ui.ui.olive.menu .active.item:hover,
 .ui.ui.olive.menu .active.item {
+  border-color: #6ab04c;
   color: #6ab04c;
 }
 .ui.ui.ui.menu .green.active.item,
 .ui.ui.green.menu .active.item:hover,
 .ui.ui.green.menu .active.item {
+  border-color: #27ae60;
   color: #27ae60;
 }
 .ui.ui.ui.menu .teal.active.item,
 .ui.ui.teal.menu .active.item:hover,
 .ui.ui.teal.menu .active.item {
+  border-color: #16a085;
   color: #16a085;
 }
 .ui.ui.ui.menu .blue.active.item,
 .ui.ui.blue.menu .active.item:hover,
 .ui.ui.blue.menu .active.item {
+  border-color: #2980b9;
   color: #2980b9;
 }
 .ui.ui.ui.menu .violet.active.item,
 .ui.ui.violet.menu .active.item:hover,
 .ui.ui.violet.menu .active.item {
+  border-color: #8e44ad;
   color: #8e44ad;
 }
 .ui.ui.ui.menu .purple.active.item,
 .ui.ui.purple.menu .active.item:hover,
 .ui.ui.purple.menu .active.item {
+  border-color: #2c3e50;
   color: #2c3e50;
 }
 .ui.ui.ui.menu .pink.active.item,
 .ui.ui.pink.menu .active.item:hover,
 .ui.ui.pink.menu .active.item {
+  border-color: #ffb8b8;
   color: #ffb8b8;
 }
 .ui.ui.ui.menu .brown.active.item,
 .ui.ui.brown.menu .active.item:hover,
 .ui.ui.brown.menu .active.item {
+  border-color: #a5673f;
   color: #a5673f;
 }
 .ui.ui.ui.menu .grey.active.item,
 .ui.ui.grey.menu .active.item:hover,
 .ui.ui.grey.menu .active.item {
+  border-color: #7f8c8d;
   color: #7f8c8d;
 }
 .ui.ui.ui.menu .black.active.item,
 .ui.ui.black.menu .active.item:hover,
 .ui.ui.black.menu .active.item {
+  border-color: #2c3e50;
   color: #2c3e50;
 }
 

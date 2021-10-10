@@ -5,3 +5,17 @@
 @invertedLinkHoverBackground: #050505;
 @invertedBoxShadow: 0 1px 3px 0 rgba(44, 44, 44, 0.9), 0 0 0 1px rgba(44, 44, 44, 0.9);
 @invertedLinkHoverBoxShadow: 0 1px 3px 0 rgba(66, 66, 66, 0.9), 0 0 0 1px rgba(66, 66, 66, 0.9);
+
+@boxShadow: none;
+@borderBoxShadow: none;
+@shadowBoxShadow: none;
+
+@border: 1px solid rgba(34,36,38,.15);
+@internalBorderColor: rgba(34,36,38,.15);
+
+// @contentPadding: 14px 20px;
+@metaColor: #A5A7AA;
+
+@linkHoverRaiseDistance: 0px;
+@linkHoverBoxShadow: none;
+@linkHoverBorder: 1px solid #D0D0D8;

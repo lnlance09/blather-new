@@ -8,6 +8,7 @@ const reducer = (state, action) => {
 			return {
 				...state,
 				contradictions: {
+					...state.contradictions,
 					data: contradictions,
 					loaded: true
 				}
@@ -18,6 +19,7 @@ const reducer = (state, action) => {
 			return {
 				...state,
 				fallacies: {
+					...state.fallacies,
 					data: fallacies,
 					loaded: true
 				}
@@ -27,6 +29,7 @@ const reducer = (state, action) => {
 			return {
 				...state,
 				pages: {
+					...state.pages,
 					data: pages,
 					loaded: true
 				}
@@ -37,14 +40,59 @@ const reducer = (state, action) => {
 			return {
 				...state,
 				tweets: {
+					...state.tweets,
 					data: tweets,
 					loaded: true
+				}
+			}
+		case "SET_COUNTS":
+			return {
+				...state,
+				contradictions: {
+					...state.contradictions,
+					count: action.counts.contradictions
+				},
+				fallacies: {
+					...state.fallacies,
+					count: action.counts.fallacies
+				},
+				pages: {
+					...state.pages,
+					count: action.counts.pages
+				},
+				tweets: {
+					...state.tweets,
+					count: action.counts.tweets
 				}
 			}
 		case "SET_PAGE_OPTIONS":
 			return {
 				...state,
 				pageOptions: action.options
+			}
+		case "SET_PAGES_TWITTER_COUNT":
+			return {
+				...state,
+				pages: {
+					...state.pages,
+					twitterCount: action.count
+				}
+			}
+		case "SET_PAGES_YOUTUBE_COUNT":
+			return {
+				...state,
+				pages: {
+					...state.pages,
+					youtubeCount: action.count
+				}
+			}
+		case "TOGGLE_CONTRADICTIONS_LOADED":
+			return {
+				...state,
+				contradictions: {
+					...state.contradictions,
+					loaded: !state.contradictions.loaded
+				}
 			}
 		case "TOGGLE_FALLACIES_LOADED":
 			return {

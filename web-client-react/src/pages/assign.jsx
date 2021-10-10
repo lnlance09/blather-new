@@ -20,8 +20,6 @@ const Assign = ({ history }) => {
 			textAlign="center"
 		>
 			<DisplayMetaTags page="assign" />
-
-			<Header as="h1" content="About" inverted={inverted} />
 		</DefaultLayout>
 	)
 }

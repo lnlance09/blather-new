@@ -73,9 +73,10 @@ const Tweet = ({
 	const className = `tweet${!assignable ? " clickable" : ""}`
 	const extEntities = retweeted ? JSON.parse(retweeted.extendedEntities) : extendedEntities
 
-	const tweetText = highlight
-		? getHighlightedText(headerFullText, highlightedText)
-		: headerFullText
+	const tweetText =
+		highlightedText !== ""
+			? getHighlightedText(headerFullText, highlightedText)
+			: headerFullText
 	const linkifiedTweetText = linkifyHtml(tweetText, {
 		className: "linkify",
 		formatHref: {
@@ -87,14 +88,15 @@ const Tweet = ({
 	let linkifiedQTweetText = ""
 	let qTweetText = ""
 	if (isQuoted) {
-		linkifiedQTweetText = linkifyHtml(qFullText, {
+		qTweetText =
+			highlightedText !== "" ? getHighlightedText(qFullText, highlightedText) : qFullText
+		linkifiedQTweetText = linkifyHtml(qTweetText, {
 			className: "linkify",
 			formatHref: {
 				mention: (val) => `/pages/twitter${val}`,
 				hashtag: (val) => val
 			}
 		})
-		qTweetText = getHighlightedText(linkifiedQTweetText, highlightedText)
 	}
 
 	const parseMedia = (entities) =>

@@ -88,7 +88,7 @@ const PageHeader = ({ activeItem, history, q, simple }) => {
 		localStorage.removeItem("unreadCount")
 		localStorage.removeItem("user")
 		localStorage.removeItem("verify")
-		window.Echo.leave(`users.${user.id}`)
+		// window.Echo.leave(`users.${user.id}`)
 		dispatch({
 			type: "LOGOUT"
 		})
@@ -192,8 +192,14 @@ const PageHeader = ({ activeItem, history, q, simple }) => {
 					Profile
 				</Dropdown.Item>
 				<Dropdown.Item onClick={() => history.push("/settings")}>Settings</Dropdown.Item>
-				<Dropdown.Item onClick={() => history.push("/settings?tab=wallets")}>
-					Wallets
+				<Dropdown.Item onClick={() => history.push("/settings?tab=fallacies")}>
+					Fallacies
+				</Dropdown.Item>
+				<Dropdown.Item onClick={() => history.push("/settings?tab=targets")}>
+					Targets
+				</Dropdown.Item>
+				<Dropdown.Item onClick={() => history.push("/settings?tab=comments")}>
+					Comments
 				</Dropdown.Item>
 				<Dropdown.Divider />
 				<Dropdown.Item onClick={logout}>Sign Out</Dropdown.Item>
@@ -251,18 +257,7 @@ const PageHeader = ({ activeItem, history, q, simple }) => {
 						</Menu.Item>
 						<Menu.Item position="right">
 							{BellDropdown}
-							{auth ? (
-								<>{ProfileDropdown}</>
-							) : (
-								<>
-									<Button
-										compact
-										color="blue"
-										content="Log In"
-										onClick={() => history.push("/login")}
-									/>
-								</>
-							)}
+							{ProfileDropdown}
 						</Menu.Item>
 					</Container>
 

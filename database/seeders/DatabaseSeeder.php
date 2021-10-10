@@ -24,7 +24,11 @@ class DatabaseSeeder extends Seeder
             ContradictionYouTubeSeeder::class,
             CommentSeeder::class,
             CommentResponseSeeder::class,
-            CommentLikeSeeder::class
+            CommentLikeSeeder::class,
+            ArgumentSeeder::class,
+            ArgumentContradictionSeeder::class,
+            ArgumentExampleTweetSeeder::class,
+            ArgumentImageSeeder::class,
         ]);
     }
 }

@@ -1,8 +1,10 @@
 <?php
 
+use App\Http\Controllers\ArgumentController;
 use App\Http\Controllers\FallacyController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\ReferenceController;
+use App\Http\Controllers\SearchController;
 use App\Http\Controllers\TweetController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\VideoController;
@@ -19,8 +21,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// Route::post('/contact', [ApplicationController::class, 'sendMsg']);
-Route::get('/fallacies/migrate', [FallacyController::class, 'migrate']);
+Route::get('/arguments', [ArgumentController::class, 'index']);
 
 // Route::get('/fallacies/migrate', [FallacyController::class, 'migrate']);
 Route::get('/fallacies', [FallacyController::class, 'index']);
@@ -30,8 +31,12 @@ Route::post('/fallacies/create', [FallacyController::class, 'create']);
 Route::get('/reference', [ReferenceController::class, 'index']);
 
 Route::get('/pages', [PageController::class, 'index']);
+Route::get('/pages/twitterCount', [PageController::class, 'twitterCount']);
+Route::get('/pages/youtubeCount', [PageController::class, 'youtubeCount']);
 Route::get('/pages/showOptions', [PageController::class, 'showOptions']);
 Route::get('/pages/{network}/{username}', [PageController::class, 'show']);
+
+Route::get('/search/counts', [SearchController::class, 'counts']);
 
 Route::get('/tweets', [TweetController::class, 'index']);
 Route::get('/tweets/{id}', [TweetController::class, 'show']);

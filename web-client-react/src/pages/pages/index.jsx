@@ -1,5 +1,9 @@
+import linkifyHtml from "linkify-html"
+import "linkify-plugin-hashtag"
+import "linkify-plugin-mention"
 import {
 	Button,
+	Divider,
 	Grid,
 	Header,
 	Image,
@@ -15,7 +19,6 @@ import { onClickRedirect } from "utils/linkFunctions"
 import { getConfig } from "options/toast"
 import { toast } from "react-toastify"
 import axios from "axios"
-import ContradictionList from "components/ContradictionList"
 import DefaultLayout from "layouts/default"
 import FallacyList from "components/FallacyList"
 import initialState from "states/page"
@@ -81,7 +84,8 @@ const Page = ({ history, match }) => {
 						"contradictionTwitter.tweet",
 						"contradictionYouTube.video",
 						"twitter.tweet",
-						"youtube.video"
+						"youtube.video",
+						"reference"
 					],
 					includeContradictions: true,
 					page,
@@ -151,21 +155,20 @@ const Page = ({ history, match }) => {
 				<>
 					<Grid stackable>
 						<Grid.Row>
-							<Grid.Column className="imgColumn" width={2}>
-								<Segment>
-									<Image
-										bordered
-										className={`inverted smooth-image image-${
-											imageLoaded ? "visible" : "hidden"
-										}`}
-										fluid
-										onError={(i) => (i.target.src = PlaceholderPic)}
-										onLoad={() => setImageLoaded(true)}
-										src={page.image}
-									/>
-								</Segment>
+							<Grid.Column className="imgColumn" width={3}>
+								<Image
+									bordered
+									className={`inverted smooth-image image-${
+										imageLoaded ? "visible" : "hidden"
+									}`}
+									fluid
+									onError={(i) => (i.target.src = PlaceholderPic)}
+									onLoad={() => setImageLoaded(true)}
+									rounded
+									src={page.image}
+								/>
 							</Grid.Column>
-							<Grid.Column width={14}>
+							<Grid.Column width={8}>
 								<Header as="h1" inverted={inverted}>
 									<Header.Content>
 										{page.name}
@@ -195,20 +198,30 @@ const Page = ({ history, match }) => {
 									size="small"
 									style={{ marginTop: 0 }}
 								>
-									{page.bio}
+									<div
+										dangerouslySetInnerHTML={{
+											__html: linkifyHtml(page.bio, {
+												className: "linkify",
+												formatHref: {
+													mention: (val) => `/pages/twitter${val}`,
+													hashtag: (val) => val
+												}
+											})
+										}}
+									/>
 								</Header>
 							</Grid.Column>
 						</Grid.Row>
 					</Grid>
 
-					<Menu attached="top" tabular size="large">
+					<Menu secondary pointing size="huge">
 						<Menu.Item
 							active={activeItem === "fallacies"}
 							name="fallacies"
 							onClick={handleItemClick}
 						>
 							Fallacies
-							<Label color="red">{page.fallacyCount}</Label>
+							<Label color="blue">{page.fallacyCount}</Label>
 						</Menu.Item>
 						<Menu.Item
 							active={activeItem === "contradictions"}
@@ -216,59 +229,58 @@ const Page = ({ history, match }) => {
 							onClick={handleItemClick}
 						>
 							Contradictions
-							<Label color="red">{page.contradictionCount}</Label>
+							<Label color="blue">{page.contradictionCount}</Label>
 						</Menu.Item>
 					</Menu>
 
-					<Segment attached>
-						{activeItem === "fallacies" && (
-							<Visibility
-								continuous
-								offset={[50, 50]}
-								onBottomVisible={() => {
-									if (!loading && !loadingMore && hasMore) {
-										getFallacies(page.id, pageNumber)
-									}
-								}}
-							>
-								<FallacyList
-									fallacies={fallacies.data}
-									history={history}
-									inverted={inverted}
-									loading={!fallacies.loaded}
-									loadingMore={loadingMore}
-									onClickFallacy={onClickFallacy}
-								/>
-							</Visibility>
-						)}
+					{activeItem === "fallacies" && (
+						<Visibility
+							continuous
+							offset={[50, 50]}
+							onBottomVisible={() => {
+								if (!loading && !loadingMore && hasMore) {
+									getFallacies([page.id], pageNumber)
+								}
+							}}
+						>
+							<FallacyList
+								defaultUserImg={page.image}
+								fallacies={fallacies.data}
+								history={history}
+								inverted={inverted}
+								loading={!fallacies.loaded}
+								loadingMore={loadingMore}
+								onClickFallacy={onClickFallacy}
+							/>
+						</Visibility>
+					)}
 
-						{activeItem === "contradictions" && (
-							<Visibility
-								continuous
-								offset={[50, 50]}
-								onBottomVisible={() => {
-									if (!loadingC && !loadingMoreC && hasMoreC) {
-										getContradictions(page.id, pageNumberC)
-									}
-								}}
-							>
-								<ContradictionList
-									contradictions={contradictions.data}
-									defaultUserImg={page.image}
-									history={history}
-									inverted={inverted}
-									loading={!contradictions.loaded}
-									loadingMore={loadingMoreC}
-									onClickContradiction={onClickFallacy}
-								/>
-							</Visibility>
-						)}
-					</Segment>
+					{activeItem === "contradictions" && (
+						<Visibility
+							continuous
+							offset={[50, 50]}
+							onBottomVisible={() => {
+								if (!loadingC && !loadingMoreC && hasMoreC) {
+									getContradictions([page.id], pageNumberC)
+								}
+							}}
+						>
+							<FallacyList
+								defaultUserImg={page.image}
+								fallacies={contradictions.data}
+								history={history}
+								inverted={inverted}
+								loading={!contradictions.loaded}
+								loadingMore={loadingMoreC}
+								onClickFallacy={onClickFallacy}
+							/>
+						</Visibility>
+					)}
+
+					<Divider hidden section />
 				</>
 			) : (
-				<div className="centeredLoader">
-					<Loader active inverted={inverted} size="big" />
-				</div>
+				<div className="centeredLoader"></div>
 			)}
 		</DefaultLayout>
 	)

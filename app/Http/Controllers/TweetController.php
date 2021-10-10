@@ -133,11 +133,11 @@ class TweetController extends Controller
                     'extended_entities' => array_key_exists('extended_entities', $tweet) ? json_encode($tweet['extended_entities'], true) : null,
                     'favorite_count' => $tweet['favorite_count'],
                     'retweet_count' => $tweet['retweet_count'],
-                    // 'tweet_json' => json_encode($tweet, true),
+                    'tweet_json' => json_encode($newTweet, true),
                     'created_at' => $tweet['created_at'],
                 ];
 
-                if ($isQuoted) {
+                if ($isQuoted && array_key_exists('quoted_status', $tweet)) {
                     $quoted = $tweet['quoted_status'];
                     $contents = file_get_contents($quoted['user']['profile_image_url_https']);
                     $img = 'pages/twitter/' . $quoted['user']['name'] . '-' . $quoted['user']['id_str'] . '-' . time() . '.jpg';

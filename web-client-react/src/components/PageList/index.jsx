@@ -1,28 +1,58 @@
 import "./style.scss"
-import { Card, Image, Placeholder } from "semantic-ui-react"
+import linkifyHtml from "linkify-html"
+import "linkify-plugin-hashtag"
+import "linkify-plugin-mention"
+import { Card, Header, Icon, Image, Placeholder, Segment } from "semantic-ui-react"
 import { formatPlural } from "utils/textFunctions"
 import NumberFormat from "react-number-format"
 import PlaceholderPic from "images/images/image-square.png"
 import PropTypes from "prop-types"
 
-const PageList = ({ history, inverted, loading, loadingMore, onClickPage, pages }) => {
+const PageList = ({
+	emptyMsg = "No results...",
+	history,
+	inverted,
+	loading,
+	loadingMore,
+	onClickPage,
+	pages
+}) => {
+	const showEmptyMsg = pages.length === 0 && !loading
+
+	const PlaceholderContent = (
+		<Card.Content>
+			<Placeholder fluid inverted={inverted}>
+				<Placeholder.Header image>
+					<Placeholder.Line />
+					<Placeholder.Line />
+				</Placeholder.Header>
+				<Placeholder.Paragraph>
+					<Placeholder.Line length="full" />
+					<Placeholder.Line length="long" />
+					<Placeholder.Line length="short" />
+				</Placeholder.Paragraph>
+			</Placeholder>
+		</Card.Content>
+	)
+
 	return (
 		<div className="pageList">
 			<Card.Group className={inverted ? "inverted" : ""} itemsPerRow={3} stackable>
 				{pages.map((page, i) => {
-					const { bio, image, fallaciesCount, name, network, username } = page
+					const { bio, image, fallacyCount, name, network, username } = page
+					const newBio = bio
+						? linkifyHtml(bio, {
+								className: "linkify",
+								formatHref: {
+									mention: (val) => `/pages/twitter${val}`,
+									hashtag: (val) => val
+								}
+						  })
+						: null
 					return (
 						<Card key={`page${i}`} onClick={(e) => onClickPage(e, network, username)}>
 							{loading ? (
-								<Card.Content>
-									<Placeholder fluid inverted={inverted}>
-										<Placeholder.Paragraph>
-											<Placeholder.Line length="full" />
-											<Placeholder.Line length="long" />
-											<Placeholder.Line length="short" />
-										</Placeholder.Paragraph>
-									</Placeholder>
-								</Card.Content>
+								<>{PlaceholderContent}</>
 							) : (
 								<>
 									<Card.Content>
@@ -35,39 +65,48 @@ const PageList = ({ history, inverted, loading, loadingMore, onClickPage, pages 
 										/>
 										<Card.Header>{name}</Card.Header>
 										<Card.Meta>@{username}</Card.Meta>
-										<Card.Meta>
-											<NumberFormat
-												displayType={"text"}
-												thousandSeparator
-												value={fallaciesCount}
-											/>
-										</Card.Meta>
-										<Card.Description>{bio}</Card.Description>
+										<Card.Description
+											dangerouslySetInnerHTML={{
+												__html: newBio
+											}}
+										/>
 									</Card.Content>
-									{fallaciesCount > 0 && (
-										<>
-											<Card.Content extra>
-												{fallaciesCount}{" "}
-												{formatPlural(fallaciesCount, "fallacy")}
-												<NumberFormat
-													displayType={"text"}
-													thousandSeparator
-													value={fallaciesCount}
-												/>
-											</Card.Content>
-										</>
-									)}
+									<Card.Content extra>
+										<NumberFormat
+											displayType={"text"}
+											thousandSeparator
+											value={fallacyCount}
+										/>{" "}
+										{formatPlural(fallacyCount, "fallacy")}
+									</Card.Content>
 								</>
 							)}
 						</Card>
 					)
 				})}
+				{loadingMore && (
+					<>
+						<Card>{PlaceholderContent}</Card>
+						<Card>{PlaceholderContent}</Card>
+						<Card>{PlaceholderContent}</Card>
+					</>
+				)}
 			</Card.Group>
+
+			{showEmptyMsg && (
+				<Segment placeholder>
+					<Header icon>
+						<Icon className="twitterIcon" name="twitter" />
+						{emptyMsg}
+					</Header>
+				</Segment>
+			)}
 		</div>
 	)
 }
 
 PageList.propTypes = {
+	emptyMsg: PropTypes.string,
 	inverted: PropTypes.bool,
 	loading: PropTypes.bool,
 	loadingMore: PropTypes.bool,
