@@ -94,7 +94,7 @@ class FallacyController extends Controller
 
         if ($tweetId) {
             $fallacies = $fallacies->whereHas('twitter', function ($query) use ($tweetId) {
-                // $query->where('tweet_id', 4079);
+                $query->where('tweet_id', $tweetId);
             });
         }
 
@@ -281,6 +281,7 @@ class FallacyController extends Controller
         */
         die;
 
+        /*
         $all = Tweet::all()->toArray();
         for ($i = 0; $i < count($all); $i++) {
             $entry = $all[$i];
@@ -309,7 +310,6 @@ class FallacyController extends Controller
             // dump($data);
             Tweet::where('id', $entry['id'])->update($data);
 
-            /*
             // $contradiction = $entry['contradiction'];
             $pageId = $entry['page_id'];
             $startTime = $entry['start_time'];
@@ -317,9 +317,7 @@ class FallacyController extends Controller
             $highlightedText = $entry['highlighted_text'];
             $mediaId = $entry['media_id'];
             $network = $entry['network'];
-            */
 
-            /*
             unset($entry['contradiction']);
             unset($entry['start_time']);
             unset($entry['end_time']);
@@ -336,9 +334,7 @@ class FallacyController extends Controller
 
             $fallacy = Fallacy::create($entry);
             $fallacy->refresh();
-            */
 
-            /*
             if ($network === 'twitter') {
                 $twitter = Tweet::where('tweet_id', $mediaId)->first();
                 if (empty($twitter)) {
@@ -365,9 +361,7 @@ class FallacyController extends Controller
                     'video_id' => $video['id'],
                 ]);
             }
-            */
 
-            /*
             if ($contradiction) {
                 if ($contradiction['network'] === 'twitter') {
                     $tweet = Tweet::where('tweet_id', $contradiction['media_id'])->first();
@@ -398,8 +392,8 @@ class FallacyController extends Controller
                     ]);
                 }
             }
-            */
         }
+        */
     }
 
     /**
@@ -427,21 +421,13 @@ class FallacyController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  String  $id
+     * @param  String  $slug
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($slug)
     {
-        $fallacy = Fallacy::where('id', $id)
-            ->with([
-                'contradiction_twitter',
-                'contradiction_youtube',
-                'tweet',
-                'video',
-                'page',
-                'user',
-                'reference'
-            ])
+        $fallacy = Fallacy::where('slug', $slug)
+            ->with(self::DEFAULT_WITH)
             ->first();
 
         if (empty($fallacy)) {

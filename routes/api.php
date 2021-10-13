@@ -25,7 +25,7 @@ Route::get('/arguments', [ArgumentController::class, 'index']);
 
 // Route::get('/fallacies/migrate', [FallacyController::class, 'migrate']);
 Route::get('/fallacies', [FallacyController::class, 'index']);
-Route::get('/fallacies/{id}', [FallacyController::class, 'show']);
+Route::get('/fallacies/{slug}', [FallacyController::class, 'show']);
 Route::post('/fallacies/create', [FallacyController::class, 'create']);
 
 Route::get('/reference', [ReferenceController::class, 'index']);
@@ -39,6 +39,7 @@ Route::get('/pages/{network}/{username}', [PageController::class, 'show']);
 Route::get('/search/counts', [SearchController::class, 'counts']);
 
 Route::get('/tweets', [TweetController::class, 'index']);
+Route::get('/tweets/showTwitterList', [TweetController::class, 'showTwitterList']);
 Route::get('/tweets/{id}', [TweetController::class, 'show']);
 
 Route::get('/users', [UserController::class, 'index']);
@@ -53,6 +54,5 @@ Route::post('/users/profilePic', [UserController::class, 'changeProfilePic'])->m
 Route::post('/users/recoverPassword', [UserController::class, 'recoverPassword']);
 Route::post('/users/update', [UserController::class, 'update'])->middleware(['auth:api', 'verified']);
 Route::post('/users/verify', [UserController::class, 'verify'])->middleware('auth:api');
-Route::post('/users/wallet', [WalletController::class, 'addWallet'])->middleware(['auth:api', 'verified']);
 
 Route::get('/videos/{id}', [VideoController::class, 'show']);

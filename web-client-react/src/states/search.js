@@ -11,6 +11,7 @@ const initialState = {
 	},
 	pageOptions: [],
 	pages: {
+		count: 0,
 		data: [{}, {}, {}, {}, {}, {}],
 		loaded: false,
 		twitterCount: 0,

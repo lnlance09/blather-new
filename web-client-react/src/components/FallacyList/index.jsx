@@ -57,6 +57,7 @@ const FallacyList = ({
 						id,
 						page,
 						reference,
+						slug,
 						twitter,
 						youtube,
 						user
@@ -95,7 +96,7 @@ const FallacyList = ({
 							typeof contradictionYouTube !== "undefined" &&
 							contradictionYouTube !== null
 						) {
-							cVideo = contradictionTwitter.tweet
+							cVideo = contradictionYouTube.video
 							dateTwo = cVideo.createdAt
 						}
 					}
@@ -103,19 +104,20 @@ const FallacyList = ({
 					const showDateDiff = (tweet || video) && (cTweet || cVideo)
 
 					return (
-						<Grid.Row
-							className={loading ? "loading" : null}
-							key={`contradiction${i}`}
-							onClick={(e) => onClickFallacy(e, id)}
-						>
+						<Grid.Row className={loading ? "loading" : null} key={`contradiction${i}`}>
 							{loading && (
 								<Grid.Column width={16}>
 									<Segment fluid>{PlaceholderSegment}</Segment>
 								</Grid.Column>
 							)}
 							{!loading && reference.id === 21 ? (
-								<Segment fluid raised>
-									<Label as="a" color="blue" ribbon>
+								<Segment
+									className="contradictionSegment"
+									fluid
+									onClick={(e) => onClickFallacy(e, slug)}
+									raised
+								>
+									<Label as="a" color="blue" ribbon size="large">
 										<Icon name="clock" />
 										{showDateDiff && (
 											<>
@@ -146,9 +148,7 @@ const FallacyList = ({
 													createdAt={tweet.createdAt}
 													defaultUserImg={defaultUserImg}
 													entities={tweet.entities}
-													extendedEntities={JSON.parse(
-														tweet.extendedEntities
-													)}
+													extendedEntities={tweet.extendedEntities}
 													fullText={tweet.fullText}
 													history={history}
 													id={tweet.tweetId}
@@ -178,9 +178,7 @@ const FallacyList = ({
 													createdAt={cTweet.createdAt}
 													defaultUserImg={defaultUserImg}
 													entities={cTweet.entities}
-													extendedEntities={JSON.parse(
-														cTweet.extendedEntities
-													)}
+													extendedEntities={cTweet.extendedEntities}
 													fullText={cTweet.fullText}
 													history={history}
 													id={cTweet.tweetId}
@@ -203,7 +201,7 @@ const FallacyList = ({
 							) : null}
 
 							{!loading && reference.id !== 21 ? (
-								<Card fluid>
+								<Card fluid onClick={(e) => onClickFallacy(e, id)}>
 									<Card.Content>
 										<Image
 											circular
@@ -237,9 +235,7 @@ const FallacyList = ({
 													createdAt={tweet.createdAt}
 													defaultUserImg={defaultUserImg}
 													entities={tweet.entities}
-													extendedEntities={JSON.parse(
-														tweet.extendedEntities
-													)}
+													extendedEntities={tweet.extendedEntities}
 													fullText={tweet.fullText}
 													history={history}
 													id={tweet.tweetId}

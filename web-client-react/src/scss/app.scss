@@ -118,17 +118,16 @@ body {
 	}
 
 	.mainContainer {
-		background: transparent;
-		// border-left: solid 1px $twitterExtraLightGrey;
-		// border-right: solid 1px $twitterExtraLightGrey;
 		min-height: 100vh;
-		padding: 0 12px 12px 12px;
 
-		.mainContent {
-			margin-top: 18px;
+		&.container {
+			background: transparent;
+			// border-left: solid 1px $twitterExtraLightGrey;
+			// border-right: solid 1px $twitterExtraLightGrey;
+			padding: 0 12px 12px 12px;
 
-			* {
-				// font-family: 'IBM Plex Serif', serif !important;
+			.mainContent {
+				margin-top: 18px;
 			}
 		}
 
@@ -197,11 +196,46 @@ body {
 		}
 
 		&.assignPage {
-			
+			.assignSegment {
+				background: $blue;
+				min-height: 100vh;
+
+				.tweetInput {
+					input {
+						// background: rgba(255, 255, 255, 0.65) !important;
+					}
+
+					.icon {
+						color: $twitter;
+					}
+				}
+
+				.card {
+					border: none !important; 
+					// background: rgba(255, 255, 255, 0.65) !important;
+				}
+
+				.dropdown, textarea {
+					// background: rgba(255, 255, 255, 0.65) !important;
+				}
+			}
 		}
 
 		&.contactPage {
 			
+		}
+
+		&.fallacyPage {
+			#fallacyDateDiff {
+				display: flex;
+				justify-content: center;
+			}
+
+			.explanationSegment {
+				p {
+					font-size: 17px;
+				}
+			}
 		}
 
 		&.forgotPage {

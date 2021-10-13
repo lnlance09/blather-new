@@ -46,19 +46,13 @@ export const DisplayMetaTags = ({ page, state }) => {
 			}
 			break
 		case "fallacy":
-			const { prediction } = state
-			const pCoin = prediction.coin
-			const pUser = prediction.user
-			const pDate = moment(prediction.targetDate).format("MMM D, YYYY")
-			const pPrice = prediction.predictionPrice
-			const price = state.loaded ? (pPrice > 1 ? pPrice.toFixed(2) : pPrice.toFixed(6)) : null
-			const pTitle = state.loaded
-				? `${pCoin.name} to $${price} on ${pDate} - ${pUser.name} - ${siteName}`
-				: null
-			metaTags = {
-				description: prediction.explanation,
-				img: pUser.img,
-				title: state.loaded ? pTitle : siteName
+			const { fallacy, loaded } = state
+			if (loaded) {
+				metaTags = {
+					description: fallacy.explanation,
+					img: fallacy.user.image,
+					title: `${fallacy.reference.name} fallacy by ${fallacy.page.name}`
+				}
 			}
 			break
 		case "forgot":

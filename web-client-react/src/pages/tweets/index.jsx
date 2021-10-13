@@ -59,6 +59,7 @@ const TweetPage = ({ history, match }) => {
 		}
 
 		getTweet(id)
+		// eslint-disable-next-line
 	}, [])
 
 	const getContradictions = async (tweetId, page = 1) => {
@@ -99,7 +100,7 @@ const TweetPage = ({ history, match }) => {
 		await axios
 			.get(`${process.env.REACT_APP_BASE_URL}fallacies`, {
 				params: {
-					with: ["reference", "user", "twitter.tweet"],
+					with: ["page", "reference", "user", "twitter.tweet"],
 					tweetId,
 					page
 				}
@@ -142,13 +143,14 @@ const TweetPage = ({ history, match }) => {
 				<>
 					<Tweet
 						config={{
-							...tweetOptions
+							...tweetOptions,
+							externalLink: true
 						}}
 						counts={tweet.counts}
 						createdAt={tweet.createdAt}
 						// defaultUserImg={defaultUserImg}
 						entities={tweet.entities}
-						extendedEntities={JSON.parse(tweet.extendedEntities)}
+						extendedEntities={tweet.extendedEntities}
 						fullText={tweet.fullText}
 						history={history}
 						id={tweet.tweetId}
@@ -158,7 +160,7 @@ const TweetPage = ({ history, match }) => {
 					/>
 					<Divider section />
 
-					<Menu attached="top" tabular size="large">
+					<Menu pointing secondary size="large">
 						<Menu.Item
 							active={activeItem === "fallacies"}
 							name="fallacies"
@@ -177,50 +179,48 @@ const TweetPage = ({ history, match }) => {
 						</Menu.Item>
 					</Menu>
 
-					<Segment attached>
-						{activeItem === "fallacies" && (
-							<Visibility
-								continuous
-								offset={[50, 50]}
-								onBottomVisible={() => {
-									if (!loading && !loadingMore && hasMore) {
-										getFallacies(tweet.id, pageNumber)
-									}
-								}}
-							>
-								<FallacyList
-									fallacies={fallacies.data}
-									history={history}
-									inverted={inverted}
-									loading={!fallacies.loaded}
-									loadingMore={loadingMore}
-									onClickFallacy={onClickFallacy}
-								/>
-							</Visibility>
-						)}
+					{activeItem === "fallacies" && (
+						<Visibility
+							continuous
+							offset={[50, 50]}
+							onBottomVisible={() => {
+								if (!loading && !loadingMore && hasMore) {
+									getFallacies(tweet.id, pageNumber)
+								}
+							}}
+						>
+							<FallacyList
+								fallacies={fallacies.data}
+								history={history}
+								inverted={inverted}
+								loading={!fallacies.loaded}
+								loadingMore={loadingMore}
+								onClickFallacy={onClickFallacy}
+							/>
+						</Visibility>
+					)}
 
-						{activeItem === "contradictions" && (
-							<Visibility
-								continuous
-								offset={[50, 50]}
-								onBottomVisible={() => {
-									if (!loadingC && !loadingMoreC && hasMoreC) {
-										getContradictions(tweet.id, pageNumberC)
-									}
-								}}
-							>
-								<FallacyList
-									emptyMsg="No contradictions yet..."
-									fallacies={fallacies.data}
-									history={history}
-									inverted={inverted}
-									loading={!fallacies.loaded}
-									loadingMore={loadingMore}
-									onClickFallacy={onClickFallacy}
-								/>
-							</Visibility>
-						)}
-					</Segment>
+					{activeItem === "contradictions" && (
+						<Visibility
+							continuous
+							offset={[50, 50]}
+							onBottomVisible={() => {
+								if (!loadingC && !loadingMoreC && hasMoreC) {
+									getContradictions(tweet.id, pageNumberC)
+								}
+							}}
+						>
+							<FallacyList
+								emptyMsg="No contradictions yet..."
+								fallacies={contradictions.data}
+								history={history}
+								inverted={inverted}
+								loading={!contradictions.loaded}
+								loadingMore={loadingMore}
+								onClickFallacy={onClickFallacy}
+							/>
+						</Visibility>
+					)}
 
 					<Divider hidden section />
 				</>

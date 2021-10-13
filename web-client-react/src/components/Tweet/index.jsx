@@ -5,6 +5,7 @@ import "linkify-plugin-mention"
 import { Card, Icon, Image, Label, List, Popup } from "semantic-ui-react"
 import { getHighlightedText } from "utils/textFunctions"
 import { tweetOptions } from "options/tweet"
+import _ from "underscore"
 import ItemPic from "images/images/square-image.png"
 import Moment from "react-moment"
 import NumberFormat from "react-number-format"
@@ -15,7 +16,6 @@ const Tweet = ({
 	counts = {},
 	createdAt,
 	defaultUserImg = "",
-	entities,
 	extendedEntities = {
 		media: []
 	},
@@ -39,13 +39,17 @@ const Tweet = ({
 		handleHoverOn,
 		highlight,
 		highlightedText,
+		imageSize,
 		onClickCallback,
 		opacity,
 		raised,
 		showStats
 	} = config
-	const { isRetweeted, rUser = user } = retweeted
-	const { isQuoted, qUser = user } = quoted
+	const { isRetweeted } = retweeted
+	const rUser = isRetweeted ? retweeted.user : {}
+
+	const { isQuoted } = quoted
+	const qUser = isQuoted ? quoted.user : {}
 
 	const headerCreatedAt = isRetweeted ? retweeted.createdAt : createdAt
 	const headerName = isRetweeted ? rUser.name : user.name
@@ -55,28 +59,30 @@ const Tweet = ({
 	const favCount = isRetweeted ? retweeted.counts.favorites : counts.favorites
 	const rtCount = isRetweeted ? retweeted.counts.retweets : counts.retweets
 
+	let extEntities = extendedEntities
+	if (retweeted && !_.isEmpty(retweeted.extendedEntities)) {
+		extEntities = retweeted.extendedEntities
+	}
+
 	let qExtEntities = quoted.extendedEntities
-	let qFullText = typeof quoted.fullText === "undefined" ? quoted.text : quoted.fullText
+	let qFullText = _.isEmpty(quoted.fullText) ? "" : quoted.fullText
 	let qName = qUser.name
 	let qUsername = qUser.username
 	let qTweetId = quoted.tweetId
 
-	if (isRetweeted && typeof retweeted.quoted !== "undefined") {
+	if (isRetweeted && !_.isEmpty(retweeted.quoted)) {
 		const { quoted } = retweeted
+		qFullText = _.isEmpty(quoted.fullText) ? "" : quoted.fullText
 		qExtEntities = quoted.extendedEntities
-		qFullText = typeof quoted.fullText === "undefined" ? quoted.text : quoted.fullText
 		qName = quoted.user.name
 		qUsername = quoted.user.screen_name
 		qTweetId = quoted.tweetId
 	}
 
-	const className = `tweet${!assignable ? " clickable" : ""}`
-	const extEntities = retweeted ? JSON.parse(retweeted.extendedEntities) : extendedEntities
-
-	const tweetText =
-		highlightedText !== ""
-			? getHighlightedText(headerFullText, highlightedText)
-			: headerFullText
+	let tweetText = headerFullText
+	if (!_.isEmpty(highlightedText)) {
+		tweetText = getHighlightedText(headerFullText, highlightedText)
+	}
 	const linkifiedTweetText = linkifyHtml(tweetText, {
 		className: "linkify",
 		formatHref: {
@@ -85,40 +91,54 @@ const Tweet = ({
 		}
 	})
 
-	let linkifiedQTweetText = ""
-	let qTweetText = ""
-	if (isQuoted) {
-		qTweetText =
-			highlightedText !== "" ? getHighlightedText(qFullText, highlightedText) : qFullText
-		linkifiedQTweetText = linkifyHtml(qTweetText, {
-			className: "linkify",
-			formatHref: {
-				mention: (val) => `/pages/twitter${val}`,
-				hashtag: (val) => val
+	let qTweetText = qFullText
+	if (isQuoted && !_.isEmpty(highlightedText)) {
+		qTweetText = getHighlightedText(qFullText, highlightedText)
+	}
+	const linkifiedQTweetText = linkifyHtml(qTweetText, {
+		className: "linkify",
+		formatHref: {
+			mention: (val) => `/pages/twitter${val}`,
+			hashtag: (val) => val
+		}
+	})
+
+	const className = `tweet${!assignable ? " clickable" : ""}`
+
+	const parseMedia = (entities) => {
+		return entities.media.map((item, i) => {
+			if (item.type !== "photo" && item.type !== "video") {
+				return null
 			}
+			return (
+				<div className="mediaPic" key={`embed${i}`}>
+					<Image
+						bordered
+						className="mediaImg"
+						crossOrigin="anonymous"
+						onError={(i) => (i.target.src = ItemPic)}
+						rounded
+						size={imageSize}
+						src={item.media_url_https}
+					/>
+				</div>
+			)
 		})
 	}
 
-	const parseMedia = (entities) =>
-		entities.media.map((item, i) => {
-			if (item.type === "photo" || item.type === "video") {
-				return (
-					<div className="mediaPic" key={`embed${i}`}>
-						<Image
-							bordered
-							className="mediaImg"
-							crossOrigin="anonymous"
-							fluid
-							onError={(i) => (i.target.src = ItemPic)}
-							rounded
-							// size={imageSize}
-							src={item.media_url_https}
-						/>
-					</div>
-				)
-			}
-			return null
-		})
+	const trigger = (
+		<List.Content>
+			<List.Header>
+				<Icon
+					name="twitter"
+					onClick={() =>
+						window.open(`https://twitter.com/${user.screenName}/status/${id}`, "_blank")
+					}
+					size="large"
+				/>
+			</List.Header>
+		</List.Content>
+	)
 
 	return (
 		<div
@@ -192,7 +212,7 @@ const Tweet = ({
 									<Card.Description className="quotedTextTweet">
 										<div
 											dangerouslySetInnerHTML={{
-												__html: qTweetText
+												__html: linkifiedQTweetText
 											}}
 										/>
 										{qExtEntities && <>{parseMedia(qExtEntities)}</>}
@@ -226,44 +246,36 @@ const Tweet = ({
 									/>
 								</Label>
 							</List.Item>
-							<List.Item className="fallacyItem">
-								<Label>
-									<Icon color="yellow" inverted name="sticky note" size="large" />{" "}
-									<NumberFormat
-										displayType={"text"}
-										thousandSeparator={true}
-										value={counts.fallacies}
-									/>
-								</Label>
-							</List.Item>
+							{counts.fallacies > 0 && (
+								<List.Item className="fallacyItem">
+									<Label>
+										<Icon
+											color="yellow"
+											inverted
+											name="sticky note"
+											size="large"
+										/>{" "}
+										<NumberFormat
+											displayType={"text"}
+											thousandSeparator={true}
+											value={counts.fallacies}
+										/>
+									</Label>
+								</List.Item>
+							)}
 						</List>
-						<List floated="right" horizontal>
-							{externalLink && (
+						{externalLink && (
+							<List floated="right" horizontal>
 								<List.Item className="externalLinkListItem">
 									<Popup
 										className="twitterExternalPopup"
 										content="View on Twitter"
 										position="bottom left"
-										trigger={
-											<List.Content>
-												<List.Header>
-													<Icon
-														name="twitter"
-														onClick={() =>
-															window.open(
-																`https://twitter.com/${user.screenName}/status/${id}`,
-																"_blank"
-															)
-														}
-														size="large"
-													/>
-												</List.Header>
-											</List.Content>
-										}
+										trigger={trigger}
 									/>
 								</List.Item>
-							)}
-						</List>
+							</List>
+						)}
 					</Card.Content>
 				)}
 			</Card>
@@ -275,7 +287,6 @@ Tweet.propTypes = {
 	config: PropTypes.shape({
 		assignable: PropTypes.bool,
 		crossOriginAnonymous: PropTypes.bool,
-		displayTextRange: PropTypes.array,
 		externalLink: PropTypes.bool,
 		handleHoverOn: PropTypes.func,
 		highlight: PropTypes.bool,
@@ -287,7 +298,6 @@ Tweet.propTypes = {
 		showStats: PropTypes.bool
 	}),
 	createdAt: PropTypes.string,
-	entities: PropTypes.string,
 	extendedEntities: PropTypes.shape({
 		media: PropTypes.array
 	}),
@@ -298,7 +308,6 @@ Tweet.propTypes = {
 			favorites: PropTypes.number,
 			retweets: PropTypes.number
 		}),
-		entities: PropTypes.string,
 		extendedEntities: PropTypes.string,
 		fullText: PropTypes.string,
 		tweetId: PropTypes.string,
@@ -313,7 +322,6 @@ Tweet.propTypes = {
 			favorites: PropTypes.number,
 			retweets: PropTypes.number
 		}),
-		entities: PropTypes.string,
 		extendedEntities: PropTypes.string,
 		fullText: PropTypes.string,
 		tweetId: PropTypes.string,

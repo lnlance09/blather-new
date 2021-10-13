@@ -1,9 +1,9 @@
 import "./style.scss"
-import { Button, Container, Dropdown, Icon, Image, Menu, Sidebar } from "semantic-ui-react"
-import { ReactSVG } from "react-svg"
+import { Button, Container, Dropdown, Header, Icon, Image, Menu, Sidebar } from "semantic-ui-react"
 import { useContext, useEffect, useReducer, useState } from "react"
-import defaultImg from "images/images/image.png"
-import Echo from "laravel-echo"
+import { ReactSVG } from "react-svg"
+import defaultImg from "images/avatar/small/veronika.jpg"
+// import Echo from "laravel-echo"
 import initialState from "./state"
 import logger from "use-reducer-logger"
 import Logo from "images/logos/brain.svg"
@@ -172,18 +172,16 @@ const PageHeader = ({ activeItem, history, q, simple }) => {
 			trigger={
 				<>
 					{user && (
-						<>
-							<span style={{ marginLeft: "12px", marginRight: "12px" }}>
-								{user.name}
-							</span>
-							<Image
-								avatar
-								bordered
-								onError={(i) => (i.target.src = defaultImg)}
-								src={user.img}
-							/>
-						</>
+						<span style={{ marginLeft: "12px", marginRight: "12px" }}>{user.name}</span>
 					)}
+					<Image
+						bordered
+						circular
+						inline
+						onError={(i) => (i.target.src = defaultImg)}
+						size="mini"
+						src={user.image ? user.image : defaultImg}
+					/>
 				</>
 			}
 		>

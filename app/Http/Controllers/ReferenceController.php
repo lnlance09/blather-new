@@ -6,7 +6,6 @@ use App\Http\Resources\Reference as ReferenceResource;
 use App\Http\Resources\ReferenceCollection;
 use App\Models\Reference;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 
 class ReferenceController extends Controller
 {
@@ -40,7 +39,6 @@ class ReferenceController extends Controller
      */
     public function create(Request $request)
     {
-        
     }
 
     /**

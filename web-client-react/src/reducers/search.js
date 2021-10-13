@@ -102,6 +102,14 @@ const reducer = (state, action) => {
 					loaded: !state.fallacies.loaded
 				}
 			}
+		case "TOGGLE_PAGES_LOADED":
+			return {
+				...state,
+				pages: {
+					...state.pages,
+					pages: !state.pages.loaded
+				}
+			}
 		case "TOGGLE_TWEETS_LOADED":
 			return {
 				...state,

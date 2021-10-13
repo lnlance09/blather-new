@@ -70,14 +70,17 @@ class SearchController extends Controller
             $where['retracted'] = $retracted;
         }
 
-        $fallacies = Fallacy::where($where);
+        $fallacies = Fallacy::where($where)->whereNotIn('ref_id', [21]);
         if (!empty($q)) {
             $fallacies = $fallacies->where('explanation', 'LIKE', '%' . $_q . '%');
         }
         $fallacyCount = $fallacies->count();
 
         // Contradiction count
-        $contradictionCount = $fallacies->where('ref_id', 21)->count();
+        $contradictionCount = Fallacy::where($where)
+            ->where('ref_id', 21)
+            ->where('explanation', 'LIKE', '%' . $_q . '%')
+            ->count();
 
         // Tweet count
         $tweets = Tweet::where(function ($q) use ($_q) {

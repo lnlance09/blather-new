@@ -1,23 +1,14 @@
-import {
-	Button,
-	Divider,
-	Dropdown,
-	Header,
-	Icon,
-	Label,
-	Menu,
-	Segment,
-	Visibility
-} from "semantic-ui-react"
+import { Button, Divider, Dropdown, Icon, Label, Menu, Visibility } from "semantic-ui-react"
 import { useContext, useEffect, useReducer, useState } from "react"
 import { DebounceInput } from "react-debounce-input"
+import { onClickRedirect } from "utils/linkFunctions"
 import { DisplayMetaTags } from "utils/metaFunctions"
 import { getDropdownOptions } from "options/page"
-import { onClickRedirect } from "utils/linkFunctions"
 import axios from "axios"
 import DefaultLayout from "layouts/default"
 import FallacyList from "components/FallacyList"
 import initialState from "states/search"
+import ItemPic from "images/images/square-image.png"
 import logger from "use-reducer-logger"
 import NumberFormat from "react-number-format"
 import PageList from "components/PageList"
@@ -285,18 +276,30 @@ const Search = ({ history, match }) => {
 		getCounts(value)
 
 		if (activeItem === "contradictions") {
+			dispatch({
+				type: "TOGGLE_CONTRADICTIONS_LOADED"
+			})
 			await getContradictions(value, pageIdsC)
 		}
 
 		if (activeItem === "fallacies") {
+			dispatch({
+				type: "TOGGLE_FALLACIES_LOADED"
+			})
 			await getFallacies(value, refIds, pageIdsF)
 		}
 
 		if (activeItem === "pages") {
+			dispatch({
+				type: "TOGGLE_PAGES_LOADED"
+			})
 			await getPages(value, network)
 		}
 
 		if (activeItem === "tweets") {
+			dispatch({
+				type: "TOGGLE_TWEETS_LOADED"
+			})
 			await getTweets(value, pageIds)
 		}
 	}
@@ -348,7 +351,7 @@ const Search = ({ history, match }) => {
 			<DisplayMetaTags page="search" />
 
 			<div className={`ui left icon input large fluid ${inverted ? "inverted" : ""}`}>
-				<i aria-hidden="true" class="search icon"></i>
+				<i aria-hidden="true" className="search icon"></i>
 				<DebounceInput
 					debounceTimeout={400}
 					minLength={3}
@@ -358,10 +361,10 @@ const Search = ({ history, match }) => {
 				/>
 			</div>
 
-			<Menu secondary pointing size="huge">
+			<Menu secondary pointing size="huge" widths={4}>
 				<Menu.Item active={activeItem === "tweets"} name="tweets" onClick={handleItemClick}>
 					Tweets
-					<Label color="blue">{tweets.count}</Label>
+					{tweets.count > 0 && <Label color="red">{tweets.count}</Label>}
 				</Menu.Item>
 				<Menu.Item
 					active={activeItem === "fallacies"}
@@ -369,7 +372,7 @@ const Search = ({ history, match }) => {
 					onClick={handleItemClick}
 				>
 					Fallacies
-					<Label color="blue">{fallacies.count}</Label>
+					{fallacies.count > 0 && <Label color="red">{fallacies.count}</Label>}
 				</Menu.Item>
 				<Menu.Item
 					active={activeItem === "contradictions"}
@@ -377,11 +380,11 @@ const Search = ({ history, match }) => {
 					onClick={handleItemClick}
 				>
 					Contradictions
-					<Label color="blue">{contradictions.count}</Label>
+					{contradictions.count > 0 && <Label color="red">{contradictions.count}</Label>}
 				</Menu.Item>
 				<Menu.Item active={activeItem === "pages"} name="pages" onClick={handleItemClick}>
 					Pages
-					<Label color="blue">{pages.count}</Label>
+					{pages.count > 0 && <Label color="red">{pages.count}</Label>}
 				</Menu.Item>
 			</Menu>
 
@@ -539,6 +542,7 @@ const Search = ({ history, match }) => {
 						}}
 					>
 						<TweetList
+							defaultUserImg={ItemPic}
 							highlightedText={q}
 							history={history}
 							inverted={inverted}

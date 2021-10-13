@@ -13,10 +13,33 @@ const DefaultLayout = ({
 	q,
 	showFooter,
 	showResults,
+	useContainer = true,
 	simpleHeader,
 	useGrid
 }) => {
 	const [searchMode, setSearchMode] = useState(false)
+
+	const mainPage = (
+		<>
+			<PageHeader
+				activeItem={activeItem}
+				history={history}
+				inverted={inverted}
+				q={q}
+				showResults={showResults}
+				simple={simpleHeader}
+				toggleSearchMode={() => setSearchMode(true)}
+			/>
+			{useGrid ? (
+				<Grid className="mainGrid" stackable>
+					<Grid.Column className="leftColumn" width={4}></Grid.Column>
+					<Grid.Column width={12}>{children}</Grid.Column>
+				</Grid>
+			) : (
+				<div className="mainContent">{children}</div>
+			)}
+		</>
+	)
 
 	return (
 		<div className={`appWrapper ${inverted ? "inverted" : ""}`}>
@@ -38,29 +61,23 @@ const DefaultLayout = ({
 				</Container>
 			) : (
 				<>
-					<Container
-						className={`mainContainer ${containerClassName} ${
-							inverted ? "inverted" : ""
-						}`}
-					>
-						<PageHeader
-							activeItem={activeItem}
-							history={history}
-							inverted={inverted}
-							q={q}
-							showResults={showResults}
-							simple={simpleHeader}
-							toggleSearchMode={() => setSearchMode(true)}
-						/>
-						{useGrid ? (
-							<Grid className="mainGrid" stackable>
-								<Grid.Column className="leftColumn" width={4}></Grid.Column>
-								<Grid.Column width={12}>{children}</Grid.Column>
-							</Grid>
-						) : (
-							<div className="mainContent">{children}</div>
-						)}
-					</Container>
+					{useContainer ? (
+						<Container
+							className={`mainContainer ${containerClassName} ${
+								inverted ? "inverted" : ""
+							}`}
+						>
+							{mainPage}
+						</Container>
+					) : (
+						<div
+							className={`mainContainer ${containerClassName} ${
+								inverted ? "inverted" : ""
+							}`}
+						>
+							{mainPage}
+						</div>
+					)}
 
 					{showFooter && <PageFooter history={history} inverted />}
 				</>
@@ -79,18 +96,8 @@ DefaultLayout.propTypes = {
 	showFooter: PropTypes.bool,
 	showResults: PropTypes.bool,
 	simpleHeader: PropTypes.bool,
+	useContainer: PropTypes.bool,
 	useGrid: PropTypes.bool
-}
-
-DefaultLayout.defaultProps = {
-	activeItem: null,
-	containerClassName: "",
-	inverted: false,
-	q: "",
-	showFooter: true,
-	showResults: true,
-	simpleHeader: false,
-	useGrid: false
 }
 
 export default DefaultLayout

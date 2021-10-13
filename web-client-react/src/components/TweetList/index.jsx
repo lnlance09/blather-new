@@ -8,7 +8,7 @@ import Tweet from "components/Tweet"
 const TweetList = ({
 	defaultUserImg,
 	emptyMsg = "No tweets...",
-	highlightedText,
+	highlightedText = "",
 	history,
 	inverted,
 	loading,
@@ -30,14 +30,14 @@ const TweetList = ({
 	return (
 		<div className="tweetList">
 			{tweets.map((tweet, i) => {
-				const { id } = tweet
+				const { extendedEntities, id } = tweet
 				return (
 					<div
 						className={`tweetWrapper ${loading ? "loading" : null}`}
 						key={`tweet${i}`}
 						onClick={(e) => onClickTweet(e, id)}
 					>
-						{loading && <Segment fluid>{PlaceholderSegment}</Segment>}
+						{loading && <Segment>{PlaceholderSegment}</Segment>}
 						{!loading && (
 							<>
 								<Tweet
@@ -55,8 +55,7 @@ const TweetList = ({
 									counts={tweet.counts}
 									createdAt={tweet.createdAt}
 									defaultUserImg={defaultUserImg}
-									entities={tweet.entities}
-									extendedEntities={JSON.parse(tweet.extendedEntities)}
+									extendedEntities={extendedEntities}
 									fullText={tweet.fullText}
 									history={history}
 									id={tweet.tweetId}

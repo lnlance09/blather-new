@@ -1,11 +1,10 @@
-import { Card, Divider, Grid, Header, Image, Menu, Segment } from "semantic-ui-react"
-import { useContext, useState } from "react"
+import { Divider, Grid, Header } from "semantic-ui-react"
+import { useContext } from "react"
 import { DisplayMetaTags } from "utils/metaFunctions"
 import { grifters } from "options/grifters"
 import DefaultLayout from "layouts/default"
 import Gallery from "react-grid-gallery"
 import PropTypes from "prop-types"
-import ReactTooltip from "react-tooltip"
 import ThemeContext from "themeContext"
 
 const Grifters = ({ history }) => {
@@ -13,12 +12,6 @@ const Grifters = ({ history }) => {
 	const { inverted } = state
 
 	const { maga } = grifters
-
-	const [activeItem, setActiveItem] = useState("what")
-
-	const handleItemClick = (e, { name }) => {
-		setActiveItem(name)
-	}
 
 	return (
 		<DefaultLayout

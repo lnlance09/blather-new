@@ -4,11 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\Tweet as TweetResource;
 use App\Http\Resources\TweetCollection;
+use App\Http\Resources\TweetLiveCollection;
 use App\Models\Page;
 use App\Models\Tweet;
 use Atymic\Twitter\Facade\Twitter;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class TweetController extends Controller
@@ -93,10 +93,35 @@ class TweetController extends Controller
 
         // Get the tweet from twitter's api
         try {
-            $tweet = Twitter::getTweet($id, ['response_format' => 'array']);
+            $tweet = Twitter::getTweet($id, [
+                'response_format' => 'array',
+                'tweet_mode' => 'extended'
+            ]);
+            // dd($tweet);
             $tweetDb = Tweet::where('tweet_id', $tweet['id_str'])->first();
 
             if ($tweetDb) {
+                // If the tweet exists in the DB and with the API, update the favorite and RT counts
+                $tweetDb->favorite_count = $tweet['favorite_count'];
+                $tweetDb->retweet_count = $tweet['retweet_count'];
+
+                $isQuoted = $tweet['is_quote_status'];
+                $isRetweeted = array_key_exists('retweeted_status', $tweet) ? $tweet['retweeted_status'] : false;
+
+                if ($isQuoted && array_key_exists('quoted_status', $tweet)) {
+                    $quoted = $tweet['quoted_status'];
+                    $tweetDb->quoted_favorite_count = $quoted['favorite_count'];
+                    $tweetDb->quoted_retweet_count = $quoted['retweet_count'];
+                }
+
+                if ($isRetweeted) {
+                    $retweeted = $tweet['retweeted_status'];
+                    $tweetDb->retweeted_favorite_count = $retweeted['favorite_count'];
+                    $tweetDb->retweeted_retweet_count = $retweeted['retweet_count'];
+                }
+
+                $tweetDb->save();
+                $tweetDb->refresh();
                 $tweet = $tweetDb;
             } else {
                 $user = $tweet['user'];
@@ -121,19 +146,15 @@ class TweetController extends Controller
                     ],
                 );
 
-                $newTweet = $tweet;
-                $newTweet['full_text'] = $tweet['text'];
-                unset($newTweet['text']);
-
                 $data = [
-                    'full_text' => $tweet['text'],
+                    'full_text' => $tweet['full_text'],
                     'page_id' => $page->id,
                     'tweet_id' => $tweet['id_str'],
                     'entities' => json_encode($tweet['entities'], true),
                     'extended_entities' => array_key_exists('extended_entities', $tweet) ? json_encode($tweet['extended_entities'], true) : null,
                     'favorite_count' => $tweet['favorite_count'],
                     'retweet_count' => $tweet['retweet_count'],
-                    'tweet_json' => json_encode($newTweet, true),
+                    'tweet_json' => json_encode($tweet, true),
                     'created_at' => $tweet['created_at'],
                 ];
 
@@ -157,16 +178,14 @@ class TweetController extends Controller
                         ],
                     );
 
-                    $data['quoted_full_text'] = $quoted['text'];
+                    $data['quoted_tweet_id'] = $quoted['id_str'];
+                    $data['quoted_full_text'] = $quoted['full_text'];
                     $data['quoted_page_id'] = $qPage->id;
                     $data['quoted_entities'] = json_encode($quoted['entities'], true);
                     $data['quoted_extended_entities'] = array_key_exists('extended_entities', $quoted) ? json_encode($quoted['extended_entities'], true) : null;
                     $data['quoted_favorite_count'] = $quoted['favorite_count'];
                     $data['quoted_retweet_count'] = $quoted['retweet_count'];
                     $data['quoted_created_at'] = $quoted['created_at'];
-
-                    $newTweet['quoted_status']['full_text'] = $quoted['text'];
-                    unset($newTweet['quoted_status']['text']);
                 }
 
                 if ($isRetweeted) {
@@ -189,25 +208,21 @@ class TweetController extends Controller
                         ],
                     );
 
-                    $data['retweeted_full_text'] = $retweeted['text'];
+                    $data['retweeted_tweet_id'] = $retweeted['id_str'];
+                    $data['retweeted_full_text'] = $retweeted['full_text'];
                     $data['retweeted_page_id'] = $rPage->id;
                     $data['retweeted_entities'] = json_encode($retweeted['entities'], true);
                     $data['retweeted_extended_entities'] = array_key_exists('extended_entities', $retweeted) ? json_encode($retweeted['extended_entities'], true) : null;
                     $data['retweeted_favorite_count'] = $retweeted['favorite_count'];
                     $data['retweeted_retweet_count'] = $retweeted['retweet_count'];
                     $data['retweeted_created_at'] = $retweeted['created_at'];
-
-                    $newTweet['retweeted_status']['full_text'] = $retweeted['text'];
-                    unset($newTweet['retweeted_status']['text']);
                 }
 
-                $data['tweet_json'] = json_encode($newTweet, true);
-
+                $data['tweet_json'] = json_encode($tweet, true);
                 Tweet::create($data);
-                // $tweet->refresh();
             }
         } catch (\Exception $e) {
-            echo 'Caught exception: ',  $e->getMessage(), "\n";
+            // echo 'Caught exception: ',  $e->getMessage(), "\n";
         }
 
         $tweet = Tweet::where('tweet_id', $id)
@@ -220,7 +235,21 @@ class TweetController extends Controller
             ], 404);
         }
 
+        // dd($tweet);
         return new TweetResource($tweet);
+    }
+
+    public function showTwitterList(Request $request)
+    {
+        $page = $request->input('page', 1);
+
+        $tweets = Twitter::getListStatuses([
+            'list_id' => 1095482595847127040,
+            'page' => $page,
+            'tweet_mode' => 'extended'
+        ]);
+        // dd($tweets);
+        return new TweetLiveCollection($tweets);
     }
 
     /**

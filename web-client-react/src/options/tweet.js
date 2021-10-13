@@ -6,7 +6,7 @@ export const tweetOptions = {
 	handleHoverOn: () => null,
 	highlight: false,
 	highlightedText: "",
-	imageSize: "tiny",
+	imageSize: "medium",
 	onClickCallback: () => null,
 	opacity: 1,
 	raised: false,

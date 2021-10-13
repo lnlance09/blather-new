@@ -104,9 +104,12 @@
   	.mediaPic {
 		display: inline-block;
 		margin-top: 8px;
+		max-height: 300px;
+		overflow-y: hidden;
 
 		.mediaImg {
-			margin-top: 10px;
+			height: 180px;
+			width: 100%;
 		}
   	}
 

@@ -1,8 +1,10 @@
-import { Button, Card, Divider, Header, Icon, Image, Placeholder, Segment } from "semantic-ui-react"
+import { Button, Card, Divider, Dropdown, Header, Icon, Placeholder } from "semantic-ui-react"
 import { useContext, useEffect, useReducer } from "react"
 import { DisplayMetaTags } from "utils/metaFunctions"
+import { argOptions } from "options/arguments"
 import { getConfig } from "options/toast"
 import { toast } from "react-toastify"
+import _ from "underscore"
 import axios from "axios"
 import DefaultLayout from "layouts/default"
 import initialState from "states/arguments"
@@ -22,7 +24,7 @@ const Arguments = ({ history }) => {
 		process.env.NODE_ENV === "development" ? logger(reducer) : reducer,
 		initialState
 	)
-	const { data, error, loaded } = internalState
+	const { data, loaded } = internalState
 
 	useEffect(() => {
 		getArguments()
@@ -50,11 +52,6 @@ const Arguments = ({ history }) => {
 					<Placeholder.Line />
 					<Placeholder.Line />
 				</Placeholder.Header>
-				<Placeholder.Paragraph>
-					<Placeholder.Line length="full" />
-					<Placeholder.Line length="long" />
-					<Placeholder.Line length="short" />
-				</Placeholder.Paragraph>
 			</Placeholder>
 		</Card.Content>
 	)
@@ -71,6 +68,8 @@ const Arguments = ({ history }) => {
 
 			<Header as="h1" content="Arguments" inverted={inverted} />
 
+			<Dropdown fluid options={argOptions} selection value={1} />
+
 			<Header as="p" inverted={inverted}>
 				These are some of the most ubiquitous right-wing talking points. These aren't
 				particularly good arguments but they're certainly some of the most common. Plenty of
@@ -81,8 +80,8 @@ const Arguments = ({ history }) => {
 			<Divider hidden />
 
 			{data.map((arg, i) => {
-				const { contradictions, description, examples, explanation, images } = arg
-				const hasContradictions = typeof contradictions !== "undefined"
+				const { contradictions, description, explanation } = arg
+				const hasContradictions = loaded ? !_.isEmpty(contradictions.data) : false
 				return (
 					<Card fluid>
 						{loaded ? (

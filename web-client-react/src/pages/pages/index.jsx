@@ -1,18 +1,7 @@
 import linkifyHtml from "linkify-html"
 import "linkify-plugin-hashtag"
 import "linkify-plugin-mention"
-import {
-	Button,
-	Divider,
-	Grid,
-	Header,
-	Image,
-	Label,
-	Loader,
-	Menu,
-	Segment,
-	Visibility
-} from "semantic-ui-react"
+import { Button, Divider, Grid, Header, Image, Label, Menu, Visibility } from "semantic-ui-react"
 import { useContext, useEffect, useReducer, useState } from "react"
 import { DisplayMetaTags } from "utils/metaFunctions"
 import { onClickRedirect } from "utils/linkFunctions"

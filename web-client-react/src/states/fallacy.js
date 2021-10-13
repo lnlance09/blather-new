@@ -1,24 +1,54 @@
 const initialState = {
+	fallacies: [{}, {}, {}],
 	fallacy: {
-		createdAt: "",
-		updatedAt: "",
-		contradictionTwitter: {},
+		contradictionTwitter: {
+			highlightedText: "",
+			id: 0,
+			tweet: {}
+		},
 		contradictionYouTube: {},
-		page: {},
-		reference: {},
-		tweet: {},
-		user: {},
-		video: {},
+		page: {
+			bio: "",
+			contradictionCount: null,
+			externalLink: "",
+			fallacyCount: null,
+			id: 0,
+			image: "",
+			name: "",
+			network: "",
+			socialMediaId: "",
+			username: ""
+		},
+		reference: {
+			description: "",
+			id: 0,
+			name: ""
+		},
+		twitter: {
+			highlightedText: "",
+			id: 0,
+			tweet: {}
+		},
+		user: {
+			bio: "",
+			id: 0,
+			image: "",
+			name: "",
+			username: ""
+		},
+		youtube: {},
 		explanation: "",
-		id: "",
+		id: null,
 		retracted: false,
+		s3Link: "",
 		slug: "",
 		status: 0,
 		title: "",
-		views: ""
+		views: 1,
+		createdAt: "",
+		updatedAt: ""
 	},
-	loaded: false,
-	fallacies: [{}, {}, {}, {}, {}, {}]
+	loaded: false
 }
 
 export default initialState
