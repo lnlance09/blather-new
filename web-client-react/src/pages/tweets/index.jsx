@@ -1,5 +1,5 @@
 import { useContext, useEffect, useReducer, useState } from "react"
-import { Divider, Loader, Label, Menu, Segment, Visibility } from "semantic-ui-react"
+import { Divider, Loader, Label, Menu, Visibility } from "semantic-ui-react"
 import { onClickRedirect } from "utils/linkFunctions"
 import { DisplayMetaTags } from "utils/metaFunctions"
 import { tweetOptions } from "options/tweet"

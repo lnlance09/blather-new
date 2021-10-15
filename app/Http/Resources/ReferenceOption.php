@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class PageOption extends JsonResource
+class ReferenceOption extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -21,10 +21,6 @@ class PageOption extends JsonResource
         }
 
         return [
-            'image' => [
-                'avatar' => true,
-                'src' => env('AWS_URL', 'https://s3.amazonaws.com/blather22/') . $this->image
-            ],
             'key' => $this->id,
             'name' => $this->name,
             'text' => $text,

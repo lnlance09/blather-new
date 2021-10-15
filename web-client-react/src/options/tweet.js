@@ -1,7 +1,6 @@
 export const tweetOptions = {
 	assignable: false,
 	crossOriginAnonymous: false,
-	displayTextRange: [0, 280],
 	externalLink: false,
 	handleHoverOn: () => null,
 	highlight: false,

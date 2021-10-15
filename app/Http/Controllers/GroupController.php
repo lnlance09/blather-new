@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\ReferenceCollection;
-use App\Http\Resources\ReferenceOptionCollection;
-use App\Models\Reference;
+use App\Models\Group;
+use App\Http\Resources\Group as GroupResourece;
+use App\Http\Resources\GroupCollection;
 use Illuminate\Http\Request;
 
-class ReferenceController extends Controller
+class GroupController extends Controller
 {
     /**
      * Instantiate a new controller instance.
@@ -25,10 +25,11 @@ class ReferenceController extends Controller
      */
     public function index(Request $request)
     {
-        $ref = Reference::withCount(['fallacies'])
+        $groups = Group::withCount(['pages'])
+            ->with(['pages'])
             ->orderBy('name')
             ->paginate(100);
-        return new ReferenceCollection($ref);
+        return new GroupCollection($groups);
     }
 
     /**
@@ -44,10 +45,10 @@ class ReferenceController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Reference  $reference
+     * @param  \App\Models\Group  $group
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Reference $reference)
+    public function destroy(Group $group)
     {
         //
     }
@@ -55,10 +56,10 @@ class ReferenceController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Reference  $reference
+     * @param  \App\Models\Group  $group
      * @return \Illuminate\Http\Response
      */
-    public function edit(Reference $reference)
+    public function edit(Group $group)
     {
         //
     }
@@ -75,9 +76,9 @@ class ReferenceController extends Controller
 
     public function showOptions(Request $request)
     {
-        $pages = Reference::orderBy('name', 'asc')
+        $groups = Group::orderBy('name', 'asc')
             ->get();
-        return new ReferenceOptionCollection($pages);
+        return new GroupCollection($groups);
     }
 
     /**

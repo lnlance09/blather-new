@@ -4,14 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Log;
 
-class Reference extends Model
+class GroupMember extends Model
 {
-    use HasFactory, Notifiable;
-
-    protected $table = 'reference';
+    use HasFactory;
 
     /**
      * The attributes that are mass assignable.
@@ -19,9 +16,8 @@ class Reference extends Model
      * @var array
      */
     protected $fillable = [
-        'description',
-        'example',
-        'name'
+        'group_id',
+        'page_id'
     ];
 
     /**
@@ -38,8 +34,13 @@ class Reference extends Model
      */
     protected $casts = [];
 
-    public function fallacies()
+    public function group()
     {
-        return $this->hasMany(Fallacy::class, 'ref_id', 'id');
+        return $this->hasOne(Group::class, 'group_id', 'id');
+    }
+
+    public function page()
+    {
+        return $this->hasOne(Page::class, 'page_id', 'id');
     }
 }

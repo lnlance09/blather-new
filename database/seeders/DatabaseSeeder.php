@@ -29,6 +29,8 @@ class DatabaseSeeder extends Seeder
             ArgumentContradictionSeeder::class,
             ArgumentExampleTweetSeeder::class,
             ArgumentImageSeeder::class,
+            GroupSeeder::class,
+            GroupMemberSeeder::class
         ]);
     }
 }

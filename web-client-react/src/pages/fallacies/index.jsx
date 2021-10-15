@@ -77,9 +77,11 @@ const Fallacy = ({ history, match }) => {
 	const showDateDiff = (tweet || video) && (cTweet || cVideo)
 	const canRetract = false
 
+	// eslint-disable-next-line
 	const [hasMore, setHasMore] = useState(false)
 	const [loading, setLoading] = useState(true)
 	const [loadingMore, setLoadingMore] = useState(false)
+	// eslint-disable-next-line
 	const [pageNumber, setPageNumber] = useState(1)
 
 	useEffect(() => {
@@ -101,6 +103,7 @@ const Fallacy = ({ history, match }) => {
 		getFallacy(slug)
 	}, [slug])
 
+	// eslint-disable-next-line
 	const getRelatedFallacies = async (fallacyId, page = 1) => {
 		page === 1 ? setLoading(true) : setLoadingMore(true)
 		await axios
@@ -226,14 +229,12 @@ const Fallacy = ({ history, match }) => {
 						<p>{reference.description}</p>
 					</Segment>
 
-					{/*
 					<FallacyList
 						fallacies={internalState.fallacies}
 						loading={loading}
 						loadingMore={loadingMore}
 						onClickFallacy={onClickFallacy}
 					/>
-					*/}
 
 					<Divider />
 

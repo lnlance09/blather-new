@@ -4,7 +4,14 @@ import Dropzone from "react-dropzone"
 import ImagePic from "images/images/image-square.png"
 import PropTypes from "prop-types"
 
-const ImageUpload = ({ callback, fluid, headerSize, inverted, img, imgSize, msg }) => {
+const ImageUpload = ({
+	callback,
+	fluid = false,
+	headerSize = "medium",
+	img = ImagePic,
+	imgSize = "small",
+	msg = "Select a picture"
+}) => {
 	const [active, setActive] = useState(false)
 
 	const onDrop = async (files) => {
@@ -55,18 +62,8 @@ ImageUpload.propTypes = {
 	fluid: PropTypes.bool,
 	headerSize: PropTypes.string,
 	img: PropTypes.string,
-	inverted: PropTypes.bool,
 	imgSize: PropTypes.string,
 	msg: PropTypes.string
-}
-
-ImageUpload.defaultProps = {
-	fluid: false,
-	headerSize: "medium",
-	img: ImagePic,
-	imgSize: "small",
-	inverted: true,
-	msg: "Select a picture"
 }
 
 export default ImageUpload

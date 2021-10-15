@@ -37,7 +37,7 @@ const Tweet = ({
 		crossOriginAnonymous,
 		externalLink,
 		handleHoverOn,
-		highlight,
+		// highlight,
 		highlightedText,
 		imageSize,
 		onClickCallback,

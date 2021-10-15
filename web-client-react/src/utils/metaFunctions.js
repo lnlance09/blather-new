@@ -1,5 +1,4 @@
 import MetaTags from "react-meta-tags"
-import moment from "moment"
 
 export const DisplayMetaTags = ({ page, state }) => {
 	const twitterHandle = "blatherio"

@@ -2,9 +2,10 @@
 
 namespace App\Http\Resources;
 
+use App\Http\Resources\PageCollection;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class Reference extends JsonResource
+class Group extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -17,9 +18,8 @@ class Reference extends JsonResource
         return [
             'id' => $this->id,
             'description' => $this->description,
-            'example' => $this->example,
             'name' => $this->name,
-            'fallacyCount' => $this->fallacies_count
+            'pages' => new PageCollection($this->pages)
         ];
     }
 }

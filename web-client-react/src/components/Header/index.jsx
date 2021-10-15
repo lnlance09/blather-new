@@ -1,5 +1,5 @@
 import "./style.scss"
-import { Button, Container, Dropdown, Header, Icon, Image, Menu, Sidebar } from "semantic-ui-react"
+import { Button, Container, Dropdown, Icon, Image, Menu, Sidebar } from "semantic-ui-react"
 import { useContext, useEffect, useReducer, useState } from "react"
 import { ReactSVG } from "react-svg"
 import defaultImg from "images/avatar/small/veronika.jpg"
@@ -16,8 +16,9 @@ window.Pusher = require("pusher-js")
 
 const PageHeader = ({ activeItem, history, q, simple }) => {
 	const { state, dispatch } = useContext(ThemeContext)
-	const { auth, bearer, inverted, notifications, user } = state
+	const { auth, inverted, notifications, user } = state
 
+	// eslint-disable-next-line
 	const [internalState, dispatchInternal] = useReducer(
 		process.env.NODE_ENV === "development" ? logger(reducer) : reducer,
 		initialState
@@ -62,6 +63,7 @@ const PageHeader = ({ activeItem, history, q, simple }) => {
 		// eslint-disable-next-line
 	}, [])
 
+	// eslint-disable-next-line
 	const addNotification = (prediction) => {
 		dispatch({
 			type: "SET_NOTIFICATIONS",
@@ -76,6 +78,7 @@ const PageHeader = ({ activeItem, history, q, simple }) => {
 		})
 	}
 
+	// eslint-disable-next-line
 	const incrementNotification = () => {
 		dispatch({
 			type: "INCREMENT_UNREAD_COUNT"

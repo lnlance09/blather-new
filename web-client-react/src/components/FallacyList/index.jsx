@@ -29,7 +29,7 @@ const FallacyList = ({
 	onClickFallacy
 }) => {
 	const showEmptyMsg = fallacies.length === 0 && !loading
-	const showContent = fallacies.length > 0 && !loading
+	// const showContent = fallacies.length > 0 && !loading
 
 	const PlaceholderSegment = (
 		<Placeholder fluid inverted={inverted}>
@@ -55,7 +55,6 @@ const FallacyList = ({
 						contradictionYouTube,
 						explanation,
 						id,
-						page,
 						reference,
 						slug,
 						twitter,

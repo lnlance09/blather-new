@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ArgumentController;
 use App\Http\Controllers\FallacyController;
+use App\Http\Controllers\GroupController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\ReferenceController;
 use App\Http\Controllers\SearchController;
@@ -28,13 +29,17 @@ Route::get('/fallacies', [FallacyController::class, 'index']);
 Route::get('/fallacies/{slug}', [FallacyController::class, 'show']);
 Route::post('/fallacies/create', [FallacyController::class, 'create']);
 
-Route::get('/reference', [ReferenceController::class, 'index']);
+Route::get('/groups', [PageController::class, 'index']);
+Route::get('/groups/showOptions', [PageController::class, 'showOptions']);
 
 Route::get('/pages', [PageController::class, 'index']);
 Route::get('/pages/twitterCount', [PageController::class, 'twitterCount']);
 Route::get('/pages/youtubeCount', [PageController::class, 'youtubeCount']);
 Route::get('/pages/showOptions', [PageController::class, 'showOptions']);
 Route::get('/pages/{network}/{username}', [PageController::class, 'show']);
+
+Route::get('/reference', [ReferenceController::class, 'index']);
+Route::get('/reference/showOptions', [ReferenceController::class, 'showOptions']);
 
 Route::get('/search/counts', [SearchController::class, 'counts']);
 

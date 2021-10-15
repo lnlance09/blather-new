@@ -26,12 +26,15 @@ const Member = ({ history, match }) => {
 		process.env.NODE_ENV === "development" ? logger(reducer) : reducer,
 		initialState
 	)
-	const { loaded, internalUser } = internalState
+	const { loaded, member } = internalState
 
 	// const [activeItem, setActiveItem] = useState(null)
+	// eslint-disable-next-line
 	const [hasMore, setHasMore] = useState(false)
 	const [imageLoaded, setImageLoaded] = useState(false)
+	// eslint-disable-next-line
 	const [loadingMore, setLoadingMore] = useState(false)
+	// eslint-disable-next-line
 	const [page, setPage] = useState(1)
 
 	useEffect(() => {
@@ -87,11 +90,12 @@ const Member = ({ history, match }) => {
 			})
 	}
 
+	// eslint-disable-next-line
 	const onClickUser = (e, id) => {
 		if (!e.metaKey) {
-			history.push(`/predictions/${id}`)
+			history.push(`/${id}`)
 		} else {
-			window.open(`/predictions/${id}`, "_blank").focus()
+			window.open(`/${id}`, "_blank").focus()
 		}
 	}
 
@@ -133,14 +137,16 @@ const Member = ({ history, match }) => {
 			})
 	}
 
-	const isMyProfile = auth ? user.id === user.id : false
+	// eslint-disable-next-line
+	const isMyProfile = auth ? user.id === member.id : false
 
+	// eslint-disable-next-line
 	const ProfilePic = () => {
-		if (auth && user.id === user.id) {
+		if (auth && user.id === member.id) {
 			return (
 				<ImageUpload
 					callback={(file) => changeProfilePic(file)}
-					img={user.img === null ? PlaceholderPic : user.img}
+					img={user.image === null ? PlaceholderPic : user.image}
 					inverted={inverted}
 				/>
 			)
@@ -157,7 +163,7 @@ const Member = ({ history, match }) => {
 					height: 175,
 					width: 175
 				}}
-				src={user.img}
+				src={user.image}
 			/>
 		)
 	}

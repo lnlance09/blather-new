@@ -58,6 +58,7 @@ const Search = ({ history, match }) => {
 	const [loadingMoreT, setLoadingMoreT] = useState(false)
 	const [pageNumberT, setPageNumberT] = useState(1)
 
+	// eslint-disable-next-line
 	const [newRefIds, setNewRefIds] = useState(refIds)
 
 	const [pageIds, setPageIds] = useState([])
