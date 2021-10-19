@@ -2,8 +2,7 @@ const initialState = {
 	cTweet: {},
 	cTweetError: false,
 	cTweetLoaded: false,
-	pageOptions: [],
-	refOptions: [],
+	groups: [],
 	tweet: {},
 	tweetError: false,
 	tweetLoaded: false

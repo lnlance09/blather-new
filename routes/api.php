@@ -29,12 +29,12 @@ Route::get('/fallacies', [FallacyController::class, 'index']);
 Route::get('/fallacies/{slug}', [FallacyController::class, 'show']);
 Route::post('/fallacies/create', [FallacyController::class, 'create']);
 
-Route::get('/groups', [PageController::class, 'index']);
-Route::get('/groups/showOptions', [PageController::class, 'showOptions']);
+Route::get('/groups', [GroupController::class, 'index']);
+Route::get('/groups/getGroupsByMember', [GroupController::class, 'getGroupsByMember']);
+Route::get('/groups/showOptions', [GroupController::class, 'showOptions']);
 
 Route::get('/pages', [PageController::class, 'index']);
-Route::get('/pages/twitterCount', [PageController::class, 'twitterCount']);
-Route::get('/pages/youtubeCount', [PageController::class, 'youtubeCount']);
+Route::get('/pages/countByNetwork', [PageController::class, 'countByNetwork']);
 Route::get('/pages/showOptions', [PageController::class, 'showOptions']);
 Route::get('/pages/{network}/{username}', [PageController::class, 'show']);
 

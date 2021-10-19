@@ -70,7 +70,7 @@ const Reference = ({ history }) => {
 								{item.fallacyCount > 0 && (
 									<>
 										<Divider hidden />
-										<Label attached="bottom left" color="red">
+										<Label attached="bottom left" color="blue">
 											<NumberFormat
 												displayType={"text"}
 												thousandSeparator
@@ -93,7 +93,7 @@ const Reference = ({ history }) => {
 					</Segment>
 				)
 			})}
-			<Divider hidden />
+			<Divider hidden section />
 		</DefaultLayout>
 	)
 }

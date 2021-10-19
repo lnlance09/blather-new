@@ -2,10 +2,10 @@
 
 namespace App\Http\Resources;
 
-use App\Http\Resources\GroupMemberCollection;
+use App\Http\Resources\Page as PageResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class Group extends JsonResource
+class GroupMember extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -15,12 +15,9 @@ class Group extends JsonResource
      */
     public function toArray($request)
     {
-        $members = $this->members ? new GroupMemberCollection($this->members) : null;
         return [
             'id' => $this->id,
-            'description' => $this->description,
-            'members' => $members,
-            'name' => $this->name
+            'page' => new PageResource($this->page),
         ];
     }
 }

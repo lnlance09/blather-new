@@ -1,19 +1,18 @@
 import {
-	Button,
 	Container,
 	Divider,
-	Dropdown,
 	Form,
 	Grid,
 	Header,
+	Icon,
 	Input,
-	Segment,
-	TextArea
+	Loader,
+	Message,
+	Segment
 } from "semantic-ui-react"
 import { useContext, useEffect, useReducer, useState } from "react"
+import { Link } from "react-router-dom"
 import { DisplayMetaTags } from "utils/metaFunctions"
-import { getDropdownOptions } from "options/page"
-import { getReferenceOptions } from "options/reference"
 import { tweetOptions } from "options/tweet"
 import { getConfig } from "options/toast"
 import { toast } from "react-toastify"
@@ -21,6 +20,7 @@ import _ from "underscore"
 import axios from "axios"
 import DefaultLayout from "layouts/default"
 import initialState from "states/assign"
+import FallacyForm from "components/FallacyForm"
 import logger from "use-reducer-logger"
 import PropTypes from "prop-types"
 import qs from "query-string"
@@ -80,19 +80,47 @@ const Assign = ({ history }) => {
 	)
 
 	// eslint-disable-next-line
-	const [explanation, setExplanation] = useState("")
+	const [groupId, setGroupId] = useState(null)
 	const [highlightedText, setHighlightedText] = useState("")
-	const [pageValue, setPageValue] = useState(6)
-	const [refValue, setRefValue] = useState(1)
+	const [pageId, setPageId] = useState(null)
+	const [tweetLoading, setTweetLoading] = useState(false)
+	const [tweetLoadingC, setTweetLoadingC] = useState(false)
 	const [url, setUrl] = useState(_url)
 	const [urlC, setUrlC] = useState("")
 
-	const { cTweetLoaded, pageOptions, refOptions, tweetError, tweetLoaded, tweet } = internalState
-	const canSubmit = refValue && pageValue && !_.isEmpty(explanation)
+	const { cTweet, cTweetLoaded, groups, tweetLoaded, tweet } = internalState
+
+	const showGroups = tweetLoaded && groups.length > 0
+
+	const getGroupsByPage = async (page) => {
+		await axios
+			.get(`${process.env.REACT_APP_BASE_URL}groups/getGroupsByMember`, {
+				params: {
+					page
+				}
+			})
+			.then(async (response) => {
+				const { data } = response.data
+				dispatch({
+					type: "GET_GROUPS_BY_PAGE",
+					groups: data
+				})
+				const groupId = data.length > 0 ? data[0].id : null
+				setGroupId(groupId)
+			})
+			.catch((e) => {
+				toast.error("There was an error")
+			})
+	}
 
 	const getTweet = async (id, contradiction = false) => {
+		contradiction ? setTweetLoadingC(true) : setTweetLoading(true)
 		await axios
-			.get(`${process.env.REACT_APP_BASE_URL}tweets/${id}`)
+			.get(`${process.env.REACT_APP_BASE_URL}tweets/${id}`, {
+				params: {
+					showGroups: true
+				}
+			})
 			.then(async (response) => {
 				const { data } = response.data
 				const type = contradiction ? "GET_TWEET_CONTRADICTION" : "GET_TWEET"
@@ -100,6 +128,12 @@ const Assign = ({ history }) => {
 					type,
 					tweet: data
 				})
+				contradiction ? setTweetLoadingC(false) : setTweetLoading(false)
+				if (!contradiction) {
+					const pageId = data.user.id
+					getGroupsByPage(pageId)
+					setPageId(pageId)
+				}
 			})
 			.catch((e) => {
 				toast.error("There was an error")
@@ -115,18 +149,6 @@ const Assign = ({ history }) => {
 			text = document.selection.createRange().text
 		}
 		setHighlightedText(text)
-	}
-
-	const onChangeExplanation = (e, { value }) => {
-		setExplanation(value)
-	}
-
-	const onChangePage = (e, { value }) => {
-		setPageValue(value)
-	}
-
-	const onChangeRef = (e, { value }) => {
-		setRefValue(value)
 	}
 
 	const onKeyUp = (e, callback) => {
@@ -170,36 +192,10 @@ const Assign = ({ history }) => {
 		})
 	}
 
-	// eslint-disable-next-line
-	const scrollToTop = () => {
-		window.scroll({
-			behavior: "smooth",
-			left: 0,
-			top: 0
-		})
-	}
+	useEffect(() => {}, [])
 
-	const submitFallacy = () => {}
-
-	useEffect(() => {
-		const getRefOptions = async () => {
-			const options = await getReferenceOptions()
-			dispatch({
-				type: "SET_REFERENCE_OPTIONS",
-				options
-			})
-		}
-		const getPageOptions = async () => {
-			const options = await getDropdownOptions()
-			dispatch({
-				type: "SET_PAGE_OPTIONS",
-				options
-			})
-		}
-
-		getRefOptions()
-		getPageOptions()
-	}, [])
+	console.log("groupId", groupId)
+	console.log("pageId", pageId)
 
 	return (
 		<DefaultLayout
@@ -211,7 +207,7 @@ const Assign = ({ history }) => {
 			useContainer={false}
 		>
 			<DisplayMetaTags page="assign" />
-			<Segment className="assignSegment" fluid>
+			<Segment className="assignSegment">
 				<Container>
 					<Header as="h1" inverted>
 						Assign a Logical Fallacy
@@ -224,7 +220,14 @@ const Assign = ({ history }) => {
 								icon="twitter"
 								iconPosition="left"
 								inverted
-								onKeyUp={(e) => onKeyUp(e, () => setUrl(""))}
+								onKeyUp={(e) =>
+									onKeyUp(e, () => {
+										setUrl("")
+										dispatch({
+											type: "RESET_TWEET"
+										})
+									})
+								}
 								onPaste={onPasteTweet}
 								placeholder="Paste a link to a tweet"
 								size="large"
@@ -238,7 +241,14 @@ const Assign = ({ history }) => {
 								icon="twitter"
 								iconPosition="left"
 								inverted
-								onKeyUp={(e) => onKeyUp(e, () => setUrlC(""))}
+								onKeyUp={(e) =>
+									onKeyUp(e, () => {
+										setUrlC("")
+										dispatch({
+											type: "RESET_TWEET"
+										})
+									})
+								}
 								onPaste={onPasteTweetC}
 								placeholder="Paste a link to a contradicting tweet"
 								size="large"
@@ -269,7 +279,17 @@ const Assign = ({ history }) => {
 										user={tweet.user}
 									/>
 								) : (
-									<>{sampleTweet}</>
+									<>
+										{tweetLoading ? (
+											<Segment style={{ opacity: 0.5 }}>
+												<div className="centeredLoader tweet">
+													<Loader active size="big" />
+												</div>
+											</Segment>
+										) : (
+											<>{sampleTweet}</>
+										)}
+									</>
 								)}
 							</div>
 						</Grid.Column>
@@ -280,85 +300,85 @@ const Assign = ({ history }) => {
 										config={{
 											...tweetOptions
 										}}
-										counts={tweet.counts}
-										createdAt={tweet.createdAt}
+										counts={cTweet.counts}
+										createdAt={cTweet.createdAt}
 										// defaultUserImg={defaultUserImg}
-										extendedEntities={tweet.extendedEntities}
-										fullText={tweet.fullText}
+										extendedEntities={cTweet.extendedEntities}
+										fullText={cTweet.fullText}
 										history={history}
-										id={tweet.tweetId}
-										quoted={tweet.quoted}
-										retweeted={tweet.retweeted}
-										user={tweet.user}
+										id={cTweet.tweetId}
+										quoted={cTweet.quoted}
+										retweeted={cTweet.retweeted}
+										user={cTweet.user}
 									/>
 								) : (
-									<>{sampleTweetC}</>
+									<>
+										{tweetLoadingC ? (
+											<Segment>
+												<div className="centeredLoader tweet">
+													<Loader active size="big" />
+												</div>
+											</Segment>
+										) : (
+											<>{!tweetLoaded && sampleTweetC}</>
+										)}
+									</>
 								)}
 							</div>
 						</Grid.Column>
 					</Grid>
 
+					{showGroups && (
+						<>
+							<Divider inverted />
+
+							{groups.map((group) => (
+								<div className="msgWrapper">
+									<Message icon key={`groupMsg${group.id}`}>
+										<Icon color="green" name="checkmark" />
+										<Message.Content>
+											<Message.Header>
+												Member of the {group.name} group
+											</Message.Header>
+											<p>
+												Tweets from{" "}
+												{group.members.data.map((item, i, { length }) => {
+													const x = i + 1
+													const url = `/pages/twitter/${item.page.username}`
+													const link = (
+														<Link target="_blank" to={url}>
+															{item.page.name}
+														</Link>
+													)
+													let text = <>{link}, </>
+													if (x === length) {
+														text = <>and {link} </>
+													}
+													return (
+														<span key={`member${item.id}`}>{text}</span>
+													)
+												})}
+												can be assigned under one umbrella.
+											</p>
+										</Message.Content>
+									</Message>
+								</div>
+							))}
+						</>
+					)}
+
 					<Divider inverted />
 
-					<Form inverted size="large">
-						<Form.Group>
-							<Form.Field width={8}>
-								<Dropdown
-									clearable
-									fluid
-									options={refOptions}
-									placeholder="Group"
-									search
-									selection
-									value={null}
-								/>
-							</Form.Field>
-							<Form.Field width={8}>
-								<Dropdown
-									clearable
-									fluid
-									loading={pageOptions.length === 0}
-									onChange={onChangePage}
-									options={pageOptions}
-									placeholder="Page"
-									search
-									selection
-									value={pageValue}
-								/>
-							</Form.Field>
-						</Form.Group>
-						<Form.Field>
-							<Dropdown
-								clearable
-								fluid
-								onChange={onChangeRef}
-								options={refOptions}
-								placeholder="Pick a fallacy"
-								search
-								selection
-								value={refValue}
-							/>
-						</Form.Field>
-						<Form.Field>
-							<TextArea
-								placeholder="Please explain how this is fallacious."
-								onChange={onChangeExplanation}
-								rows={7}
-								value={explanation}
-							/>
-						</Form.Field>
-						<Form.Field>
-							<Button
-								color="green"
-								content="Submit"
-								disabled={!canSubmit}
-								fluid
-								inverted
-								size="large"
-							/>
-						</Form.Field>
-					</Form>
+					<FallacyForm
+						groupId={groupId}
+						history={history}
+						inverted={inverted}
+						pageId={pageId}
+						tweetId={tweetLoaded ? tweet.id : null}
+					/>
 				</Container>
+
+				<Divider hidden section />
 			</Segment>
 		</DefaultLayout>
 	)

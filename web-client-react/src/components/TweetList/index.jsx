@@ -70,7 +70,7 @@ const TweetList = ({
 			})}
 			{loadingMore && (
 				<div className="loading" key="loadingMore">
-					<Segment fluid>{PlaceholderSegment}</Segment>
+					<Segment>{PlaceholderSegment}</Segment>
 				</div>
 			)}
 			{showEmptyMsg && (

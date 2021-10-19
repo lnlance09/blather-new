@@ -13,7 +13,7 @@ import {
 import { tweetOptions } from "options/tweet"
 import Marked from "marked"
 import Moment from "react-moment"
-import PlaceholderPic from "images/images/image-square.png"
+import PlaceholderPic from "images/avatar/small/joe.jpg"
 import PropTypes from "prop-types"
 import ReactPlayer from "react-player"
 import Tweet from "components/Tweet"
@@ -106,17 +106,15 @@ const FallacyList = ({
 						<Grid.Row className={loading ? "loading" : null} key={`contradiction${i}`}>
 							{loading && (
 								<Grid.Column width={16}>
-									<Segment fluid>{PlaceholderSegment}</Segment>
+									<Segment>{PlaceholderSegment}</Segment>
 								</Grid.Column>
 							)}
 							{!loading && reference.id === 21 ? (
 								<Segment
 									className="contradictionSegment"
-									fluid
 									onClick={(e) => onClickFallacy(e, slug)}
-									raised
 								>
-									<Label as="a" color="blue" ribbon size="large">
+									<Label as="a" basic color="blue" ribbon size="large">
 										<Icon name="clock" />
 										{showDateDiff && (
 											<>
@@ -200,7 +198,7 @@ const FallacyList = ({
 							) : null}
 
 							{!loading && reference.id !== 21 ? (
-								<Card fluid onClick={(e) => onClickFallacy(e, id)}>
+								<Card fluid onClick={(e) => onClickFallacy(e, slug)}>
 									<Card.Content>
 										<Image
 											circular
@@ -210,7 +208,7 @@ const FallacyList = ({
 											size="mini"
 											src={user.image}
 										/>
-										<Card.Header onClick={(e) => onClickFallacy(e, id)}>
+										<Card.Header onClick={(e) => onClickFallacy(e, slug)}>
 											{reference.name} #{id}
 										</Card.Header>
 										<Card.Meta>
@@ -253,7 +251,7 @@ const FallacyList = ({
 			</Grid>
 			{loadingMore && (
 				<>
-					<Segment fluid>{PlaceholderSegment}</Segment>
+					<Segment>{PlaceholderSegment}</Segment>
 				</>
 			)}
 			{showEmptyMsg && (

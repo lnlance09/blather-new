@@ -1,10 +1,10 @@
 import axios from "axios"
 
-export const getDropdownOptions = async (groupId = null) => {
+export const getGroupsOptions = async () => {
 	return await axios
-		.get(`${process.env.REACT_APP_BASE_URL}pages/showOptions`, {
+		.get(`${process.env.REACT_APP_BASE_URL}groups/showOptions`, {
 			params: {
-				groupId
+				showCounts: 1
 			}
 		})
 		.then((response) => {

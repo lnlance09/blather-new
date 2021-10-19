@@ -1,5 +1,10 @@
 const reducer = (state, action) => {
 	switch (action.type) {
+		case "GET_GROUPS_BY_PAGE":
+			return {
+				...state,
+				groups: action.groups
+			}
 		case "GET_TWEET":
 			return {
 				...state,
@@ -14,15 +19,19 @@ const reducer = (state, action) => {
 				cTweetError: false,
 				cTweetLoaded: true
 			}
-		case "SET_PAGE_OPTIONS":
+		case "RESET_TWEET":
 			return {
 				...state,
-				pageOptions: action.options
+				tweet: {},
+				tweetError: false,
+				tweetLoaded: false
 			}
-		case "SET_REFERENCE_OPTIONS":
+		case "RESET_TWEET_CONTRADICTION":
 			return {
 				...state,
-				refOptions: action.options
+				cTweet: {},
+				cTweetError: false,
+				cTweetLoaded: false
 			}
 		default:
 			throw new Error()

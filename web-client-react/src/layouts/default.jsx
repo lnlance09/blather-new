@@ -11,7 +11,7 @@ const DefaultLayout = ({
 	history,
 	inverted,
 	q,
-	showFooter,
+	showFooter = true,
 	showResults,
 	useContainer = true,
 	simpleHeader,

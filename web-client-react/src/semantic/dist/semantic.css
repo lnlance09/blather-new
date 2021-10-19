@@ -45343,7 +45343,7 @@ Floated Menu / Item
 .ui.secondary.pointing.menu {
   margin-left: 0;
   margin-right: 0;
-  border-bottom: 3px solid #f0f0f0;
+  border-bottom: 2px solid #f0f0f0;
 }
 
 .ui.secondary.pointing.menu .item {
@@ -45351,9 +45351,9 @@ Floated Menu / Item
   border-bottom-style: solid;
   border-radius: 0;
   align-self: flex-end;
-  margin: 0 0 -3px;
+  margin: 0 0 -2px;
   padding: 0.85714286em 1.14285714em;
-  border-bottom-width: 3px;
+  border-bottom-width: 2px;
   transition: color 0.1s ease;
 }
 
@@ -45408,7 +45408,7 @@ Floated Menu / Item
 .ui.secondary.pointing.menu .active.item {
   background-color: transparent;
   box-shadow: none;
-  border-color: #000000;
+  border-color: #2980b9;
   font-weight: 800;
   color: rgba(0, 0, 0, 0.95);
 }
@@ -45416,7 +45416,7 @@ Floated Menu / Item
 /* Active Hover */
 
 .ui.secondary.pointing.menu .active.item:hover {
-  border-color: #000000;
+  border-color: #2980b9;
   color: rgba(0, 0, 0, 0.95);
 }
 
@@ -45430,7 +45430,7 @@ Floated Menu / Item
 
 .ui.secondary.vertical.pointing.menu {
   border-bottom-width: 0;
-  border-right-width: 3px;
+  border-right-width: 2px;
   border-right-style: solid;
   border-right-color: #f0f0f0;
 }
@@ -45440,14 +45440,14 @@ Floated Menu / Item
   border-right-style: solid;
   border-right-color: transparent;
   border-radius: 0 !important;
-  margin: 0 -3px 0 0;
-  border-right-width: 3px;
+  margin: 0 -2px 0 0;
+  border-right-width: 2px;
 }
 
 /* Vertical Active */
 
 .ui.secondary.vertical.pointing.menu .active.item {
-  border-color: #000000;
+  border-color: #2980b9;
 }
 
 /* Inverted */

@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-
 use App\Models\Fallacy;
 use App\Models\Page;
 use App\Models\Tweet;
@@ -25,6 +24,8 @@ class SearchController extends Controller
         $q = $request->input('q', null);
         $network = $request->input('network', 'all');
         $pageIds = $request->input('pageIds', null);
+        $pageIdsF = $request->input('pageIdsF', null);
+        $pageIdsC = $request->input('pageIdsC', null);
         $refIds = $request->input('refIds', null);
         $userId = $request->input('userId', null);
         $retracted = $request->input('retracted', null);
@@ -71,16 +72,30 @@ class SearchController extends Controller
         }
 
         $fallacies = Fallacy::where($where)->whereNotIn('ref_id', [21]);
+
         if (!empty($q)) {
             $fallacies = $fallacies->where('explanation', 'LIKE', '%' . $_q . '%');
         }
+
+        if ($pageIdsF) {
+            $fallacies = $fallacies->whereIn('page_id', $pageIdsF);
+        }
+
         $fallacyCount = $fallacies->count();
 
         // Contradiction count
-        $contradictionCount = Fallacy::where($where)
-            ->where('ref_id', 21)
-            ->where('explanation', 'LIKE', '%' . $_q . '%')
-            ->count();
+        $contradictions = Fallacy::where($where)
+            ->where('ref_id', 21);
+
+        if (!empty($q)) {
+            $contradictions = $contradictions->where('explanation', 'LIKE', '%' . $_q . '%');
+        }
+
+        if ($pageIdsC) {
+            $contradictions = $contradictions->whereIn('page_id', $pageIdsC);
+        }
+
+        $contradictionCount = $contradictions->count();
 
         // Tweet count
         $tweets = Tweet::where(function ($q) use ($_q) {
@@ -94,7 +109,7 @@ class SearchController extends Controller
         });
 
         if (is_array($pageIds)) {
-            //    $tweets = $tweets->whereIn('page_id', $pageIds);
+            $tweets = $tweets->whereIn('page_id', $pageIds);
         }
 
         $tweetCount = $tweets->count();

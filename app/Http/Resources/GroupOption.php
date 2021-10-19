@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class ReferenceOption extends JsonResource
+class GroupOption extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -17,11 +17,10 @@ class ReferenceOption extends JsonResource
         $text = $this->name;
 
         if ($request->input('showCounts') == 1) {
-            $text .= ' (' . number_format($this->fallacies_count) . ')';
+            $text .= ' - ' . number_format($this->members_count) . ' members';
         }
 
         return [
-            'description' => $this->description,
             'key' => $this->id,
             'name' => $this->name,
             'text' => $text,

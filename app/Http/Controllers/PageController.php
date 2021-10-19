@@ -124,8 +124,19 @@ class PageController extends Controller
 
     public function showOptions(Request $request)
     {
-        $pages = Page::withCount(['fallacies'])
-            ->orderBy('fallacies_count', 'desc')
+        $groupId = $request->input('groupId', null);
+
+        $pages = Page::withCount(['fallacies']);
+
+        if ($groupId) {
+            $pages = Page::withCount(['fallacies'])
+                ->whereHas('groupMembers', function ($query) use ($groupId) {
+                    $query->where('group_id', $groupId);
+                });
+        }
+
+        $pages = $pages->orderBy('fallacies_count', 'desc')
+            ->limit(50)
             ->get();
         return new PageOptionCollection($pages);
     }
@@ -141,17 +152,27 @@ class PageController extends Controller
         //
     }
 
-    public function twitterCount()
+    public function countByNetwork(Request $request)
     {
-        $count = Page::where('network', 'twitter')->count();
-        return response([
-            'count' => $count
-        ]);
-    }
+        $_q = $request->input('q', null);
+        $network = $request->input('network', 'twitter');
 
-    public function youtubeCount()
-    {
-        $count = Page::where('network', 'youtube')->count();
+        $pages = Page::where('network', $network);
+
+        if (!empty($_q)) {
+            $pages = $pages->where(function ($q) use ($_q) {
+                $q->where(function ($query) use ($_q) {
+                    $query->where('name', 'LIKE', '%' . $_q . '%');
+                })->orWhere(function ($query) use ($_q) {
+                    $query->where('username', 'LIKE', '%' . $_q . '%');
+                })->orWhere(function ($query) use ($_q) {
+                    $query->where('bio', 'LIKE', '%' . $_q . '%');
+                });
+            });
+        }
+
+        $count = $pages->count();
+
         return response([
             'count' => $count
         ]);

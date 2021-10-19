@@ -10,6 +10,8 @@ class GroupMember extends Model
 {
     use HasFactory;
 
+    protected $table = 'groups_members';
+
     /**
      * The attributes that are mass assignable.
      *
@@ -36,11 +38,11 @@ class GroupMember extends Model
 
     public function group()
     {
-        return $this->hasOne(Group::class, 'group_id', 'id');
+        return $this->hasOne(Group::class, 'id', 'group_id');
     }
 
     public function page()
     {
-        return $this->hasOne(Page::class, 'page_id', 'id');
+        return $this->hasOne(Page::class, 'id', 'page_id');
     }
 }

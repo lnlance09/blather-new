@@ -2,7 +2,6 @@
 
 namespace App\Http\Resources;
 
-use App\Http\Resources\Page as PageResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class Tweet extends JsonResource
@@ -100,15 +99,14 @@ class Tweet extends JsonResource
                 'favorites' => $this->favorite_count,
                 'retweets' => $this->retweet_count
             ],
-            // 'entities' => $this->entities,
             'extendedEntities' => json_decode($this->extended_entities, true),
             'fallacyCount' => $this->fallacies_count,
             'fullText' => $this->full_text,
-            'page' => new PageResource($this->page),
             'quoted' => $quoted,
             'retweeted' => $retweeted,
             'tweetId' => $this->tweet_id,
             'user' => [
+                'id' => $this->page->id,
                 'image' => env('AWS_URL', 'https://s3.amazonaws.com/blather22/') . $this->page->image,
                 'name' => $this->page->name,
                 'username' => $this->page->username,

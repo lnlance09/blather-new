@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Group;
 use App\Http\Resources\Group as GroupResourece;
 use App\Http\Resources\GroupCollection;
+use App\Http\Resources\GroupOptionCollection;
+use App\Models\Group;
+use App\Models\GroupMember;
 use Illuminate\Http\Request;
 
 class GroupController extends Controller
@@ -64,6 +66,21 @@ class GroupController extends Controller
         //
     }
 
+    public function getGroupsByMember(Request $request)
+    {
+        $request->validate([
+            'page' => 'bail|required|exists:pages,id',
+        ]);
+
+        $page = $request->input('page', null);
+        $groups = Group::with(['members.page'])
+            ->whereHas('members', function ($query) use ($page) {
+                $query->where('page_id', $page);
+            })
+            ->get();
+        return new GroupCollection($groups);
+    }
+
     /**
      * Display the specified resource.
      *
@@ -76,9 +93,10 @@ class GroupController extends Controller
 
     public function showOptions(Request $request)
     {
-        $groups = Group::orderBy('name', 'asc')
+        $groups = Group::withCount(['members'])
+            ->orderBy('id', 'asc')
             ->get();
-        return new GroupCollection($groups);
+        return new GroupOptionCollection($groups);
     }
 
     /**

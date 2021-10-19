@@ -6,7 +6,7 @@
 @invertedActiveBackground: rgba(255, 255, 255, 0.15);
 
 @secondaryPointingBorderColor: #f0f0f0;
-@secondaryPointingActiveBorderColor: #000000;
+@secondaryPointingActiveBorderColor: #2980b9;
 @secondaryPointingActiveFontWeight: 800;
-@secondaryPointingBorderWidth: 3px;
+@secondaryPointingBorderWidth: 2px;
 // @secondaryPointingActiveTextColor;

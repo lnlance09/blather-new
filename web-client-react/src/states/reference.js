@@ -1,5 +1,5 @@
 const initialState = {
-	reference: [{}, {}, {}],
+	reference: [{}, {}, {}, {}, {}, {}, {}, {}, {}],
 	loaded: false
 }
 

@@ -1,12 +1,12 @@
 const initialState = {
 	fallacies: {
 		count: 0,
-		data: [{}, {}, {}],
+		data: [{}, {}, {}, {}, {}, {}, {}, {}, {}],
 		loaded: false
 	},
 	tweets: {
 		count: 0,
-		data: [{}, {}, {}],
+		data: [{}, {}, {}, {}, {}, {}, {}, {}, {}],
 		loaded: false
 	}
 }

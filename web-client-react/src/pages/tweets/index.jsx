@@ -10,6 +10,7 @@ import DefaultLayout from "layouts/default"
 import initialState from "states/tweet"
 import FallacyList from "components/FallacyList"
 import logger from "use-reducer-logger"
+import NumberFormat from "react-number-format"
 import PropTypes from "prop-types"
 import reducer from "reducers/tweet"
 import ThemeContext from "themeContext"
@@ -148,7 +149,6 @@ const TweetPage = ({ history, match }) => {
 						}}
 						counts={tweet.counts}
 						createdAt={tweet.createdAt}
-						// defaultUserImg={defaultUserImg}
 						entities={tweet.entities}
 						extendedEntities={tweet.extendedEntities}
 						fullText={tweet.fullText}
@@ -166,16 +166,32 @@ const TweetPage = ({ history, match }) => {
 							name="fallacies"
 							onClick={handleItemClick}
 						>
-							Fallacies
-							<Label color="red">{tweet.fallacyCount}</Label>
+							Fallacies{" "}
+							<span className="count">
+								(
+								<NumberFormat
+									displayType={"text"}
+									thousandSeparator
+									value={tweet.fallacyCount}
+								/>
+								)
+							</span>
 						</Menu.Item>
 						<Menu.Item
 							active={activeItem === "contradictions"}
 							name="contradictions"
 							onClick={handleItemClick}
 						>
-							Contradictions
-							<Label color="red">{contradictions.count}</Label>
+							Contradictions{" "}
+							<span className="count">
+								(
+								<NumberFormat
+									displayType={"text"}
+									thousandSeparator
+									value={contradictions.count}
+								/>
+								)
+							</span>
 						</Menu.Item>
 					</Menu>
 

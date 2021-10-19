@@ -39,9 +39,7 @@ class Page extends Model
      *
      * @var array
      */
-    protected $casts = [
-        
-    ];
+    protected $casts = [];
 
     public function contradictions()
     {
@@ -56,5 +54,10 @@ class Page extends Model
     public function tweets()
     {
         return $this->hasMany(Tweet::class, 'page_id', 'id');
+    }
+
+    public function groupMembers()
+    {
+        return $this->hasMany(GroupMember::class, 'page_id', 'id');
     }
 }

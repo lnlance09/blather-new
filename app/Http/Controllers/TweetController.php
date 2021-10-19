@@ -235,7 +235,6 @@ class TweetController extends Controller
             ], 404);
         }
 
-        // dd($tweet);
         return new TweetResource($tweet);
     }
 

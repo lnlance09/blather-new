@@ -36,6 +36,6 @@ class Group extends Model
 
     public function members()
     {
-        return $this->hasMany(GroupMember::class, 'id', 'group_id');
+        return $this->hasMany(GroupMember::class, 'group_id', 'id');
     }
 }

@@ -9,6 +9,7 @@ const reducer = (state, action) => {
 				...state,
 				contradictions: {
 					...state.contradictions,
+					count: action.total,
 					data: contradictions,
 					loaded: true
 				}
@@ -20,6 +21,7 @@ const reducer = (state, action) => {
 				...state,
 				fallacies: {
 					...state.fallacies,
+					count: action.total,
 					data: fallacies,
 					loaded: true
 				}
@@ -30,6 +32,7 @@ const reducer = (state, action) => {
 				...state,
 				pages: {
 					...state.pages,
+					count: action.total,
 					data: pages,
 					loaded: true
 				}
@@ -41,6 +44,7 @@ const reducer = (state, action) => {
 				...state,
 				tweets: {
 					...state.tweets,
+					count: action.total,
 					data: tweets,
 					loaded: true
 				}

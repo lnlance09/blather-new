@@ -48,10 +48,15 @@ const Arguments = ({ history }) => {
 	const PlaceholderContent = (
 		<Card.Content>
 			<Placeholder fluid inverted={inverted}>
-				<Placeholder.Header>
+				<Placeholder.Header image>
 					<Placeholder.Line />
 					<Placeholder.Line />
 				</Placeholder.Header>
+				<Placeholder.Paragraph>
+					<Placeholder.Line length="full" />
+					<Placeholder.Line length="long" />
+					<Placeholder.Line length="short" />
+				</Placeholder.Paragraph>
 			</Placeholder>
 		</Card.Content>
 	)
@@ -118,6 +123,8 @@ const Arguments = ({ history }) => {
 					</Card>
 				)
 			})}
+
+			<Divider hidden section />
 		</DefaultLayout>
 	)
 }
