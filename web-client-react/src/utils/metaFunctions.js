@@ -45,8 +45,14 @@ export const DisplayMetaTags = ({ page, state }) => {
 			}
 			break
 		case "fallacy":
-			const { fallacy, loaded } = state
-			if (loaded) {
+			metaTags = {
+				description,
+				img,
+				title: ` - ${siteName}`
+			}
+
+			const { fallacy } = state
+			if (state.loaded && !state.error) {
 				metaTags = {
 					description: fallacy.explanation,
 					img: fallacy.user.image,
@@ -76,10 +82,11 @@ export const DisplayMetaTags = ({ page, state }) => {
 			}
 			break
 		case "page":
+			const { page } = state
 			metaTags = {
 				description,
 				img,
-				title: `${state.page.name} - ${siteName}`
+				title: state.loaded ? `${page.name} - ${siteName}` : siteName
 			}
 			break
 		case "privacy":
@@ -125,10 +132,11 @@ export const DisplayMetaTags = ({ page, state }) => {
 			}
 			break
 		case "user":
+			const { user } = state
 			metaTags = {
-				description: state.loaded ? state.trader.bio : description,
-				img: state.loaded ? state.trader.img : img,
-				title: state.loaded ? `${state.trader.name} - ${siteName}` : siteName
+				description: state.loaded ? user.bio : description,
+				img: state.loaded ? user.img : img,
+				title: state.loaded ? `${user.name} - ${siteName}` : siteName
 			}
 			break
 		default:
@@ -156,20 +164,17 @@ export const DisplayMetaTags = ({ page, state }) => {
 			<meta name="twitter:image" content={metaTags.img} />
 
 			<meta name="description" content={metaTags.description} />
-			<meta
-				name="keywords"
-				content="cryptocurrency,coins,tokens,predictions,bitcoin,ethereum,influencers,technical analysis,wall street"
-			/>
+			<meta name="keywords" content="" />
 			<meta name="title" content={metaTags.title} />
 
-			{page === "prediction" && (
+			{page === "fallacy" && (
 				<>
 					<meta property="article:publisher" content={siteName} />
-					<meta property="article:author" content={state.prediction.user.name} />
-					<meta name="author" content={state.prediction.user.name} />
+					<meta property="article:author" content={state.fallacy.user.name} />
+					<meta name="author" content={state.fallacy.user.name} />
 
 					<link rel="publisher" href={baseUrl} />
-					<link rel="author" href={`${baseUrl}/${state.prediction.user.username}`} />
+					<link rel="author" href={`${baseUrl}/${state.fallacy.user.username}`} />
 				</>
 			)}
 

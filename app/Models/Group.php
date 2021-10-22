@@ -34,6 +34,11 @@ class Group extends Model
      */
     protected $casts = [];
 
+    public function fallacies()
+    {
+        return $this->hasMany(Fallacy::class, 'group_id', 'id');
+    }
+
     public function members()
     {
         return $this->hasMany(GroupMember::class, 'group_id', 'id');

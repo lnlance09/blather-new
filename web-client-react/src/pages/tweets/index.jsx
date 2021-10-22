@@ -1,5 +1,5 @@
 import { useContext, useEffect, useReducer, useState } from "react"
-import { Divider, Loader, Label, Menu, Visibility } from "semantic-ui-react"
+import { Button, Divider, Loader, Menu, Visibility } from "semantic-ui-react"
 import { onClickRedirect } from "utils/linkFunctions"
 import { DisplayMetaTags } from "utils/metaFunctions"
 import { tweetOptions } from "options/tweet"
@@ -158,7 +158,17 @@ const TweetPage = ({ history, match }) => {
 						retweeted={tweet.retweeted}
 						user={tweet.user}
 					/>
-					<Divider section />
+
+					<Divider hidden />
+
+					<Button
+						color="blue"
+						content="Assign a fallacy"
+						icon="gavel"
+						onClick={() => history.push(`/assign?id=${tweet.tweetId}`)}
+					/>
+
+					<Divider />
 
 					<Menu pointing secondary size="large">
 						<Menu.Item

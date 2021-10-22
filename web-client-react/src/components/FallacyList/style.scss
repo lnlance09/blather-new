@@ -18,8 +18,16 @@
             }
 
             .segment {
-                p {
-                    font-size: 16px;
+                .explanation {
+                    display: flex;
+                    font-size: 17px;
+
+                    img {
+                        border: solid 1px $twitterExtraLightGrey;
+                        border-radius: 4px;
+                        padding: 8px;
+                        width: 300px;
+                    }
                 }
 
                 &.contradictionSegment {
@@ -55,7 +63,10 @@
 
     .card {
         .explanation {
-            font-size: 16px;
+            p {
+                display: flex;
+                font-size: 17px;
+            }
         }
     }
 }

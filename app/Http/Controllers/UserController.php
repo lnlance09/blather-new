@@ -113,9 +113,8 @@ class UserController extends Controller
         $img->resize(320, 320);
         $img->save($file);
 
-        $contents = file_get_contents($file);
         $img = 'users/' . Str::random(24) . '.jpg';
-        Storage::disk('s3')->put($img, $contents);
+        Storage::disk('s3')->put($img, file_get_contents($file));
 
         $user = User::find($userId);
         $user->img = $img;

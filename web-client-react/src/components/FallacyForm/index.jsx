@@ -1,5 +1,15 @@
 import "./style.scss"
-import { Button, Divider, Dropdown, Form, Header, Label, Transition } from "semantic-ui-react"
+import {
+	Button,
+	Divider,
+	Dropdown,
+	Form,
+	Header,
+	Image,
+	Label,
+	Placeholder,
+	Transition
+} from "semantic-ui-react"
 import { useEffect, useReducer, useRef, useState } from "react"
 import { getGroupsOptions } from "options/group"
 import { getDropdownOptions } from "options/page"
@@ -8,8 +18,10 @@ import { getConfig } from "options/toast"
 import { toast } from "react-toastify"
 import _ from "underscore"
 import axios from "axios"
+import ImageUpload from "components/ImageUpload"
 import initialState from "./state"
 import logger from "use-reducer-logger"
+import PlaceholderPic from "images/images/image-square.png"
 import PropTypes from "prop-types"
 import reducer from "./reducer"
 
@@ -31,7 +43,7 @@ const FallacyForm = ({
 		initialState
 	)
 
-	const { groupOptions, pageOptions, refOptions } = internalState
+	const { groupOptions, images, imagesLoading, pageOptions, refOptions } = internalState
 
 	const explanationRef = useRef(null)
 
@@ -53,6 +65,38 @@ const FallacyForm = ({
 
 	const onChangeGroup = (e, { value }) => {
 		setGroupValue(value)
+	}
+
+	const addImage = async (file) => {
+		const formData = new FormData()
+		formData.set("file", file)
+
+		const explanation = _.isEmpty(explanationRef.current) ? "" : explanationRef.current.value
+
+		dispatch({
+			type: "TOGGLE_IMAGES_LOADING"
+		})
+
+		await axios
+			.post(`${process.env.REACT_APP_BASE_URL}fallacies/addImage`, formData, {
+				headers: {
+					"Content-Type": "multipart/form-data",
+					enctype: "multipart/form-data"
+				}
+			})
+			.then((response) => {
+				const { image } = response.data
+				dispatch({
+					type: "SET_IMAGES",
+					image
+				})
+
+				explanationRef.current.value = `${explanation} \n \n ![Caption](${image} "")`
+				explanationRef.current.focus()
+			})
+			.catch(() => {
+				toast.error("Error uploading image")
+			})
 	}
 
 	const submitFallacy = async () => {
@@ -205,6 +249,56 @@ const FallacyForm = ({
 						placeholder="Please explain how this is fallacious."
 						ref={explanationRef}
 						rows={7}
+					/>
+
+					{(images.length > 0 || imagesLoading) && <Divider inverted />}
+
+					<Image.Group size="small">
+						{images.map((img, i) => (
+							<Image
+								key={img}
+								label={{
+									as: "a",
+									color: "red",
+									corner: "right",
+									icon: "close",
+									onClick: () => {
+										dispatch({
+											type: "REMOVE_IMAGE",
+											key: i
+										})
+
+										const explanation = _.isEmpty(explanationRef.current)
+											? ""
+											: explanationRef.current.value
+										explanationRef.current.value = explanation.replace(
+											`![Caption](${img} "")`,
+											""
+										)
+										explanationRef.current.focus()
+									}
+								}}
+								rounded
+								src={img}
+							/>
+						))}
+						{imagesLoading && (
+							<Placeholder as={Image} rounded size="large">
+								<Placeholder.Image
+									onError={(i) => (i.target.src = PlaceholderPic)}
+								/>
+							</Placeholder>
+						)}
+					</Image.Group>
+
+					{(images.length > 0 || imagesLoading) && <Divider inverted />}
+
+					<ImageUpload
+						as="segment"
+						callback={(file) => addImage(file)}
+						headerSize="tiny"
+						inverted={inverted}
+						msg="add image"
 					/>
 				</Form.Field>
 				<Form.Field>

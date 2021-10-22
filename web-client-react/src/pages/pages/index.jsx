@@ -1,7 +1,6 @@
-import linkifyHtml from "linkify-html"
 import "linkify-plugin-hashtag"
 import "linkify-plugin-mention"
-import { Button, Divider, Grid, Header, Image, Label, Menu, Visibility } from "semantic-ui-react"
+import { Button, Divider, Grid, Header, Image, Menu, Visibility } from "semantic-ui-react"
 import { useContext, useEffect, useReducer, useState } from "react"
 import { DisplayMetaTags } from "utils/metaFunctions"
 import { onClickRedirect } from "utils/linkFunctions"
@@ -11,7 +10,9 @@ import axios from "axios"
 import DefaultLayout from "layouts/default"
 import FallacyList from "components/FallacyList"
 import initialState from "states/page"
+import linkifyHtml from "linkify-html"
 import logger from "use-reducer-logger"
+import NumberFormat from "react-number-format"
 import PlaceholderPic from "images/images/image-square.png"
 import PropTypes from "prop-types"
 import reducer from "reducers/page"
@@ -140,6 +141,7 @@ const Page = ({ history, match }) => {
 			inverted={inverted}
 		>
 			<DisplayMetaTags page="page" state={internalState} />
+
 			{loaded ? (
 				<>
 					<Grid stackable>
@@ -210,7 +212,17 @@ const Page = ({ history, match }) => {
 							onClick={handleItemClick}
 						>
 							Fallacies
-							<Label color="blue">{page.fallacyCount}</Label>
+							{page.fallacyCount > 0 && (
+								<span className="count">
+									(
+									<NumberFormat
+										displayType={"text"}
+										thousandSeparator
+										value={page.fallacyCount}
+									/>
+									)
+								</span>
+							)}
 						</Menu.Item>
 						<Menu.Item
 							active={activeItem === "contradictions"}
@@ -218,7 +230,17 @@ const Page = ({ history, match }) => {
 							onClick={handleItemClick}
 						>
 							Contradictions
-							<Label color="blue">{page.contradictionCount}</Label>
+							{page.contradictionCount > 0 && (
+								<span className="count">
+									(
+									<NumberFormat
+										displayType={"text"}
+										thousandSeparator
+										value={page.contradictionCount}
+									/>
+									)
+								</span>
+							)}
 						</Menu.Item>
 					</Menu>
 

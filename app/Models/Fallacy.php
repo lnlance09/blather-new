@@ -28,6 +28,7 @@ class Fallacy extends Model
     protected $fillable = [
         // 'id',
         'explanation',
+        'group_id',
         'page_id',
         'ref_id',
         'retracted',
@@ -57,6 +58,12 @@ class Fallacy extends Model
     {
 
         return $this->hasOne(Page::class, 'id', 'page_id');
+    }
+
+    public function group()
+    {
+
+        return $this->hasOne(Group::class, 'id', 'group_id');
     }
 
     public function user()

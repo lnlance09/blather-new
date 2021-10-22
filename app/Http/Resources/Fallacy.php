@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Http\Resources\Group as GroupResource;
 use App\Http\Resources\FallacyTwitter as FallacyTwitterResource;
 use App\Http\Resources\FallacyYouTube as FallacyYouTubeResource;
 use App\Http\Resources\Page as PageResource;
@@ -24,6 +25,7 @@ class Fallacy extends JsonResource
             'contradictionTwitter' => new FallacyTwitterResource($this->contradictionTwitter),
             'contradictionYouTube' => new FallacyYouTubeResource($this->contradictionYouTube),
             'explanation' => $this->explanation,
+            'group' => new GroupResource($this->group),
             'page' => new PageResource($this->page),
             'reference' => new ReferenceResource($this->reference),
             'retracted' => $this->retracted,

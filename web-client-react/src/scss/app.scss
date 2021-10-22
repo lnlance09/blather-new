@@ -148,6 +148,13 @@ body {
 			min-height: 300px;
 			position: relative;
 
+			h1 {
+				left: 50%;
+				position: absolute;
+				top: 50%;
+				transform: translate(-50%, -50%);
+			}
+
 			.ui.loader.inverted {
 				color: $white;
 				left: 50%;
@@ -293,6 +300,17 @@ body {
 				}
 			}
 
+			.ui.image svg {
+				display: inline;
+				position: relative;
+				top: 18px;
+				width: 200px;
+
+				path {
+					fill: $red;
+				}
+			}
+
 			.placeholderWrapper {
 				
 			}
@@ -386,6 +404,13 @@ body {
 		}
 
 		&.socialMediaPage {
+			.menu.secondary.pointing {
+				.item .count {
+					font-weight: normal;
+					margin-left: 8px;
+				}
+			}
+
 			.ui.grid {
 				.imgColumn {
 					align-items: center;

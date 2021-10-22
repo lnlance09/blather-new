@@ -10,6 +10,8 @@ use App\Models\Tweet;
 use Atymic\Twitter\Facade\Twitter;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+use Intervention\Image\ImageManagerStatic as Image;
 
 class TweetController extends Controller
 {
@@ -41,9 +43,6 @@ class TweetController extends Controller
 
         $tweets = $tweets->with(['page'])
             ->withCount(['fallacies'])
-            // ->whereHas('page', function ($query) use ($q) {
-            //    $query->where('coin_id', $coinId)->where('status', 'Correct');
-            // })
             ->orderBy($sort, $dir)
             ->paginate(15);
         return new TweetCollection($tweets);
@@ -97,7 +96,7 @@ class TweetController extends Controller
                 'response_format' => 'array',
                 'tweet_mode' => 'extended'
             ]);
-            // dd($tweet);
+            dd($tweet);
             $tweetDb = Tweet::where('tweet_id', $tweet['id_str'])->first();
 
             if ($tweetDb) {
@@ -128,9 +127,16 @@ class TweetController extends Controller
                 $isQuoted = $tweet['is_quote_status'];
                 $isRetweeted = array_key_exists('retweeted_status', $tweet) ? $tweet['retweeted_status'] : false;
 
-                $contents = file_get_contents($user['profile_image_url_https']);
-                $img = 'pages/twitter/' . $user['name'] . '-' . $user['id_str'] . '-' . time() . '.jpg';
-                Storage::disk('s3')->put($img, $contents);
+                $imgUrl = Str::replace('_normal', '', $user['profile_image_url_https']);
+                $page = Page::where('social_media_id', $user['id_str'])->first();
+
+                if (empty($page)) {
+                    $img = 'pages/twitter/' . Str::random(24) . '.jpg';
+                } else {
+                    $img = $page->image;
+                }
+
+                Storage::disk('s3')->put($img, file_get_contents($imgUrl));
 
                 $page = Page::updateOrCreate(
                     [
@@ -160,9 +166,16 @@ class TweetController extends Controller
 
                 if ($isQuoted && array_key_exists('quoted_status', $tweet)) {
                     $quoted = $tweet['quoted_status'];
-                    $contents = file_get_contents($quoted['user']['profile_image_url_https']);
-                    $img = 'pages/twitter/' . $quoted['user']['name'] . '-' . $quoted['user']['id_str'] . '-' . time() . '.jpg';
-                    Storage::disk('s3')->put($img, $contents);
+                    $imgUrl = Str::replace('_normal', '', $quoted['user']['profile_image_url_https']);
+                    $page = Page::where('social_media_id', $quoted['user']['id_str'])->first();
+
+                    if (empty($page)) {
+                        $img = 'pages/twitter/' . Str::random(24) . '.jpg';
+                    } else {
+                        $img = $page->image;
+                    }
+
+                    Storage::disk('s3')->put($img, file_get_contents($imgUrl));
 
                     $qPage = Page::updateOrCreate(
                         [
@@ -190,9 +203,17 @@ class TweetController extends Controller
 
                 if ($isRetweeted) {
                     $retweeted = $tweet['retweeted_status'];
-                    $contents = file_get_contents($retweeted['user']['profile_image_url_https']);
-                    $img = 'pages/twitter/' . $retweeted['user']['name'] . '-' . $retweeted['user']['id_str'] . '-' . time() . '.jpg';
-                    Storage::disk('s3')->put($img, $contents);
+                    $imgUrl = Str::replace('_normal', '', $retweeted['user']['profile_image_url_https']);
+                    $page = Page::where('social_media_id', $retweeted['user']['id_str'])->first();
+
+                    if (empty($page)) {
+                        $img = 'pages/twitter/' . Str::random(24) . '.jpg';
+                    } else {
+                        $img = $page->image;
+                    }
+
+                    Storage::disk('s3')->put($img, file_get_contents($imgUrl));
+
 
                     $rPage = Page::updateOrCreate(
                         [
@@ -247,7 +268,6 @@ class TweetController extends Controller
             'page' => $page,
             'tweet_mode' => 'extended'
         ]);
-        // dd($tweets);
         return new TweetLiveCollection($tweets);
     }
 

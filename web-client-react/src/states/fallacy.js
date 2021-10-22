@@ -1,4 +1,5 @@
 const initialState = {
+	error: false,
 	fallacies: [{}, {}, {}],
 	fallacy: {
 		contradictionTwitter: {

@@ -102,7 +102,6 @@ const PageHeader = ({ activeItem, history, q, simple }) => {
 			className={`bellDropdown ${inverted ? "inverted" : null}`}
 			direction="right"
 			icon={false}
-			pointing="top"
 			trigger={
 				<div className="trigger item">
 					<Icon circular color="yellow" name="bell" size="large" />
@@ -169,12 +168,12 @@ const PageHeader = ({ activeItem, history, q, simple }) => {
 
 	const ProfileDropdown = (
 		<Dropdown
+			borderless
 			className={`profileDropdown ${inverted ? "inverted" : null}`}
 			icon={false}
-			pointing="top"
 			trigger={
 				<>
-					{user && (
+					{auth && (
 						<span style={{ marginLeft: "12px", marginRight: "12px" }}>{user.name}</span>
 					)}
 					<Image
@@ -192,9 +191,11 @@ const PageHeader = ({ activeItem, history, q, simple }) => {
 				<Dropdown.Item onClick={() => history.push(`/${user.username}`)}>
 					Profile
 				</Dropdown.Item>
-				<Dropdown.Item onClick={() => history.push("/settings")}>Settings</Dropdown.Item>
 				<Dropdown.Item onClick={() => history.push("/settings?tab=fallacies")}>
 					Fallacies
+				</Dropdown.Item>
+				<Dropdown.Item onClick={() => history.push("/settings?tab=contradictions")}>
+					Contradictions
 				</Dropdown.Item>
 				<Dropdown.Item onClick={() => history.push("/settings?tab=targets")}>
 					Targets
@@ -202,8 +203,19 @@ const PageHeader = ({ activeItem, history, q, simple }) => {
 				<Dropdown.Item onClick={() => history.push("/settings?tab=comments")}>
 					Comments
 				</Dropdown.Item>
+
+				{auth && (
+					<Dropdown.Item onClick={() => history.push("/settings")}>
+						Settings
+					</Dropdown.Item>
+				)}
+
 				<Dropdown.Divider />
-				<Dropdown.Item onClick={logout}>Sign Out</Dropdown.Item>
+				{auth ? (
+					<Dropdown.Item onClick={logout}>Sign Out</Dropdown.Item>
+				) : (
+					<Dropdown.Item onClick={() => history.push("/auth")}>Sign In</Dropdown.Item>
+				)}
 			</Dropdown.Menu>
 		</Dropdown>
 	)

@@ -23,7 +23,7 @@ class User extends JsonResource
             'bio' => empty($this->bio) ? 'Apparently, this trader prefers to keep an air of mystery about them.' : $this->bio,
             // 'comments' => new CommentCollection($this->comments),
             // 'fallacies' => new FallacyCollection($this->fallacies),
-            'image' => env('AWS_URL', 'https://preditc.s3.us-west-2.amazonaws.com/') . $this->image,
+            'image' => env('AWS_URL', 'https://blather-new.s3.us-west-2.amazonaws.com/') . $this->image,
             // 'likes' => new LikeCollection($this->likes),
             'name' => $this->name,
             // 'responses' => new ResponseCollection($this->responses),

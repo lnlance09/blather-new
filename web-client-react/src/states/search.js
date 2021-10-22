@@ -17,6 +17,7 @@ const initialState = {
 		twitterCount: 0,
 		youtubeCount: 0
 	},
+	refOptions: [],
 	tweets: {
 		count: 0,
 		data: [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}],

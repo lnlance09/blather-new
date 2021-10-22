@@ -24,10 +24,11 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/arguments', [ArgumentController::class, 'index']);
 
-// Route::get('/fallacies/migrate', [FallacyController::class, 'migrate']);
+Route::get('/fallacies/migrate', [FallacyController::class, 'migrate']);
 Route::get('/fallacies', [FallacyController::class, 'index']);
 Route::get('/fallacies/{slug}', [FallacyController::class, 'show']);
-Route::post('/fallacies/create', [FallacyController::class, 'create']);
+Route::post('/fallacies/addImage', [FallacyController::class, 'addImage']);
+Route::post('/fallacies/create', [FallacyController::class, 'create'])->middleware('api');
 
 Route::get('/groups', [GroupController::class, 'index']);
 Route::get('/groups/getGroupsByMember', [GroupController::class, 'getGroupsByMember']);

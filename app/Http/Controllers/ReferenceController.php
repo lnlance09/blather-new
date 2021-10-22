@@ -75,9 +75,20 @@ class ReferenceController extends Controller
 
     public function showOptions(Request $request)
     {
-        $pages = Reference::orderBy('name', 'asc')
-            ->get();
-        return new ReferenceOptionCollection($pages);
+        $pageIds = $request->input('pageIds', null);
+
+        $refs = Reference::orderBy('name', 'asc')->get();
+
+        if ($pageIds) {
+            $refs = Reference::where('id', '!=', 21)
+                ->whereHas('fallacies', function ($query) use ($pageIds) {
+                    $query->whereIn('page_id', $pageIds);
+                })->withCount(['fallacies' => function ($query) use ($pageIds) {
+                    $query->whereIn('page_id', $pageIds);
+                }])->orderBy('fallacies_count', 'desc')->get();
+        }
+
+        return new ReferenceOptionCollection($refs);
     }
 
     /**

@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Page;
 use App\Http\Resources\Page as PageResource;
 use App\Http\Resources\PageCollection;
 use App\Http\Resources\PageOptionCollection;
+use App\Models\Page;
 use Illuminate\Http\Request;
 
 class PageController extends Controller

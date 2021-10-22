@@ -73,8 +73,7 @@ VALUES
 	(55,'When following the law is assumed to be the morally correct thing to do, without justification, or when breaking the law is assumed to be the morally wrong thing to do, without justification. This can also happen when one equates supporting the legalization of something with actually supporting it.','Appeal to the Law'),
 	(65,'An error in reasoning whereby one believes that someone or something are actually what they self-identify as despite all evidence to the contrary. Anyone can choose to identify as whatever they want to but it doesn\'t necessarily mean that the self-identification is accurate.','It\'s in the name!'),
 	(67,'The belief that ending a cruel policy is an insult to all of the people who were previously victimized by it.','Appeal to Suffering'),
-	(69,'A conclusion or statement that does not logically follow from the previous argument or statement.','Non Sequitur'),
-	(70,'A personal favorite amongst miserable people of all stripes, it is when one assumes that something is bad because it reduces suffering. Basically, I had to suffer so other people should have to suffer too.','Appeal to Suffering');
+	(69,'A conclusion or statement that does not logically follow from the previous argument or statement.','Non Sequitur');
 
 /*!40000 ALTER TABLE `reference` ENABLE KEYS */;
 UNLOCK TABLES;

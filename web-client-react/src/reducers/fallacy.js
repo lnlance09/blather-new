@@ -3,6 +3,7 @@ const reducer = (state, action) => {
 		case "GET_FALLACY":
 			return {
 				...state,
+				error: false,
 				fallacy: action.fallacy,
 				loaded: true
 			}
@@ -12,6 +13,12 @@ const reducer = (state, action) => {
 			return {
 				...state,
 				fallacies
+			}
+		case "SET_FALLACY_ERROR":
+			return {
+				...state,
+				error: true,
+				loaded: true
 			}
 		default:
 			throw new Error()

@@ -46,6 +46,14 @@ const App = () => {
 
 							<Route component={Arguments} exact path="/arguments" />
 
+							<Route
+								exact
+								path="/assign"
+								render={(props) => (
+									<Assign key={window.location.pathname} {...props} />
+								)}
+							/>
+
 							<Route component={Contact} exact path="/contact" />
 
 							<Route
@@ -66,7 +74,7 @@ const App = () => {
 
 							<Route component={Grifters} exact path="/grifters" />
 
-							<Route component={Login} exact path="/login" />
+							<Route component={Login} exact path="/auth" />
 
 							<Route
 								exact

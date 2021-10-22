@@ -2,11 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\Group as GroupResourece;
 use App\Http\Resources\GroupCollection;
 use App\Http\Resources\GroupOptionCollection;
 use App\Models\Group;
-use App\Models\GroupMember;
 use Illuminate\Http\Request;
 
 class GroupController extends Controller

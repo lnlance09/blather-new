@@ -90,6 +90,11 @@ const reducer = (state, action) => {
 					youtubeCount: action.count
 				}
 			}
+		case "SET_REFERENCE_OPTIONS":
+			return {
+				...state,
+				refOptions: action.options
+			}
 		case "TOGGLE_CONTRADICTIONS_LOADED":
 			return {
 				...state,

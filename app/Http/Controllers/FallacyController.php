@@ -4,23 +4,24 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\Fallacy as FallacyResource;
 use App\Http\Resources\FallacyCollection;
-
 use App\Models\ContradictionTwitter;
 use App\Models\ContradictionYouTube;
 use App\Models\Fallacy;
 use App\Models\FallacyTwitter;
 use App\Models\FallacyYouTube;
 use App\Models\GroupMember;
+use App\Models\Page;
 use App\Models\Reference;
 use App\Models\Tweet;
-
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class FallacyController extends Controller
 {
     const DEFAULT_WITH = [
+        'group',
         'page',
         'reference',
         'user',
@@ -101,6 +102,21 @@ class FallacyController extends Controller
         $fallacies = $fallacies->orderBy($sort, $dir)
             ->paginate(15);
         return new FallacyCollection($fallacies);
+    }
+
+    public function addImage(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|image',
+        ]);
+        $file = $request->file('file');
+
+        $img = 'uploads/' . Str::random(24) . '.jpg';
+        Storage::disk('s3')->put($img, file_get_contents($file));
+
+        return response()->json([
+            'image' => env('AWS_URL', 'https://blather-new.s3.us-west-2.amazonaws.com/') . $img
+        ]);
     }
 
     /**
@@ -199,6 +215,7 @@ class FallacyController extends Controller
             'explanation' => $explanation,
             'slug' => Str::slug($title, '-'),
             'title' => $title,
+            'group_id' => $groupId,
             'page_id' => $pageId,
             'ref_id' => $refId,
             'user_id' => $userId
@@ -248,216 +265,6 @@ class FallacyController extends Controller
         return new FallacyResource($fallacy);
     }
 
-    public function migrate()
-    {
-        /*
-        $json = Storage::disk('local')->get('public/arguments.json');
-        $json = json_decode($json, true);
-        // dd($json);
-
-        $tweetController = new TweetController;
-
-        for ($i = 0; $i < count($json); $i++) {
-            $item = $json[$i];
-
-            $description = $item['description'];
-            $explanation = implode('. ', $item['tips']);
-            $slug = $item['argument'];
-            $meme = $item['meme'];
-            $images = $item['images'];
-            $examples =  $item['examples'];
-            $contradictions = $item['contradictions'];
-
-            $argData = [
-                'description' => $description,
-                'explanation' => $explanation,
-                'slug' => $slug
-            ];
-            $arg = Argument::create($argData);
-            $arg->refresh();
-
-            if (is_array($meme)) {
-                $images = array_merge($images, $meme);
-            } else {
-                $image[] = $meme;
-            }
-
-            for ($x = 0; $x < count($images); $x++) {
-                $contents = file_get_contents($images[$x]);
-                $img = 'arguments/' . Str::random(24) . '.jpg';
-                Storage::disk('s3')->put($img, $contents);
-
-                ArgumentImage::create([
-                    'argument_id' => $arg->id,
-                    'caption' => '',
-                    's3_link' => $img
-                ]);
-            }
-
-            for ($x = 0; $x < count($examples); $x++) {
-                $url = parse_url($examples[$x]);
-                if (!array_key_exists('host', $url)) {
-                    continue;
-                }
-
-                if ($url['host'] === 'twitter.com') {
-                    $segs = explode('/', $url['path']);
-                    $tweetId = end($segs);
-                    $tweet = $tweetController->show($tweetId);
-
-                    if ($tweet) {
-                        ArgumentExampleTweet::create([
-                            'argument_id' => $arg->id,
-                            'tweet_id' => $tweet->id
-                        ]);
-                    }
-                }
-            }
-        }
-
-        for ($i = 0; $i < count($json); $i++) {
-            $item = $json[$i];
-            $slug = $item['argument'];
-            $contradictions = $item['contradictions'];
-
-            $arg = Argument::where('slug', $slug)->first();
-            if (empty($arg)) {
-                continue;
-            }
-
-            for ($x = 0; $x < count($contradictions); $x++) {
-                $c = $contradictions[$x];
-
-                $cArg = Argument::where('slug', $c['argument'])->first();
-                if (empty($cArg)) {
-                    continue;
-                }
-
-                ArgumentContradiction::create([
-                    'argument_id' => $arg->id,
-                    'contradicting_argument_id' => $cArg->id,
-                    'explanation' => $c['description']
-                ]);
-            }
-        }
-        */
-        die;
-
-        /*
-        $all = Tweet::all()->toArray();
-        for ($i = 0; $i < count($all); $i++) {
-            $entry = $all[$i];
-            // dump($entry);
-
-            $data = [];
-            $tweetJson = @json_decode($entry['tweet_json'], true);
-            $realFullText = $tweetJson['full_text'];
-            // dd($tweetJson);
-
-            $data['full_text'] = $realFullText;
-            $data['tweet_id'] = $tweetJson['id_str'];
-
-            if ($entry['retweeted_tweet_id'] && array_key_exists('retweeted_status', $tweetJson)) {
-                $realRtText = $tweetJson['retweeted_status']['full_text'];
-                $data['retweeted_full_text'] = $realRtText;
-                $data['retweeted_tweet_id'] = $tweetJson['retweeted_status']['id_str'];
-            }
-
-            if ($entry['quoted_tweet_id'] && array_key_exists('quoted_status', $tweetJson)) {
-                $realQtText = $tweetJson['quoted_status']['full_text'];
-                $data['quoted_full_text'] = $realQtText;
-                $data['quoted_tweet_id'] = $tweetJson['quoted_status']['id_str'];
-            }
-
-            // dump($data);
-            Tweet::where('id', $entry['id'])->update($data);
-
-            // $contradiction = $entry['contradiction'];
-            $pageId = $entry['page_id'];
-            $startTime = $entry['start_time'];
-            $endTime = $entry['end_time'];
-            $highlightedText = $entry['highlighted_text'];
-            $mediaId = $entry['media_id'];
-            $network = $entry['network'];
-
-            unset($entry['contradiction']);
-            unset($entry['start_time']);
-            unset($entry['end_time']);
-            unset($entry['highlighted_text']);
-            unset($entry['media_id']);
-            unset($entry['network']);
-
-            $page = Page::where('social_media_id', $pageId)->first();
-            if (empty($page)) {
-                continue;
-            }
-
-            $entry['page_id'] = $page['id'];
-
-            $fallacy = Fallacy::create($entry);
-            $fallacy->refresh();
-
-            if ($network === 'twitter') {
-                $twitter = Tweet::where('tweet_id', $mediaId)->first();
-                if (empty($twitter)) {
-                    continue;
-                }
-
-                FallacyTwitter::create([
-                    'fallacy_id' => $entry['id'],
-                    'highlighted_text' => $highlightedText,
-                    'tweet_id' => $twitter['id'],
-                ]);
-            }
-
-            if ($network === 'youtube') {
-                $video = Video::where('video_id', $mediaId)->first();
-                if (empty($video)) {
-                    continue;
-                }
-
-                FallacyYouTube::create([
-                    'end_time' => $endTime,
-                    'fallacy_id' => $entry['id'],
-                    'start_time' => $startTime,
-                    'video_id' => $video['id'],
-                ]);
-            }
-
-            if ($contradiction) {
-                if ($contradiction['network'] === 'twitter') {
-                    $tweet = Tweet::where('tweet_id', $contradiction['media_id'])->first();
-
-                    if (empty($tweet)) {
-                        continue;
-                    }
-                
-                    ContradictionTwitter::create([
-                        'fallacy_id' => $contradiction['fallacy_entry_id'],
-                        'highlighted_text' => $contradiction['highlighted_text'],
-                        'tweet_id' => $tweet['id'],
-                    ]);
-                }
-
-                if ($contradiction['network'] === 'youtube') {
-                    $video = Video::where('video_id', $contradiction['media_id'])->first();
-
-                    if (empty($video)) {
-                        continue;
-                    }
-
-                    ContradictionYouTube::create([
-                        'start_time' => $contradiction['start_time'],
-                        'end_time' => $contradiction['end_time'],
-                        'fallacy_id' => $contradiction['fallacy_entry_id'],
-                        'video_id' => $video['id'],
-                    ]);
-                }
-            }
-        }
-        */
-    }
-
     /**
      * Remove the specified resource from storage.
      *
@@ -478,6 +285,36 @@ class FallacyController extends Controller
     public function edit(Fallacy $fallacy)
     {
         //
+    }
+
+    public function migrate()
+    {
+        $pages = Page::all();
+
+        foreach ($pages as $page) {
+            $id = $page->id;
+            $image = 'https://s3.amazonaws.com/blather22/' . $page->image;
+            $network = $page->network;
+            $pageId = $page->social_media_id;
+
+            $ext = $network === 'twitter' ? 'jpg' : 'png';
+            $img = 'pages/' . $network . '/' . Str::random(24) . '.' . $ext;
+
+            $uploaded = false;
+
+            try {
+                Storage::disk('s3')->put($img, file_get_contents($image));
+                $uploaded = true;
+            } catch (\Exception $e) {
+                echo "Could not fetch image";
+            }
+
+            if ($uploaded) {
+                $page = Page::where('id', $id)->first();
+                $page->image = $img;
+                $page->save();
+            }
+        }
     }
 
     /**

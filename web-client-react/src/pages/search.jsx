@@ -1,9 +1,19 @@
-import { Button, Divider, Dropdown, Icon, Label, Menu, Visibility } from "semantic-ui-react"
+import {
+	Button,
+	Divider,
+	Dropdown,
+	Icon,
+	Label,
+	Menu,
+	Segment,
+	Visibility
+} from "semantic-ui-react"
 import { useContext, useEffect, useReducer, useState } from "react"
 import { DebounceInput } from "react-debounce-input"
 import { onClickRedirect } from "utils/linkFunctions"
 import { DisplayMetaTags } from "utils/metaFunctions"
 import { getDropdownOptions } from "options/page"
+import { getReferenceOptions } from "options/reference"
 import axios from "axios"
 import DefaultLayout from "layouts/default"
 import FallacyList from "components/FallacyList"
@@ -20,9 +30,16 @@ import TweetList from "components/TweetList"
 
 const Search = ({ history, match }) => {
 	const query = qs.parse(window.location.search)
-	const { network, refIds } = query
+	const { network } = query
+
 	const _q = typeof query.q === "undefined" ? "" : query.q
 	const type = !query.type ? "tweets" : query.type
+
+	let refIds = !query["refIds[]"] ? [] : query["refIds[]"]
+	if (typeof refIds === "string") {
+		refIds = [refIds]
+	}
+	refIds = refIds.map((i) => Number(i))
 
 	let _pageIds = !query["pageIds[]"] ? [] : query["pageIds[]"]
 	if (typeof _pageIds === "string") {
@@ -51,7 +68,7 @@ const Search = ({ history, match }) => {
 		process.env.NODE_ENV === "development" ? logger(reducer) : reducer,
 		initialState
 	)
-	const { contradictions, fallacies, pageOptions, pages, tweets } = internalState
+	const { contradictions, fallacies, pageOptions, pages, refOptions, tweets } = internalState
 	const { twitterCount, youtubeCount } = pages
 
 	const [activeItem, setActiveItem] = useState(type)
@@ -77,12 +94,34 @@ const Search = ({ history, match }) => {
 	const [loadingMoreT, setLoadingMoreT] = useState(false)
 	const [pageNumberT, setPageNumberT] = useState(1)
 
-	// eslint-disable-next-line
 	const [newRefIds, setNewRefIds] = useState(refIds)
 
 	const [pageIds, setPageIds] = useState(_pageIds)
 	const [pageIdsF, setPageIdsF] = useState(_pageIdsF)
 	const [pageIdsC, setPageIdsC] = useState(_pageIdsC)
+
+	const getPageOptions = async () => {
+		const options = await getDropdownOptions()
+		dispatch({
+			type: "SET_PAGE_OPTIONS",
+			options
+		})
+	}
+
+	const getRefOptions = async (pageIds = null) => {
+		const options = await getReferenceOptions(pageIds)
+		dispatch({
+			type: "SET_REFERENCE_OPTIONS",
+			options
+		})
+	}
+
+	useEffect(() => {
+		getRefOptions(pageIdsF)
+		getPageOptions()
+		getCounts()
+		// eslint-disable-next-line
+	}, [])
 
 	useEffect(() => {
 		if (activeItem === "contradictions" && !contradictions.loaded) {
@@ -90,7 +129,7 @@ const Search = ({ history, match }) => {
 		}
 
 		if (activeItem === "fallacies" && !fallacies.loaded) {
-			getFallacies(q, refIds, pageIdsF)
+			getFallacies(q, newRefIds, pageIdsF)
 		}
 
 		if (activeItem === "pages" && !pages.loaded) {
@@ -101,19 +140,11 @@ const Search = ({ history, match }) => {
 			getTweets(q, pageIds)
 		}
 		// eslint-disable-next-line
-	}, [q, activeItem])
+	}, [activeItem])
 
 	useEffect(() => {
-		const getPageOptions = async () => {
-			const options = await getDropdownOptions()
-			dispatch({
-				type: "SET_PAGE_OPTIONS",
-				options
-			})
-		}
-		getPageOptions()
 		getCounts(q)
-	}, [])
+	}, [q])
 
 	const handleItemClick = (e, { name }) => {
 		setActiveItem(name)
@@ -132,7 +163,7 @@ const Search = ({ history, match }) => {
 		history.push(`/search/?${stringified}`)
 	}
 
-	const getCounts = async (q) => {
+	const getCounts = async (q = null) => {
 		await axios
 			.get(`${process.env.REACT_APP_BASE_URL}search/counts`, {
 				params: {
@@ -300,7 +331,6 @@ const Search = ({ history, match }) => {
 	const onChangeQ = async (e) => {
 		const value = e.target.value
 		setQ(value)
-		getCounts(value)
 
 		const stringified = qs.stringify(
 			{
@@ -327,7 +357,7 @@ const Search = ({ history, match }) => {
 			dispatch({
 				type: "TOGGLE_FALLACIES_LOADED"
 			})
-			await getFallacies(value, refIds, pageIdsF)
+			await getFallacies(value, newRefIds, pageIdsF)
 		}
 
 		if (activeItem === "pages") {
@@ -395,8 +425,30 @@ const Search = ({ history, match }) => {
 			{ arrayFormat: "bracket" }
 		)
 		history.push(`/search/?${stringified}`)
+		getRefOptions(value)
 		setPageIdsF(value)
 		getFallacies(q, newRefIds, value)
+	}
+
+	const onChangeRef = async (e, { value }) => {
+		dispatch({
+			type: "TOGGLE_FALLACIES_LOADED"
+		})
+		const stringified = qs.stringify(
+			{
+				q,
+				network,
+				pageIds,
+				pageIdsF,
+				pageIdsC,
+				refIds: value,
+				type: activeItem
+			},
+			{ arrayFormat: "bracket" }
+		)
+		history.push(`/search/?${stringified}`)
+		setNewRefIds(value)
+		getFallacies(q, value, pageIdsF)
 	}
 
 	const onChangeTwitterUser = async (e, { value }) => {
@@ -510,19 +562,37 @@ const Search = ({ history, match }) => {
 
 			{activeItem === "fallacies" && (
 				<>
-					<Dropdown
-						fluid
-						multiple
-						onChange={onChangeFallaciesUser}
-						options={pageOptions}
-						placeholder="Filter by page"
-						renderLabel={(item) => {
-							return <Label color="blue" content={item.name} image={item.image} />
-						}}
-						search
-						selection
-						value={pageIdsF}
-					/>
+					<Segment>
+						<Dropdown
+							fluid
+							multiple
+							onChange={onChangeFallaciesUser}
+							options={pageOptions}
+							placeholder="Filter by page"
+							renderLabel={(item) => {
+								return <Label color="blue" content={item.name} image={item.image} />
+							}}
+							search
+							selection
+							value={pageIdsF}
+						/>
+
+						<Divider />
+
+						<Dropdown
+							fluid
+							multiple
+							onChange={onChangeRef}
+							options={refOptions}
+							placeholder="Filter by fallacy"
+							renderLabel={(item) => {
+								return <Label color="blue" content={item.name} image={item.image} />
+							}}
+							search
+							selection
+							value={newRefIds}
+						/>
+					</Segment>
 
 					<Divider />
 

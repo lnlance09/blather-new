@@ -1,3 +1,4 @@
+import "./style.scss"
 import { Button, Dimmer, Header, Icon, Image } from "semantic-ui-react"
 import { useState } from "react"
 import Dropzone from "react-dropzone"
@@ -5,7 +6,8 @@ import ImagePic from "images/images/image-square.png"
 import PropTypes from "prop-types"
 
 const ImageUpload = ({
-	callback,
+	as = "image",
+	callback = () => null,
 	fluid = false,
 	headerSize = "medium",
 	img = ImagePic,
@@ -41,23 +43,54 @@ const ImageUpload = ({
 
 	return (
 		<div className="imageUpload">
-			<Dimmer.Dimmable
-				as={Image}
-				circular
-				dimmed={active}
-				dimmer={{ active, content, inverted: false }}
-				fluid={fluid}
-				onError={(i) => (i.target.src = ImagePic)}
-				onMouseEnter={() => setActive(true)}
-				onMouseLeave={() => setActive(false)}
-				size={fluid ? null : imgSize}
-				src={img}
-			/>
+			{as === "image" && (
+				<Dimmer.Dimmable
+					as={Image}
+					circular
+					dimmed={active}
+					dimmer={{ active, content, inverted: false }}
+					fluid={fluid}
+					onError={(i) => (i.target.src = ImagePic)}
+					onMouseEnter={() => setActive(true)}
+					onMouseLeave={() => setActive(false)}
+					size={fluid ? null : imgSize}
+					src={img}
+				/>
+			)}
+
+			{as === "segment" && (
+				<>
+					<Dropzone onDrop={onDrop}>
+						{({ getRootProps, getInputProps }) => (
+							<section>
+								<div {...getRootProps()}>
+									<input {...getInputProps()} />
+									<Header
+										className="imageUploadHeader"
+										inverted
+										size={headerSize}
+									>
+										<Button
+											circular
+											color="green"
+											icon="plus"
+											onClick={(e) => e.preventDefault()}
+											size={headerSize}
+										/>
+										<Header.Content>{msg}</Header.Content>
+									</Header>
+								</div>
+							</section>
+						)}
+					</Dropzone>
+				</>
+			)}
 		</div>
 	)
 }
 
 ImageUpload.propTypes = {
+	as: PropTypes.string,
 	callback: PropTypes.func,
 	fluid: PropTypes.bool,
 	headerSize: PropTypes.string,

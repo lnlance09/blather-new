@@ -18,6 +18,7 @@ class CreateFallaciesTable extends Migration
             $table->string('slug');
             $table->text('title');
             $table->text('explanation');
+            $table->unsignedBigInteger('group_id')->nullable()->default(null);
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('page_id');
             $table->unsignedBigInteger('ref_id');
@@ -27,6 +28,7 @@ class CreateFallaciesTable extends Migration
             $table->bigInteger('views')->default(1);
             $table->timestamps();
 
+            $table->foreign('group_id')->references('id')->on('groups');
             $table->foreign('user_id')->references('id')->on('users');
             $table->foreign('page_id')->references('id')->on('pages');
             $table->foreign('ref_id')->references('id')->on('reference');

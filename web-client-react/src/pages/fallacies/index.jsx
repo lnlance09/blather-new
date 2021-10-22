@@ -7,7 +7,6 @@ import {
 	Image,
 	List,
 	Placeholder,
-	Rail,
 	Segment,
 	Transition
 } from "semantic-ui-react"
@@ -15,6 +14,7 @@ import { useContext, useEffect, useReducer, useState } from "react"
 import { RedditShareButton, TwitterShareButton } from "react-share"
 import { CopyToClipboard } from "react-copy-to-clipboard"
 import { Link } from "react-router-dom"
+import { ReactSVG } from "react-svg"
 import { onClickRedirect } from "utils/linkFunctions"
 import { DisplayMetaTags } from "utils/metaFunctions"
 import { tweetOptions } from "options/tweet"
@@ -27,6 +27,8 @@ import FallacyList from "components/FallacyList"
 import html2canvas from "html2canvas"
 import initialState from "states/fallacy"
 import logger from "use-reducer-logger"
+import Logo from "images/logos/agent.svg"
+import Marked from "marked"
 import Moment from "react-moment"
 import PropTypes from "prop-types"
 import reducer from "reducers/fallacy"
@@ -60,7 +62,7 @@ const Fallacy = ({ history, match }) => {
 		process.env.NODE_ENV === "development" ? logger(reducer) : reducer,
 		initialState
 	)
-	const { fallacy, loaded } = internalState
+	const { error, fallacy, loaded } = internalState
 	const {
 		contradictionTwitter,
 		contradictionYouTube,
@@ -85,7 +87,7 @@ const Fallacy = ({ history, match }) => {
 	let video = null
 	let cVideo = null
 
-	if (loaded) {
+	if (loaded && !error) {
 		title = `${reference.name} #${id}`
 
 		if (typeof twitter !== "undefined" && twitter !== null) {
@@ -135,6 +137,9 @@ const Fallacy = ({ history, match }) => {
 					setVisible(true)
 				})
 				.catch(() => {
+					dispatch({
+						type: "SET_FALLACY_ERROR"
+					})
 					toast.error("There was an error")
 				})
 		}
@@ -231,209 +236,247 @@ const Fallacy = ({ history, match }) => {
 			<DisplayMetaTags page="fallacy" state={internalState} />
 			{loaded ? (
 				<>
-					<Header as="h1" className="fallacyHeader">
-						{title}
-						<Header.Subheader>Assigned to {page.name}</Header.Subheader>
-					</Header>
-					<Transition animation="scale" duration={900} visible={visible}>
-						<Segment id="fallacyMaterial" stacked>
-							<>
-								{tweet && (
-									<Tweet
-										config={{
-											...tweetOptions,
-											highlightedText,
-											onClickCallback: (e, history, id) => {
-												e.stopPropagation()
-												const isLink =
-													e.target.classList.contains("linkify")
-												if (!isLink) {
-													onClickRedirect(e, history, `/tweets/${id}`)
-												}
-											}
-										}}
-										counts={tweet.counts}
-										createdAt={tweet.createdAt}
-										extendedEntities={twitter.extendedEntities}
-										fullText={tweet.fullText}
-										history={history}
-										id={tweet.tweetId}
-										quoted={tweet.quoted}
-										retweeted={tweet.retweeted}
-										user={tweet.user}
-									/>
-								)}
-								{showDateDiff && (
-									<Divider
-										hidden
-										horizontal
-										id="fallacyDateDiff"
-										inverted={inverted}
+					{error && (
+						<>
+							<div className="centeredLoader">
+								<Header as="h1" image textAlign="center">
+									<ReactSVG className="errorSvg" src={Logo} />
+									<Header.Content>This fallacy does not exist</Header.Content>
+								</Header>
+							</div>
+						</>
+					)}
+
+					{!error && (
+						<>
+							<Header as="h1" className="fallacyHeader">
+								{title}
+								<Header.Subheader>Assigned to {page.name}</Header.Subheader>
+							</Header>
+							<Transition animation="scale" duration={900} visible={visible}>
+								<Segment id="fallacyMaterial" stacked>
+									<>
+										{tweet && (
+											<Tweet
+												config={{
+													...tweetOptions,
+													highlightedText,
+													onClickCallback: (e, history, id) => {
+														e.stopPropagation()
+														const isLink =
+															e.target.classList.contains("linkify")
+														if (!isLink) {
+															onClickRedirect(
+																e,
+																history,
+																`/tweets/${id}`
+															)
+														}
+													}
+												}}
+												counts={tweet.counts}
+												createdAt={tweet.createdAt}
+												extendedEntities={twitter.extendedEntities}
+												fullText={tweet.fullText}
+												history={history}
+												id={tweet.tweetId}
+												quoted={tweet.quoted}
+												retweeted={tweet.retweeted}
+												user={tweet.user}
+											/>
+										)}
+										{showDateDiff && (
+											<Divider
+												hidden
+												horizontal
+												id="fallacyDateDiff"
+												inverted={inverted}
+											>
+												<Icon
+													name="clock outline"
+													style={{ marginRight: "5px" }}
+												/>{" "}
+												<Moment ago from={dateOne}>
+													{dateTwo}
+												</Moment>{" "}
+												<div style={{ marginLeft: 3 }}>apart</div>
+											</Divider>
+										)}
+										{cTweet && (
+											<Tweet
+												config={{
+													...tweetOptions,
+													highlightedText: highlightedTextC
+												}}
+												counts={cTweet.counts}
+												createdAt={cTweet.createdAt}
+												entities={cTweet.entities}
+												extendedEntities={cTweet.extendedEntities}
+												fullText={cTweet.fullText}
+												history={history}
+												id={cTweet.tweetId}
+												quoted={cTweet.quoted}
+												retweeted={cTweet.retweeted}
+												user={cTweet.user}
+											/>
+										)}
+									</>
+								</Segment>
+							</Transition>
+
+							<List className="shareList" horizontal size="tiny">
+								<List.Item>
+									<TwitterShareButton title={title} url={url}>
+										<Button circular color="twitter" icon="twitter" />
+									</TwitterShareButton>
+								</List.Item>
+								<List.Item>
+									<RedditShareButton url={url}>
+										<Button circular color="orange" icon="reddit alien" />
+									</RedditShareButton>
+								</List.Item>
+								<List.Item position="right">
+									<CopyToClipboard
+										onCopy={() => toast.success("Copied")}
+										text={url}
 									>
-										<Icon name="clock outline" style={{ marginRight: "5px" }} />{" "}
-										<Moment ago from={dateOne}>
-											{dateTwo}
-										</Moment>{" "}
-										<div style={{ marginLeft: 3 }}>apart</div>
-									</Divider>
+										<>
+											<Button circular color="blue" icon="paperclip" />{" "}
+										</>
+									</CopyToClipboard>
+								</List.Item>
+								{canScreenshot && (
+									<List.Item position="right">
+										<Button
+											circular
+											className="screenshotButton"
+											color="olive"
+											icon="camera"
+											loading={downloading}
+											onClick={captureScreenshot}
+											style={{ verticalAlign: "none" }}
+										/>
+									</List.Item>
 								)}
-								{cTweet && (
-									<Tweet
-										config={{
-											...tweetOptions,
-											highlightedText: highlightedTextC
-										}}
-										counts={cTweet.counts}
-										createdAt={cTweet.createdAt}
-										entities={cTweet.entities}
-										extendedEntities={cTweet.extendedEntities}
-										fullText={cTweet.fullText}
-										history={history}
-										id={cTweet.tweetId}
-										quoted={cTweet.quoted}
-										retweeted={cTweet.retweeted}
-										user={cTweet.user}
+							</List>
+
+							<Divider />
+
+							<Segment basic className="explanationSegment">
+								<Header>
+									<Image
+										circular
+										onError={(i) => (i.target.src = defaultImg)}
+										src={user.image}
 									/>
-								)}
-							</>
-						</Segment>
-					</Transition>
-
-					<List className="shareList" horizontal size="tiny">
-						<List.Item>
-							<TwitterShareButton title={title} url={url}>
-								<Button circular color="twitter" icon="twitter" />
-							</TwitterShareButton>
-						</List.Item>
-						<List.Item>
-							<RedditShareButton url={url}>
-								<Button circular color="orange" icon="reddit alien" />
-							</RedditShareButton>
-						</List.Item>
-						<List.Item position="right">
-							<CopyToClipboard onCopy={() => toast.success("Copied")} text={url}>
-								<>
-									<Button circular color="blue" icon="paperclip" />{" "}
-								</>
-							</CopyToClipboard>
-						</List.Item>
-						{canScreenshot && (
-							<List.Item position="right">
-								<Button
-									circular
-									className="screenshotButton"
-									color="olive"
-									icon="camera"
-									loading={downloading}
-									onClick={captureScreenshot}
-									style={{ verticalAlign: "none" }}
+									<Header.Content>
+										{user.name}
+										<Header.Subheader>
+											<Moment date={fallacy.createdAt} fromNow />
+										</Header.Subheader>
+									</Header.Content>
+								</Header>
+								<div
+									dangerouslySetInnerHTML={{
+										__html: Marked(explanation)
+									}}
 								/>
-							</List.Item>
-						)}
-					</List>
+							</Segment>
 
-					<Divider />
+							<Divider />
 
-					<Segment basic className="explanationSegment">
-						<Header>
-							<Image
-								circular
-								onError={(i) => (i.target.src = defaultImg)}
-								src={user.image}
+							<Segment secondary>
+								<Header as="h3">{reference.name}</Header>
+								<p>{reference.description}</p>
+							</Segment>
+
+							<FallacyList
+								fallacies={internalState.fallacies}
+								loading={loading}
+								loadingMore={loadingMore}
+								onClickFallacy={onClickFallacy}
 							/>
-							<Header.Content>
-								{user.name}
-								<Header.Subheader>
-									<Moment date={fallacy.createdAt} fromNow />
-								</Header.Subheader>
-							</Header.Content>
-						</Header>
-						<p>{explanation}</p>
-					</Segment>
 
-					<Divider />
+							<Divider />
 
-					<Segment secondary>
-						<Header as="h3">{reference.name}</Header>
-						<p>{reference.description}</p>
-					</Segment>
-
-					<FallacyList
-						fallacies={internalState.fallacies}
-						loading={loading}
-						loadingMore={loadingMore}
-						onClickFallacy={onClickFallacy}
-					/>
-
-					<Divider />
-
-					<Card className="retractionCard" fluid>
-						<Card.Content>
-							<Image
-								bordered
-								circular
-								floated="right"
-								onClick={() => history.push(`/${user.username}`)}
-								onError={(i) => (i.target.src = defaultImg)}
-								size="mini"
-								src={page.image}
-							/>
-							<Card.Header>
-								{retracted ? "Retracted" : "Still waiting for a retraction..."}
-							</Card.Header>
-							<Card.Meta>
-								{retracted ? (
-									`Nice work, ${user.name}`
-								) : (
-									<>
-										Waiting for{" "}
-										<Moment ago date={createdAt} fromNow interval={60000} />
-										...
-									</>
-								)}
-							</Card.Meta>
-							<Card.Description>
-								{retracted ? (
-									<>
-										<Link to={`/pages/${page.username}`}>{page.name}</Link> has
-										admitted that this is poor reasoning.
-									</>
-								) : (
-									<p>
-										{canRetract ? (
-											`${page.name}, this is an opportunity to show your
-												followers that you have enough courage to admit that
-												you were wrong.`
+							<Card className="retractionCard" fluid>
+								<Card.Content>
+									<Image
+										bordered
+										circular
+										floated="right"
+										onClick={() => history.push(`/${user.username}`)}
+										onError={(i) => (i.target.src = defaultImg)}
+										size="mini"
+										src={page.image}
+									/>
+									<Card.Header>
+										{retracted
+											? "Retracted"
+											: "Still waiting for a retraction..."}
+									</Card.Header>
+									<Card.Meta>
+										{retracted ? (
+											`Nice work, ${user.name}`
 										) : (
 											<>
-												<Link to={`/${user.username}`}>{page.name}</Link>,
-												you can retract this by{" "}
-												<Link to="/signin">signing in</Link>.
+												Waiting for{" "}
+												<Moment
+													ago
+													date={createdAt}
+													fromNow
+													interval={60000}
+												/>
+												...
 											</>
 										)}
-									</p>
-								)}
-							</Card.Description>
-						</Card.Content>
-						<Card.Content extra>
-							{retracted ? (
-								<Button active color="green" fluid size="large">
-									<Icon name="checkmark" />
-									Retracted
-								</Button>
-							) : (
-								<Button
-									content="Retract"
-									disabled={!canRetract}
-									fluid
-									negative
-									onClick={retractLogic}
-								/>
-							)}
-						</Card.Content>
-					</Card>
-
-					<Divider />
+									</Card.Meta>
+									<Card.Description>
+										{retracted ? (
+											<>
+												<Link to={`/pages/${page.username}`}>
+													{page.name}
+												</Link>{" "}
+												has admitted that this is poor reasoning.
+											</>
+										) : (
+											<p>
+												{canRetract ? (
+													`${page.name}, this is an opportunity to show your
+												followers that you have enough courage to admit that
+												you were wrong.`
+												) : (
+													<>
+														<Link to={`/${user.username}`}>
+															{page.name}
+														</Link>
+														, you can retract this by{" "}
+														<Link to="/signin">signing in</Link>.
+													</>
+												)}
+											</p>
+										)}
+									</Card.Description>
+								</Card.Content>
+								<Card.Content extra>
+									{retracted ? (
+										<Button active color="green" fluid size="large">
+											<Icon name="checkmark" />
+											Retracted
+										</Button>
+									) : (
+										<Button
+											content="Retract"
+											disabled={!canRetract}
+											fluid
+											negative
+											onClick={retractLogic}
+										/>
+									)}
+								</Card.Content>
+							</Card>
+						</>
+					)}
 				</>
 			) : (
 				<div className="placeholderWrapper">
