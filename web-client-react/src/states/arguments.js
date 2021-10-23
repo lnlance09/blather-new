@@ -1,5 +1,6 @@
 const initialState = {
-	data: [{}, {}, {}, {}, {}, {}, {}, {}, {}],
+	argOptions: [],
+	args: [{}, {}, {}, {}, {}, {}, {}, {}, {}],
 	error: false,
 	loaded: false
 }

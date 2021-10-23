@@ -18,11 +18,11 @@ class Argument extends JsonResource
      */
     public function toArray($request)
     {
-        // dd($this->tweets);
         return [
             'id' => $this->id,
             'contradictionCount' => $this->contradictions_count,
             'contradictions' => new ContradictionCollection($this->contradictions),
+            'contradictionOptions' => array_column($this->contradictions->toArray(), 'id'),
             'description' => $this->description,
             'explanation' => $this->explanation,
             'imageCount' => $this->images_count,

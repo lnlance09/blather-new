@@ -3,9 +3,19 @@ const reducer = (state, action) => {
 		case "GET_ARGUMENTS":
 			return {
 				...state,
-				data: action.arguments,
+				args: action.args,
 				error: false,
 				loaded: true
+			}
+		case "SET_ARGUMENT_OPTIONS":
+			return {
+				...state,
+				argOptions: action.options
+			}
+		case "UPDATE_ARGUMENTS":
+			return {
+				...state,
+				args: action.args
 			}
 		default:
 			throw new Error()

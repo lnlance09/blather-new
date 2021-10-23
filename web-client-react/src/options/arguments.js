@@ -1,4 +1,20 @@
-export const argOptions = [
+import axios from "axios"
+
+export const getArgumentOptions = async () => {
+	return await axios
+		.get(`${process.env.REACT_APP_BASE_URL}arguments/showOptions`, {
+			params: {}
+		})
+		.then((response) => {
+			const { data } = response.data
+			return data
+		})
+		.catch(() => {
+			console.error("There was an error")
+		})
+}
+
+export const argumentOptions = [
 	{ key: 1, text: "Right-Wing Arguments", value: 1 },
 	{ key: 2, text: "MLM Arguments", value: 2, disabled: true },
 	{ key: 3, text: "Anti-Vaxx Arguments", value: 3, disabled: true },

@@ -111,5 +111,30 @@ class ReferenceController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $user = $request->user();
+        $value = $request->input('value', null);
+
+        if ($user->id !== 1) {
+            return response([
+                'message' => 'Unauthorized'
+            ], 403);
+        }
+
+        $ref = Reference::where('id', $id)->first();
+
+        if (empty($ref)) {
+            return response([
+                'message' => 'Reference does not exist'
+            ], 404);
+        }
+
+        $ref->description = $value;
+        $ref->save();
+
+        $refs = Reference::withCount(['fallacies'])
+            ->orderBy('name')
+            ->paginate(100);
+
+        return new ReferenceCollection($refs);
     }
 }

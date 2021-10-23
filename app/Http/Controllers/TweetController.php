@@ -96,7 +96,6 @@ class TweetController extends Controller
                 'response_format' => 'array',
                 'tweet_mode' => 'extended'
             ]);
-            dd($tweet);
             $tweetDb = Tweet::where('tweet_id', $tweet['id_str'])->first();
 
             if ($tweetDb) {

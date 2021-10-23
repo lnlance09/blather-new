@@ -18,6 +18,7 @@ class CreateReferenceTable extends Migration
             $table->string('name');
             $table->text('description');
             $table->text('example');
+            $table->timestamps();
         });
     }
 

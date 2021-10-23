@@ -23,6 +23,9 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/arguments', [ArgumentController::class, 'index']);
+Route::get('/arguments/showOptions', [ArgumentController::class, 'showOptions']);
+Route::get('/arguments/{id}', [ArgumentController::class, 'show']);
+Route::post('/arguments/{id}/update', [ArgumentController::class, 'update'])->middleware(['auth:api', 'verified']);
 
 Route::get('/fallacies/migrate', [FallacyController::class, 'migrate']);
 Route::get('/fallacies', [FallacyController::class, 'index']);
@@ -41,6 +44,7 @@ Route::get('/pages/{network}/{username}', [PageController::class, 'show']);
 
 Route::get('/reference', [ReferenceController::class, 'index']);
 Route::get('/reference/showOptions', [ReferenceController::class, 'showOptions']);
+Route::post('/reference/{id}/update', [ReferenceController::class, 'update'])->middleware(['auth:api', 'verified']);
 
 Route::get('/search/counts', [SearchController::class, 'counts']);
 

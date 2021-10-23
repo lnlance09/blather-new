@@ -4,8 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\Argument as ArgumentResource;
 use App\Http\Resources\ArgumentCollection;
+use App\Http\Resources\ArgumentOptionCollection;
 use App\Models\Argument;
+use App\Models\ArgumentContradiction;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class ArgumentController extends Controller
 {
@@ -87,6 +90,12 @@ class ArgumentController extends Controller
         return new ArgumentResource($arg);
     }
 
+    public function showOptions(Request $request)
+    {
+        $args = Argument::orderBy('description', 'asc')->get();
+        return new ArgumentOptionCollection($args);
+    }
+
     /**
      * Store a newly created resource in storage.
      *
@@ -102,11 +111,59 @@ class ArgumentController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Argument  $argument
+     * @param  Int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Argument $argument)
+    public function update(Request $request, $id)
     {
-        //
+
+        $user = $request->user();
+
+        $description = $request->input('description', null);
+        $explanation = $request->input('explanation', null);
+        $contradictions = $request->input('contradictions', []);
+
+        if ($user->id !== 1) {
+            return response([
+                'message' => 'Unauthorized'
+            ], 403);
+        }
+
+        $arg = Argument::where('id', $id)->first();
+
+        if (empty($arg)) {
+            return response([
+                'message' => 'Argument does not exist'
+            ], 404);
+        }
+
+        $arg->description = $description;
+        $arg->explanation = $explanation;
+        $arg->slug = Str::slug($description);
+        $arg->save();
+
+        foreach ($contradictions as $c) {
+            $cExists = ArgumentContradiction::where([
+                'argument_id' => $id,
+                'contradicting_argument_id' => $c['id']
+            ])->count() == 1;
+
+            if (!$cExists) {
+                ArgumentContradiction::create([
+                    'argument_id' => $id,
+                    'contradicting_argument_id' => $c['id']
+                ]);
+            }
+        }
+
+        ArgumentContradiction::where('id', $id)
+            ->whereNotIn('contradicting_argument_id', $contradictions)
+            ->delete();
+
+        $args = Argument::with(['contradictions.contradiction', 'images', 'tweets.tweet'])
+            ->withCount(['contradictions', 'images', 'tweets'])
+            ->get();
+
+        return new ArgumentCollection($args);
     }
 }

@@ -147,17 +147,30 @@ $logoHeight: 40px;
 
                 .dropdown.bellDropdown {
                     .menu.transition.visible {
-                        right: -164px;
+                        border: none;
+                        border-radius: 0;
+                        right: -210px;
                         top: 59px;
                         width: 360px;
                     }
                 }
 
                 .dropdown.profileDropdown {
+                    align-items: center;
+                    display: flex;
+                    justify-content: flex-end;
+                    width: 200px;
+
+                    img {
+                        float: right;
+                    }
+
                     .menu.transition.visible {
-                        left: 4px;
+                        border: none;
+                        border-radius: 0;
+                        left: 14px;
                         top: 55px;
-                        width: 160px;
+                        width: 200px;
                     }
                 }
             }
