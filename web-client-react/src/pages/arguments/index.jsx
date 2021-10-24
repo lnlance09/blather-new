@@ -1,15 +1,5 @@
-import {
-	Button,
-	Card,
-	Divider,
-	Dropdown,
-	Form,
-	Header,
-	Icon,
-	Label,
-	Placeholder
-} from "semantic-ui-react"
-import { useContext, useEffect, useReducer, useState } from "react"
+import { Button, Card, Divider, Dropdown, Header, Icon, Placeholder } from "semantic-ui-react"
+import { useContext, useEffect, useReducer } from "react"
 import { getArgumentOptions } from "options/arguments"
 import { DisplayMetaTags } from "utils/metaFunctions"
 import { argumentOptions } from "options/arguments"
@@ -23,6 +13,7 @@ import logger from "use-reducer-logger"
 import PropTypes from "prop-types"
 import reducer from "reducers/arguments"
 import ThemeContext from "themeContext"
+import ArgumentForm from "components/ArgumentForm"
 
 const toastConfig = getConfig()
 toast.configure(toastConfig)
@@ -36,8 +27,6 @@ const Arguments = ({ history }) => {
 		initialState
 	)
 	const { argOptions, args, loaded } = internalState
-
-	const [contradictions, setContradictions] = useState([])
 
 	const canEdit = auth && user.id === 1
 
@@ -88,21 +77,12 @@ const Arguments = ({ history }) => {
 					}
 				}
 			)
-			.then((response) => {
-				const args = response.data.data
-				dispatch({
-					type: "UPDATE_ARGUMENT",
-					args
-				})
+			.then(() => {
 				toast.success("Changed!")
 			})
 			.catch(() => {
 				console.error("There was an error")
 			})
-	}
-
-	const onChangeC = async (e, { value }) => {
-		setContradictions(value)
 	}
 
 	const PlaceholderContent = (
@@ -148,79 +128,19 @@ const Arguments = ({ history }) => {
 				const { contradictions, description, explanation } = arg
 				const hasContradictions = loaded ? !_.isEmpty(contradictions.data) : false
 				return (
-					<Card fluid>
+					<Card fluid key={`cardArg${i}`}>
 						{loaded ? (
 							<>
 								<Card.Content>
 									{canEdit ? (
-										<>
-											<Form>
-												<Form.Field>
-													<input
-														defaultValue={arg.description}
-														id={`descText${i}`}
-														rows={6}
-														placeholder="Enter title"
-														style={{
-															width: "100%"
-														}}
-													/>
-												</Form.Field>
-												<Form.Field>
-													<textarea
-														defaultValue={arg.explanation}
-														id={`expText${i}`}
-														rows={6}
-														placeholder="Enter description"
-														style={{
-															width: "100%"
-														}}
-													/>
-												</Form.Field>
-												<Form.Field>
-													<Dropdown
-														fluid
-														multiple
-														onChange={onChangeC}
-														options={argOptions}
-														placeholder="Contradictions"
-														renderLabel={(item) => {
-															return (
-																<Label
-																	color="blue"
-																	content={item.name}
-																/>
-															)
-														}}
-														search
-														selection
-														value={arg.contradictionOptions}
-													/>
-												</Form.Field>
-												<Form.Field>
-													<Button
-														color="red"
-														content="Save"
-														fluid
-														onClick={() => {
-															const explanation =
-																document.getElementById(
-																	`expText${i}`
-																).value
-															const description =
-																document.getElementById(
-																	`descText${i}`
-																).value
-															updateArg(
-																arg.id,
-																description,
-																explanation
-															)
-														}}
-													/>
-												</Form.Field>
-											</Form>
-										</>
+										<ArgumentForm
+											contradictions={arg.contradictionOptions}
+											description={description}
+											explanation={explanation}
+											id={arg.id}
+											options={argOptions}
+											updateArg={updateArg}
+										/>
 									) : (
 										<>
 											<Card.Header>{description}</Card.Header>

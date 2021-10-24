@@ -287,36 +287,6 @@ class FallacyController extends Controller
         //
     }
 
-    public function migrate()
-    {
-        $pages = Page::all();
-
-        foreach ($pages as $page) {
-            $id = $page->id;
-            $image = 'https://s3.amazonaws.com/blather22/' . $page->image;
-            $network = $page->network;
-            $pageId = $page->social_media_id;
-
-            $ext = $network === 'twitter' ? 'jpg' : 'png';
-            $img = 'pages/' . $network . '/' . Str::random(24) . '.' . $ext;
-
-            $uploaded = false;
-
-            try {
-                Storage::disk('s3')->put($img, file_get_contents($image));
-                $uploaded = true;
-            } catch (\Exception $e) {
-                echo "Could not fetch image";
-            }
-
-            if ($uploaded) {
-                $page = Page::where('id', $id)->first();
-                $page->image = $img;
-                $page->save();
-            }
-        }
-    }
-
     /**
      * Display the specified resource.
      *

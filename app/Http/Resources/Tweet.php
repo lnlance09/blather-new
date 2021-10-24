@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Http\Resources\ArgumentExampleTweetCollection;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class Tweet extends JsonResource
@@ -93,6 +94,8 @@ class Tweet extends JsonResource
 
         return [
             'id' => $this->id,
+            'arguments' => new ArgumentExampleTweetCollection($this->arguments),
+            'argumentOptions' => array_column($this->arguments->toArray(), 'argument_id'),
             'contradictionCount' => $this->contradictions_count,
             'counts' => [
                 'fallacies' => $this->fallacies_count,
@@ -107,7 +110,7 @@ class Tweet extends JsonResource
             'tweetId' => $this->tweet_id,
             'user' => [
                 'id' => $this->page->id,
-                'image' => env('AWS_URL', 'https://s3.amazonaws.com/blather22/') . $this->page->image,
+                'image' => env('AWS_URL', 'https://blather-new.s3.us-west-2.amazonaws.com/') . $this->page->image,
                 'name' => $this->page->name,
                 'username' => $this->page->username,
             ],

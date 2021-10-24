@@ -19,6 +19,7 @@ const reducer = (state, action) => {
 			return {
 				...state,
 				fallacies: {
+					count: action.total,
 					data: fallacies,
 					loaded: true
 				}
@@ -26,9 +27,21 @@ const reducer = (state, action) => {
 		case "GET_TWEET":
 			return {
 				...state,
+				arguments: action.arguments,
 				error: false,
 				loaded: true,
 				tweet: action.tweet
+			}
+		case "SET_ARGUMENT_OPTIONS":
+			return {
+				...state,
+				argOptions: action.options
+			}
+		case "SET_TWEET_ERROR":
+			return {
+				...state,
+				error: true,
+				loaded: true
 			}
 		default:
 			throw new Error()

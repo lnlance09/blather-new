@@ -51,6 +51,7 @@ Route::get('/search/counts', [SearchController::class, 'counts']);
 Route::get('/tweets', [TweetController::class, 'index']);
 Route::get('/tweets/showTwitterList', [TweetController::class, 'showTwitterList']);
 Route::get('/tweets/{id}', [TweetController::class, 'show']);
+Route::post('/tweets/{id}/addArguments', [TweetController::class, 'addArguments'])->middleware(['auth:api', 'verified']);
 
 Route::get('/users', [UserController::class, 'index']);
 Route::get('/users/verifyForgotCode', [UserController::class, 'verifyForgotCode']);

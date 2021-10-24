@@ -1,10 +1,9 @@
 import { Button, Divider, Form, Header, Label, Placeholder, Segment } from "semantic-ui-react"
-import { useContext, useEffect, useReducer } from "react"
+import { useContext, useEffect, useReducer, useState } from "react"
 import { DisplayMetaTags } from "utils/metaFunctions"
 import { formatPlural } from "utils/textFunctions"
 import { getConfig } from "options/toast"
 import { toast } from "react-toastify"
-// import { Link } from "react-router-dom"
 import axios from "axios"
 import DefaultLayout from "layouts/default"
 import initialState from "states/reference"
@@ -26,6 +25,8 @@ const Reference = ({ history }) => {
 		initialState
 	)
 	const { loaded, reference } = internalState
+
+	const [loading, setLoading] = useState(false)
 
 	const canEdit = auth && user.id === 1
 
@@ -90,6 +91,7 @@ const Reference = ({ history }) => {
 				return (
 					<Segment
 						className="refSegment"
+						key={`refSegment${i}`}
 						onClick={() => {
 							if (loaded && !canEdit) {
 								history.push(`/search/fallacies?types[]=${item.id}`)
@@ -100,35 +102,35 @@ const Reference = ({ history }) => {
 							<>
 								<Header as="h3">{item.name}</Header>
 								{canEdit ? (
-									<>
-										<Form>
-											<Form.Field>
-												<textarea
-													defaultValue={item.description}
-													id={`refText${i}`}
-													rows={6}
-													placeholder="Enter description"
-													style={{
-														width: "100%"
-													}}
-												/>
-											</Form.Field>
-											<Form.Field>
-												<Button
-													basic
-													color="blue"
-													content="Save"
-													fluid
-													onClick={() => {
-														const value = document.getElementById(
-															`refText${i}`
-														).value
-														updateRef(item.id, value)
-													}}
-												/>
-											</Form.Field>
-										</Form>
-									</>
+									<Form>
+										<Form.Field>
+											<textarea
+												defaultValue={item.description}
+												id={`refText${i}`}
+												rows={6}
+												placeholder="Enter description"
+												style={{
+													width: "100%"
+												}}
+											/>
+										</Form.Field>
+										<Form.Field>
+											<Button
+												color="orange"
+												content="Save"
+												fluid
+												loading={loading}
+												onClick={async () => {
+													setLoading(true)
+													const value = document.getElementById(
+														`refText${i}`
+													).value
+													await updateRef(item.id, value)
+													setLoading(false)
+												}}
+											/>
+										</Form.Field>
+									</Form>
 								) : (
 									<p>{item.description}</p>
 								)}

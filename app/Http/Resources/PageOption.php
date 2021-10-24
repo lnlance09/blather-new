@@ -24,7 +24,7 @@ class PageOption extends JsonResource
             /*
             'image' => [
                 'avatar' => true,
-                'src' => env('AWS_URL', 'https://s3.amazonaws.com/blather22/') . $this->image
+                'src' => env('AWS_URL', 'https://blather-new.s3.us-west-2.amazonaws.com/') . $this->image
             ],
             */
             'key' => $this->id,

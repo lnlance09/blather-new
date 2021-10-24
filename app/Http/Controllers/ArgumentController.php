@@ -145,13 +145,13 @@ class ArgumentController extends Controller
         foreach ($contradictions as $c) {
             $cExists = ArgumentContradiction::where([
                 'argument_id' => $id,
-                'contradicting_argument_id' => $c['id']
+                'contradicting_argument_id' => $c
             ])->count() == 1;
 
             if (!$cExists) {
                 ArgumentContradiction::create([
                     'argument_id' => $id,
-                    'contradicting_argument_id' => $c['id']
+                    'contradicting_argument_id' => $c
                 ]);
             }
         }

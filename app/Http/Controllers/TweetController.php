@@ -5,13 +5,14 @@ namespace App\Http\Controllers;
 use App\Http\Resources\Tweet as TweetResource;
 use App\Http\Resources\TweetCollection;
 use App\Http\Resources\TweetLiveCollection;
+use App\Models\Argument;
+use App\Models\ArgumentExampleTweet;
 use App\Models\Page;
 use App\Models\Tweet;
 use Atymic\Twitter\Facade\Twitter;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use Intervention\Image\ImageManagerStatic as Image;
 
 class TweetController extends Controller
 {
@@ -22,18 +23,18 @@ class TweetController extends Controller
      */
     public function index(Request $request)
     {
-        $_q = $request->input('q');
+        $q = $request->input('q');
         $pageIds = $request->input('pageIds', null);
         $sort = $request->input('sort', 'id');
         $dir = $request->input('dir', 'asc');
 
-        $tweets = Tweet::where(function ($q) use ($_q) {
-            $q->where(function ($query) use ($_q) {
-                $query->where('full_text', 'LIKE', '%' . $_q . '%');
-            })->orWhere(function ($query) use ($_q) {
-                $query->where('retweeted_full_text', 'LIKE', '%' . $_q . '%');
-            })->orWhere(function ($query) use ($_q) {
-                $query->where('quoted_full_text', 'LIKE', '%' . $_q . '%');
+        $tweets = Tweet::where(function ($query) use ($q) {
+            $query->where(function ($query) use ($q) {
+                $query->where('full_text', 'LIKE', '%' . $q . '%');
+            })->orWhere(function ($query) use ($q) {
+                $query->where('retweeted_full_text', 'LIKE', '%' . $q . '%');
+            })->orWhere(function ($query) use ($q) {
+                $query->where('quoted_full_text', 'LIKE', '%' . $q . '%');
             });
         });
 
@@ -46,6 +47,60 @@ class TweetController extends Controller
             ->orderBy($sort, $dir)
             ->paginate(15);
         return new TweetCollection($tweets);
+    }
+
+    public function addArguments(Request $request, $id)
+    {
+        $user = $request->user();
+        if ($user->id !== 1) {
+            return response([
+                'message' => 'Unauthorized'
+            ], 401);
+        }
+
+        $args = $request->input('args', []);
+
+        $tweet = Tweet::where('id', $id)->first();
+        if (!$tweet) {
+            return response([
+                'message' => 'Invalid tweet'
+            ], 404);
+        }
+
+        if (!is_array($args)) {
+            return response([
+                'message' => 'Invalid args'
+            ], 422);
+        }
+
+        for ($i = 0; $i < count($args); $i++) {
+            $argId = $args[$i];
+            $count = Argument::where('id', $argId)->count();
+            if ($count == 0) {
+                continue;
+            }
+
+            $count = ArgumentExampleTweet::where([
+                'argument_id' => $argId,
+                'tweet_id' => $id
+            ])->count();
+            if ($count == 1) {
+                continue;
+            }
+
+            ArgumentExampleTweet::create([
+                'argument_id' => $argId,
+                'tweet_id' => $id
+            ]);
+        }
+
+        ArgumentExampleTweet::where('tweet_id', $id)
+            ->whereNotIn('argument_id', $args)
+            ->delete();
+
+        return response([
+            'message' => 'Success'
+        ]);
     }
 
     /**
@@ -246,7 +301,8 @@ class TweetController extends Controller
         }
 
         $tweet = Tweet::where('tweet_id', $id)
-            ->withCount(['fallacies'])
+            ->with(['arguments.argument'])
+            ->withCount(['arguments', 'fallacies'])
             ->first();
 
         if (empty($tweet)) {

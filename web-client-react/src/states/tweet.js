@@ -1,4 +1,5 @@
 const initialState = {
+	argOptions: [],
 	contradictions: {
 		count: 0,
 		data: [{}, {}, {}],
@@ -6,6 +7,7 @@ const initialState = {
 	},
 	error: false,
 	fallacies: {
+		count: 0,
 		data: [{}, {}, {}],
 		loaded: false
 	},

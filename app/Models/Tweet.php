@@ -65,6 +65,11 @@ class Tweet extends Model
         'retweeted_created_at' => 'datetime'
     ];
 
+    public function arguments()
+    {
+        return $this->hasMany(ArgumentExampleTweet::class);
+    }
+
     public function fallacies()
     {
         return $this->hasMany(FallacyTwitter::class);

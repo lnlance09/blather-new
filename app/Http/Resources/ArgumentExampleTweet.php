@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Http\Resources\Argument as ArgumentResource;
 use App\Http\Resources\Tweet as TweetResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -15,9 +16,20 @@ class ArgumentExampleTweet extends JsonResource
      */
     public function toArray($request)
     {
+        $argument = [];
+        if ($request->input('argument') == 1) {
+            $argument = new ArgumentResource($this->argument);
+        }
+
+        $tweet = [];
+        if ($request->input('tweet') == 1) {
+            $tweet = new TweetResource($this->tweet);
+        }
+
         return [
             'id' => $this->id,
-            'tweet' => new TweetResource($this->tweet),
+            'argument' => $argument,
+            'tweet' => $tweet,
         ];
     }
 }

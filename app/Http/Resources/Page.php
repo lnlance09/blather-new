@@ -21,14 +21,14 @@ class Page extends JsonResource
         if ($network === 'youtube') {
             $externalLink = 'https://www.youtube.com/channel/' . $socialMediaId;
         }
-    
+
         return [
             'id' => $this->id,
             'bio' => $this->bio,
             'contradictionCount' => $this->contradictions_count,
-            'fallacyCount' => $this->fallacies_count, 
+            'fallacyCount' => $this->fallacies_count,
             'externalLink' => $externalLink,
-            'image' => env('AWS_URL', 'https://s3.amazonaws.com/blather22/') . $this->image,
+            'image' => env('AWS_URL', 'https://blather-new.s3.us-west-2.amazonaws.com/') . $this->image,
             'name' => $this->name,
             'network' => $network,
             'socialMediaId' => $socialMediaId,

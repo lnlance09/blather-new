@@ -168,7 +168,6 @@ const PageHeader = ({ activeItem, history, q, simple }) => {
 
 	const ProfileDropdown = (
 		<Dropdown
-			borderless
 			className={`profileDropdown ${auth ? "auth" : ""}`}
 			icon={false}
 			trigger={

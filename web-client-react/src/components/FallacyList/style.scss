@@ -18,8 +18,10 @@
             }
 
             .segment {
+                width: 100%;
+            
                 .explanation {
-                    display: flex;
+                    // display: flex;
                     font-size: 17px;
 
                     img {
@@ -64,7 +66,7 @@
     .card {
         .explanation {
             p {
-                display: flex;
+                // display: flex;
                 font-size: 17px;
             }
         }
