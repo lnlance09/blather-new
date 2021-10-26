@@ -39,7 +39,15 @@ const PageList = ({
 		<div className="pageList">
 			<Card.Group className={inverted ? "inverted" : ""} itemsPerRow={3} stackable>
 				{pages.map((page, i) => {
-					const { bio, image, fallacyCount, name, network, username } = page
+					const {
+						bio,
+						contradictionCount,
+						image,
+						fallacyCount,
+						name,
+						network,
+						username
+					} = page
 					const newBio = bio
 						? linkifyHtml(bio, {
 								className: "linkify",
@@ -71,14 +79,28 @@ const PageList = ({
 											}}
 										/>
 									</Card.Content>
-									<Card.Content extra>
-										<NumberFormat
-											displayType={"text"}
-											thousandSeparator
-											value={fallacyCount}
-										/>{" "}
-										{formatPlural(fallacyCount, "fallacy")}
-									</Card.Content>
+									{fallacyCount > 0 && (
+										<Card.Content extra>
+											Assigned{" "}
+											<NumberFormat
+												displayType={"text"}
+												thousandSeparator
+												value={fallacyCount}
+											/>{" "}
+											{formatPlural(fallacyCount, "fallacy")}
+										</Card.Content>
+									)}
+									{contradictionCount > 0 && (
+										<Card.Content extra>
+											Assigned{" "}
+											<NumberFormat
+												displayType={"text"}
+												thousandSeparator
+												value={contradictionCount}
+											/>{" "}
+											{formatPlural(contradictionCount, "contradiction")}
+										</Card.Content>
+									)}
 								</>
 							)}
 						</Card>

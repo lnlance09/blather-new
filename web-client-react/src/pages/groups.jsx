@@ -5,7 +5,7 @@ import DefaultLayout from "layouts/default"
 import PropTypes from "prop-types"
 import ThemeContext from "themeContext"
 
-const NotFound = ({ history }) => {
+const Groups = ({ history }) => {
 	const { inverted } = useContext(ThemeContext)
 
 	return (
@@ -26,8 +26,8 @@ const NotFound = ({ history }) => {
 	)
 }
 
-NotFound.propTypes = {
+Groups.propTypes = {
 	history: PropTypes.object
 }
 
-export default NotFound
+export default Groups

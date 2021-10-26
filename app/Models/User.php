@@ -94,6 +94,11 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(Comment::class);
     }
 
+    public function contradictions()
+    {
+        return $this->hasMany(Fallacy::class)->where('ref_id', '21');
+    }
+
     public function likes()
     {
         return $this->hasMany(CommentLike::class);
@@ -106,7 +111,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function fallacies()
     {
-        return $this->hasMany(Fallacy::class);
+        return $this->hasMany(Fallacy::class)->where('ref_id', '!=', '21');
     }
 
     public function retractedFallacies()

@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 // use App\Events\ApplicationSent;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\PageCollection;
 use App\Http\Resources\User as UserResource;
 use App\Http\Resources\UserCollection;
 use App\Mail\ForgotPassword;
+use App\Models\Page;
 use App\Mail\VerificationCode;
 use App\Models\User;
 use App\Rules\MatchOldPassword;
@@ -51,20 +53,10 @@ class UserController extends Controller
         $users = User::where('name', 'LIKE', '%' . $q . '%')
             ->withCount([
                 'comments',
-                'fallacies',
-                'likes',
-                'responses'
+                'fallacies'
             ]);
 
-        if ($sort === 'accuracy') {
-            $users = $users->orderByRaw('(correct_predictions_count / (correct_predictions_count + incorrect_predictions_count)) ' . $dir);
-        }
-
-        if ($sort === 'predictions') {
-            $users = $users->orderByRaw('predictions_count ' . $dir);
-        }
-
-        $users = $users->paginate(12);
+        $users = $users->paginate(15);
         return new UserCollection($users);
     }
 
@@ -269,6 +261,24 @@ class UserController extends Controller
         ]);
     }
 
+    public function getTargets(Request $request)
+    {
+        $id = $request->input('id');
+
+        $request->validate([
+            'id' => 'bail|required|exists:users,id'
+        ]);
+
+        $pages = Page::withCount(['contradictions', 'fallacies'])
+            ->whereHas('fallacies', function ($query) use ($id) {
+                $query->where('user_id', $id);
+            })
+            ->orderBy('fallacies_count', 'desc')
+            ->paginate(15);
+
+        return new PageCollection($pages);
+    }
+
     /**
      * Login
      * 
@@ -296,7 +306,17 @@ class UserController extends Controller
 
         $user->api_token = Str::random(60);
         $user->save();
-        $user->refresh();
+
+        $user = User::where('id', $user->id)
+            ->withCount([
+                'comments',
+                'contradictions',
+                'fallacies',
+                'likes',
+                'responses',
+                'retractedFallacies'
+            ])
+            ->first();
 
         return response()->json([
             'bearer' => $user->api_token,
@@ -343,10 +363,12 @@ class UserController extends Controller
     {
         $user = User::where('username', $username)
             ->withCount([
-                'predictions',
-                'incorrectPredictions',
-                'correctPredictions',
-                'pendingPredictions'
+                'comments',
+                'contradictions',
+                'fallacies',
+                'likes',
+                'responses',
+                'retractedFallacies'
             ])
             ->first();
 

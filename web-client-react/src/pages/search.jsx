@@ -144,6 +144,7 @@ const Search = ({ history, match }) => {
 
 	useEffect(() => {
 		getCounts(q)
+		// eslint-disable-next-line
 	}, [q])
 
 	const handleItemClick = (e, { name }) => {

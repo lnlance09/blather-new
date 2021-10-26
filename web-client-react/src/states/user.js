@@ -1,12 +1,30 @@
 const initialState = {
-    loaded: false,
-    predictions: {
-        data: [{}, {}, {}],
-        loading: true
-    },
-    trader: {
-        name: ""
-    }
+	comments: {
+		data: [{}, {}, {}],
+		loaded: false
+	},
+	contradictions: {
+		data: [{}, {}, {}],
+		loaded: false
+	},
+	error: false,
+	fallacies: {
+		data: [{}, {}, {}],
+		loaded: false
+	},
+	likes: {
+		data: [{}, {}, {}],
+		loaded: false
+	},
+	loaded: false,
+	member: {
+		name: "",
+		username: ""
+	},
+	targets: {
+		data: [{}, {}, {}],
+		loaded: false
+	}
 }
 
 export default initialState

@@ -49,6 +49,8 @@ const TweetPage = ({ history, match }) => {
 
 	const { argOptions, contradictions, error, fallacies, loaded, tweet } = internalState
 
+	const showArgs = loaded ? tweet.arguments.length > 0 : false
+
 	const [activeItem, setActiveItem] = useState("fallacies")
 	const [hasMore, setHasMore] = useState(false)
 	const [hasMoreC, setHasMoreC] = useState(false)
@@ -203,7 +205,7 @@ const TweetPage = ({ history, match }) => {
 			inverted={inverted}
 			textAlign="center"
 		>
-			<DisplayMetaTags page="tweet" />
+			<DisplayMetaTags page="tweet" state={internalState} />
 
 			{loaded ? (
 				<>
@@ -276,13 +278,30 @@ const TweetPage = ({ history, match }) => {
 
 							<Header as="h2" content="What kind of argument is this?" />
 
-							{tweet.arguments.data.map((arg, i) => (
-								<Segment key={`argSegment${i}`} placeholder>
-									<Header inverted textAlign="center" size="large">
-										"{arg.argument.description}"
-									</Header>
+							{showArgs ? (
+								<>
+									{tweet.arguments.data.map((arg, i) => (
+										<Segment
+											className="argPlaceholder"
+											key={`argSegment${i}`}
+											placeholder
+										>
+											<Header inverted textAlign="center" size="large">
+												"{arg.argument.description}"
+											</Header>
+										</Segment>
+									))}
+								</>
+							) : (
+								<Segment className="argPlaceholder" placeholder>
+									<Header
+										content="Unknown"
+										inverted
+										textAlign="center"
+										size="large"
+									/>
 								</Segment>
-							))}
+							)}
 
 							<Menu pointing secondary size="large">
 								<Menu.Item

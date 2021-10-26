@@ -33,9 +33,7 @@ class Comment extends Model
      *
      * @var array
      */
-    protected $casts = [
-        
-    ];
+    protected $casts = [];
 
     public function fallacy()
     {

@@ -2,6 +2,7 @@ import "linkify-plugin-hashtag"
 import "linkify-plugin-mention"
 import { Button, Divider, Grid, Header, Image, Menu, Visibility } from "semantic-ui-react"
 import { useContext, useEffect, useReducer, useState } from "react"
+import { ReactSVG } from "react-svg"
 import { DisplayMetaTags } from "utils/metaFunctions"
 import { onClickRedirect } from "utils/linkFunctions"
 import { getConfig } from "options/toast"
@@ -12,6 +13,7 @@ import FallacyList from "components/FallacyList"
 import initialState from "states/page"
 import linkifyHtml from "linkify-html"
 import logger from "use-reducer-logger"
+import Logo from "images/logos/agent.svg"
 import NumberFormat from "react-number-format"
 import PlaceholderPic from "images/images/image-square.png"
 import PropTypes from "prop-types"
@@ -30,9 +32,9 @@ const Page = ({ history, match }) => {
 		process.env.NODE_ENV === "development" ? logger(reducer) : reducer,
 		initialState
 	)
-	const { contradictions, fallacies, loaded, page } = internalState
+	const { contradictions, error, fallacies, loaded, page } = internalState
 
-	const [activeItem, setActiveItem] = useState("contradictions")
+	const [activeItem, setActiveItem] = useState("fallacies")
 	const [hasMore, setHasMore] = useState(false)
 	const [hasMoreC, setHasMoreC] = useState(false)
 	const [loading, setLoading] = useState(true)
@@ -57,6 +59,9 @@ const Page = ({ history, match }) => {
 					getContradictions([page.id])
 				})
 				.catch(() => {
+					dispatchInternal({
+						type: "SET_PAGE_ERROR"
+					})
 					toast.error("There was an error")
 				})
 		}
@@ -144,151 +149,170 @@ const Page = ({ history, match }) => {
 
 			{loaded ? (
 				<>
-					<Grid stackable>
-						<Grid.Row>
-							<Grid.Column className="imgColumn" width={3}>
-								<Image
-									bordered
-									className={`inverted smooth-image image-${
-										imageLoaded ? "visible" : "hidden"
-									}`}
-									fluid
-									onError={(i) => (i.target.src = PlaceholderPic)}
-									onLoad={() => setImageLoaded(true)}
-									rounded
-									src={page.image}
-								/>
-							</Grid.Column>
-							<Grid.Column width={8}>
-								<Header as="h1" inverted={inverted}>
-									<Header.Content>
-										{page.name}
-										<Header.Subheader>@{page.username}</Header.Subheader>
-									</Header.Content>
-									<Button
-										circular
-										className={`networkBtn ${inverted ? "inverted" : null}`}
-										color={network}
-										compact
-										icon={network}
-										onClick={() => {
-											window.open(page.externalLink, "_blank").focus()
-										}}
-										size="small"
-									/>
+					{error && (
+						<>
+							<div className="centeredLoader">
+								<Header as="h1" image textAlign="center">
+									<ReactSVG className="errorSvg" src={Logo} />
+									<Header.Content>This page does not exist</Header.Content>
 								</Header>
-								<Header
-									as="p"
-									inverted={inverted}
-									size="small"
-									style={{ marginTop: 0 }}
-								></Header>
-								<Header
-									as="p"
-									inverted={inverted}
-									size="small"
-									style={{ marginTop: 0 }}
+							</div>
+						</>
+					)}
+
+					{!error && (
+						<>
+							<Grid stackable>
+								<Grid.Row>
+									<Grid.Column className="imgColumn" width={3}>
+										<Image
+											bordered
+											className={`inverted smooth-image image-${
+												imageLoaded ? "visible" : "hidden"
+											}`}
+											fluid
+											onError={(i) => (i.target.src = PlaceholderPic)}
+											onLoad={() => setImageLoaded(true)}
+											rounded
+											src={page.image}
+										/>
+									</Grid.Column>
+									<Grid.Column width={8}>
+										<Header as="h1" inverted={inverted}>
+											<Header.Content>
+												{page.name}
+												<Header.Subheader>
+													@{page.username}
+												</Header.Subheader>
+											</Header.Content>
+											<Button
+												circular
+												className={`networkBtn ${
+													inverted ? "inverted" : null
+												}`}
+												color={network}
+												compact
+												icon={network}
+												onClick={() => {
+													window.open(page.externalLink, "_blank").focus()
+												}}
+												size="small"
+											/>
+										</Header>
+										<Header
+											as="p"
+											inverted={inverted}
+											size="small"
+											style={{ marginTop: 0 }}
+										/>
+										<Header
+											inverted={inverted}
+											size="small"
+											style={{ marginTop: 0 }}
+										>
+											<div
+												dangerouslySetInnerHTML={{
+													__html: linkifyHtml(page.bio, {
+														className: "linkify",
+														formatHref: {
+															mention: (val) =>
+																`/pages/twitter${val}`,
+															hashtag: (val) => val
+														}
+													})
+												}}
+											/>
+										</Header>
+									</Grid.Column>
+								</Grid.Row>
+							</Grid>
+
+							<Menu secondary pointing size="huge">
+								<Menu.Item
+									active={activeItem === "fallacies"}
+									name="fallacies"
+									onClick={handleItemClick}
 								>
-									<div
-										dangerouslySetInnerHTML={{
-											__html: linkifyHtml(page.bio, {
-												className: "linkify",
-												formatHref: {
-													mention: (val) => `/pages/twitter${val}`,
-													hashtag: (val) => val
-												}
-											})
-										}}
-									/>
-								</Header>
-							</Grid.Column>
-						</Grid.Row>
-					</Grid>
+									Fallacies
+									{page.fallacyCount > 0 && (
+										<span className="count">
+											(
+											<NumberFormat
+												displayType={"text"}
+												thousandSeparator
+												value={page.fallacyCount}
+											/>
+											)
+										</span>
+									)}
+								</Menu.Item>
+								<Menu.Item
+									active={activeItem === "contradictions"}
+									name="contradictions"
+									onClick={handleItemClick}
+								>
+									Contradictions
+									{page.contradictionCount > 0 && (
+										<span className="count">
+											(
+											<NumberFormat
+												displayType={"text"}
+												thousandSeparator
+												value={page.contradictionCount}
+											/>
+											)
+										</span>
+									)}
+								</Menu.Item>
+							</Menu>
 
-					<Menu secondary pointing size="huge">
-						<Menu.Item
-							active={activeItem === "fallacies"}
-							name="fallacies"
-							onClick={handleItemClick}
-						>
-							Fallacies
-							{page.fallacyCount > 0 && (
-								<span className="count">
-									(
-									<NumberFormat
-										displayType={"text"}
-										thousandSeparator
-										value={page.fallacyCount}
+							{activeItem === "fallacies" && (
+								<Visibility
+									continuous
+									offset={[50, 50]}
+									onBottomVisible={() => {
+										if (!loading && !loadingMore && hasMore) {
+											getFallacies([page.id], pageNumber)
+										}
+									}}
+								>
+									<FallacyList
+										defaultUserImg={page.image}
+										fallacies={fallacies.data}
+										history={history}
+										inverted={inverted}
+										loading={!fallacies.loaded}
+										loadingMore={loadingMore}
+										onClickFallacy={onClickFallacy}
 									/>
-									)
-								</span>
+								</Visibility>
 							)}
-						</Menu.Item>
-						<Menu.Item
-							active={activeItem === "contradictions"}
-							name="contradictions"
-							onClick={handleItemClick}
-						>
-							Contradictions
-							{page.contradictionCount > 0 && (
-								<span className="count">
-									(
-									<NumberFormat
-										displayType={"text"}
-										thousandSeparator
-										value={page.contradictionCount}
+
+							{activeItem === "contradictions" && (
+								<Visibility
+									continuous
+									offset={[50, 50]}
+									onBottomVisible={() => {
+										if (!loadingC && !loadingMoreC && hasMoreC) {
+											getContradictions([page.id], pageNumberC)
+										}
+									}}
+								>
+									<FallacyList
+										defaultUserImg={page.image}
+										fallacies={contradictions.data}
+										history={history}
+										inverted={inverted}
+										loading={!contradictions.loaded}
+										loadingMore={loadingMoreC}
+										onClickFallacy={onClickFallacy}
 									/>
-									)
-								</span>
+								</Visibility>
 							)}
-						</Menu.Item>
-					</Menu>
 
-					{activeItem === "fallacies" && (
-						<Visibility
-							continuous
-							offset={[50, 50]}
-							onBottomVisible={() => {
-								if (!loading && !loadingMore && hasMore) {
-									getFallacies([page.id], pageNumber)
-								}
-							}}
-						>
-							<FallacyList
-								defaultUserImg={page.image}
-								fallacies={fallacies.data}
-								history={history}
-								inverted={inverted}
-								loading={!fallacies.loaded}
-								loadingMore={loadingMore}
-								onClickFallacy={onClickFallacy}
-							/>
-						</Visibility>
+							<Divider hidden section />
+						</>
 					)}
-
-					{activeItem === "contradictions" && (
-						<Visibility
-							continuous
-							offset={[50, 50]}
-							onBottomVisible={() => {
-								if (!loadingC && !loadingMoreC && hasMoreC) {
-									getContradictions([page.id], pageNumberC)
-								}
-							}}
-						>
-							<FallacyList
-								defaultUserImg={page.image}
-								fallacies={contradictions.data}
-								history={history}
-								inverted={inverted}
-								loading={!contradictions.loaded}
-								loadingMore={loadingMoreC}
-								onClickFallacy={onClickFallacy}
-							/>
-						</Visibility>
-					)}
-
-					<Divider hidden section />
 				</>
 			) : (
 				<div className="centeredLoader"></div>

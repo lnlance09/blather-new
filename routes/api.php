@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ArgumentController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\FallacyController;
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\PageController;
@@ -26,6 +27,11 @@ Route::get('/arguments', [ArgumentController::class, 'index']);
 Route::get('/arguments/showOptions', [ArgumentController::class, 'showOptions']);
 Route::get('/arguments/{id}', [ArgumentController::class, 'show']);
 Route::post('/arguments/{id}/update', [ArgumentController::class, 'update'])->middleware(['auth:api', 'verified']);
+
+Route::get('/comments', [CommentController::class, 'index']);
+Route::post('/comments/create', [CommentController::class, 'create']);
+Route::post('/comments/like', [CommentController::class, 'like']);
+Route::post('/comments/unlike', [CommentController::class, 'unlike']);
 
 Route::get('/fallacies/migrate', [FallacyController::class, 'migrate']);
 Route::get('/fallacies', [FallacyController::class, 'index']);
@@ -54,6 +60,7 @@ Route::get('/tweets/{id}', [TweetController::class, 'show']);
 Route::post('/tweets/{id}/addArguments', [TweetController::class, 'addArguments'])->middleware(['auth:api', 'verified']);
 
 Route::get('/users', [UserController::class, 'index']);
+Route::get('/users/getTargets', [UserController::class, 'getTargets']);
 Route::get('/users/verifyForgotCode', [UserController::class, 'verifyForgotCode']);
 Route::get('/users/{username}', [UserController::class, 'show']);
 Route::post('/users/changePassword', [UserController::class, 'changePassword'])->middleware(['auth:api', 'verified']);

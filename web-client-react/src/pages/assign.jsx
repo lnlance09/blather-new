@@ -82,6 +82,7 @@ const Assign = ({ history }) => {
 	// eslint-disable-next-line
 	const [groupId, setGroupId] = useState(null)
 	const [highlightedText, setHighlightedText] = useState("")
+	const [highlightedTextC, setHighlightedTextC] = useState("")
 	const [pageId, setPageId] = useState(null)
 	const [tweetLoading, setTweetLoading] = useState(false)
 	const [tweetLoadingC, setTweetLoadingC] = useState(false)
@@ -140,15 +141,14 @@ const Assign = ({ history }) => {
 			})
 	}
 
-	// eslint-disable-next-line
-	const handleHoverOn = (e) => {
+	const handleHoverOn = () => {
 		let text = ""
 		if (window.getSelection) {
 			text = window.getSelection().toString()
 		} else if (document.selection) {
 			text = document.selection.createRange().text
 		}
-		setHighlightedText(text)
+		return text
 	}
 
 	const onKeyUp = (e, callback) => {
@@ -265,11 +265,15 @@ const Assign = ({ history }) => {
 								{tweetLoaded ? (
 									<Tweet
 										config={{
-											...tweetOptions
+											...tweetOptions,
+											handleHoverOn: () => {
+												const text = handleHoverOn()
+												setHighlightedText(text)
+											},
+											highlightedText
 										}}
 										counts={tweet.counts}
 										createdAt={tweet.createdAt}
-										// defaultUserImg={defaultUserImg}
 										extendedEntities={tweet.extendedEntities}
 										fullText={tweet.fullText}
 										history={history}
@@ -298,11 +302,15 @@ const Assign = ({ history }) => {
 								{cTweetLoaded ? (
 									<Tweet
 										config={{
-											...tweetOptions
+											...tweetOptions,
+											handleHoverOn: () => {
+												const text = handleHoverOn()
+												setHighlightedTextC(text)
+											},
+											highlightedText: highlightedTextC
 										}}
 										counts={cTweet.counts}
 										createdAt={cTweet.createdAt}
-										// defaultUserImg={defaultUserImg}
 										extendedEntities={cTweet.extendedEntities}
 										fullText={cTweet.fullText}
 										history={history}

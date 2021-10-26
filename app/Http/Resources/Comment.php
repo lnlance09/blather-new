@@ -21,8 +21,10 @@ class Comment extends JsonResource
         return [
             'id' => $this->id,
             'fallacyId' => $this->fallacy_id,
+            'likeCount' => $this->likes_count,
             'likes' => new LikeCollection($this->likes),
             'msg' => $this->msg,
+            'responseCount' => $this->responses_count,
             'responses' => new ResponseCollection($this->responses),
             'user' => new UserResource($this->user),
             'createdAt' => $this->created_at,

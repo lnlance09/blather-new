@@ -2,10 +2,6 @@
 
 namespace App\Http\Resources;
 
-use App\Http\Resources\CommentCollection as CommentCollection;
-use App\Http\Resources\CommentLikeCollection as LikeCollection;
-use App\Http\Resources\CommentResponseCollection as ResponseCollection;
-use App\Http\Resources\FallacyCollection as FallacyCollection;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class User extends JsonResource
@@ -18,16 +14,20 @@ class User extends JsonResource
      */
     public function toArray($request)
     {
+        // dd($this);
+
         return [
             'id' => $this->id,
             'bio' => empty($this->bio) ? 'Apparently, this trader prefers to keep an air of mystery about them.' : $this->bio,
-            // 'comments' => new CommentCollection($this->comments),
-            // 'fallacies' => new FallacyCollection($this->fallacies),
+            'commentsCount' => $this->comments_count,
+            'contradictionsCount' => $this->contradictions_count,
+            'fallaciesCount' => $this->fallacies_count,
             'image' => env('AWS_URL', 'https://blather-new.s3.us-west-2.amazonaws.com/') . $this->image,
-            // 'likes' => new LikeCollection($this->likes),
+            'likesCount' => $this->likes_count,
             'name' => $this->name,
-            // 'responses' => new ResponseCollection($this->responses),
-            // 'retractedFallacies' => new FallacyCollection($this->retracted_fallacies),
+            'responsesCount' => $this->respones_count,
+            'retractedCount' => $this->retracted_fallacies_count,
+            'targetsCount' => '',
             'username' => $this->username
         ];
     }

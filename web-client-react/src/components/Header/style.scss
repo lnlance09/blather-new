@@ -43,12 +43,24 @@ $logoHeight: 40px;
         // border-bottom: solid 1px rgba(255, 255, 255, 0.15);
         box-shadow: none !important;
 
-        a.item {
+        a.item{
             font-size: 15px;
 
             &.active {
                 background: $white;
                 font-weight: bold;
+            }
+        }
+
+        .ui.item.simple.dropdown {
+            font-size: 15px;
+
+            .icon {
+                display: none;
+            }
+
+            .menu .item {
+                font-size: 14px !important;
             }
         }
 
@@ -68,8 +80,8 @@ $logoHeight: 40px;
 
         .container {
             height: 76px;
-            padding-left: 12px;
-            padding-right: 12px;
+            // padding-left: 6px;
+            // padding-right: 6px;
 
             .item.logoItem {
                 h1.header {
@@ -147,8 +159,6 @@ $logoHeight: 40px;
 
                 .dropdown.bellDropdown {
                     .menu.transition.visible {
-                        border: none;
-                        border-radius: 0;
                         right: -210px;
                         top: 59px;
                         width: 360px;
@@ -166,11 +176,14 @@ $logoHeight: 40px;
                     }
 
                     .menu.transition.visible {
-                        border: none;
-                        border-radius: 0;
-                        left: 14px;
+                        position: absolute;
+                        left: -20px;
                         top: 55px;
-                        width: 200px;
+                        width: 220px;
+
+                        .label {
+                            float: right;
+                        }
                     }
                 }
             }

@@ -1,4 +1,4 @@
-import { Button, Form, Header, TextArea } from "semantic-ui-react"
+import { Button, Form, Header } from "semantic-ui-react"
 import { useContext, useState } from "react"
 import { DisplayMetaTags } from "utils/metaFunctions"
 import { getConfig } from "options/toast"
@@ -69,7 +69,7 @@ const Contact = ({ history }) => {
 			/>
 			<Form inverted={inverted} size="large">
 				<Form.Field>
-					<TextArea onChange={onChangeMsg} placeholder="What's up?" value={msg} />
+					<textarea onChange={onChangeMsg} placeholder="What's up?" value={msg} />
 				</Form.Field>
 				<Form.Field>
 					<Button color="blue" content="Send" fluid onClick={sendMsg} size="large" />

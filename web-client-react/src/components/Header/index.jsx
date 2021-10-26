@@ -1,5 +1,5 @@
 import "./style.scss"
-import { Button, Container, Dropdown, Icon, Image, Menu, Sidebar } from "semantic-ui-react"
+import { Button, Container, Dropdown, Icon, Image, Label, Menu, Sidebar } from "semantic-ui-react"
 import { useContext, useEffect, useReducer, useState } from "react"
 import { ReactSVG } from "react-svg"
 import defaultImg from "images/avatar/small/veronika.jpg"
@@ -17,6 +17,9 @@ window.Pusher = require("pusher-js")
 const PageHeader = ({ activeItem, history, q, simple }) => {
 	const { state, dispatch } = useContext(ThemeContext)
 	const { auth, inverted, notifications, user } = state
+
+	const username = auth ? user.username : "anonymous"
+	const { commentsCount, contradictionsCount, fallaciesCount, likesCount, targetsCount } = user
 
 	// eslint-disable-next-line
 	const [internalState, dispatchInternal] = useReducer(
@@ -187,29 +190,58 @@ const PageHeader = ({ activeItem, history, q, simple }) => {
 			}
 		>
 			<Dropdown.Menu>
-				<Dropdown.Item onClick={() => history.push(`/${user.username}`)}>
-					Profile
-				</Dropdown.Item>
-				<Dropdown.Item onClick={() => history.push("/settings?tab=fallacies")}>
+				<Dropdown.Item onClick={() => history.push(`/${username}?tab=fallacies`)}>
 					Fallacies
+					{fallaciesCount > 0 && (
+						<Label color="red" horizontal>
+							{fallaciesCount}
+						</Label>
+					)}
 				</Dropdown.Item>
-				<Dropdown.Item onClick={() => history.push("/settings?tab=contradictions")}>
+				<Dropdown.Item onClick={() => history.push(`/${username}?tab=contradictions`)}>
 					Contradictions
+					{contradictionsCount > 0 && (
+						<Label color="red" horizontal>
+							{contradictionsCount}
+						</Label>
+					)}
 				</Dropdown.Item>
-				<Dropdown.Item onClick={() => history.push("/settings?tab=targets")}>
-					Targets
-				</Dropdown.Item>
-				<Dropdown.Item onClick={() => history.push("/settings?tab=comments")}>
+				<Dropdown.Item onClick={() => history.push(`/${username}?tab=comments`)}>
 					Comments
+					{commentsCount > 0 && (
+						<Label color="red" horizontal>
+							{commentsCount}
+						</Label>
+					)}
+				</Dropdown.Item>
+				<Dropdown.Item onClick={() => history.push(`/${username}?tab=targets`)}>
+					Likes
+					{likesCount > 0 && (
+						<Label color="red" horizontal>
+							{likesCount}
+						</Label>
+					)}
+				</Dropdown.Item>
+				<Dropdown.Item onClick={() => history.push(`/${username}?tab=targets`)}>
+					Targets
+					{targetsCount > 0 && (
+						<Label color="red" horizontal>
+							{targetsCount}
+						</Label>
+					)}
 				</Dropdown.Item>
 
 				{auth && (
-					<Dropdown.Item onClick={() => history.push("/settings")}>
-						Settings
-					</Dropdown.Item>
+					<>
+						<Dropdown.Divider />
+						<Dropdown.Item onClick={() => history.push(`/${username}/settings`)}>
+							Settings
+						</Dropdown.Item>
+					</>
 				)}
 
 				<Dropdown.Divider />
+
 				{auth ? (
 					<Dropdown.Item onClick={logout}>Sign Out</Dropdown.Item>
 				) : (
@@ -244,22 +276,16 @@ const PageHeader = ({ activeItem, history, q, simple }) => {
 							Activity
 						</Menu.Item>
 						<Menu.Item
-							active={activeItem === "arguments"}
-							onClick={() => history.push("/arguments")}
-						>
-							Arguments
-						</Menu.Item>
-						<Menu.Item
 							active={activeItem === "grifters"}
 							onClick={() => history.push("/grifters")}
 						>
-							Grfiters
+							Grifters
 						</Menu.Item>
 						<Menu.Item
-							active={activeItem === "reference"}
-							onClick={() => history.push("/reference")}
+							active={activeItem === "groups"}
+							onClick={() => history.push("/groups")}
 						>
-							Reference
+							Groups
 						</Menu.Item>
 						<Menu.Item
 							active={activeItem === "search"}
@@ -267,6 +293,16 @@ const PageHeader = ({ activeItem, history, q, simple }) => {
 						>
 							Search
 						</Menu.Item>
+						<Dropdown item simple text="Reference">
+							<Dropdown.Menu>
+								<Dropdown.Item onClick={() => history.push("/arguments")}>
+									Arguments
+								</Dropdown.Item>
+								<Dropdown.Item onClick={() => history.push("/reference")}>
+									Reference
+								</Dropdown.Item>
+							</Dropdown.Menu>
+						</Dropdown>
 						<Menu.Item position="right">
 							{BellDropdown}
 							{ProfileDropdown}

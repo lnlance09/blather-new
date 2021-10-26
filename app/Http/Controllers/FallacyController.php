@@ -50,7 +50,7 @@ class FallacyController extends Controller
         $q = $request->input('q', null);
         $pageIds = $request->input('pageIds', null);
         $refIds = $request->input('refIds', null);
-        $userId = $request->input('userId', null);
+        $userIds = $request->input('userIds', null);
         $retracted = $request->input('retracted', null);
         $status = $request->input('status', null);
         $includeContradictions = $request->input('includeContradictions', false);
@@ -62,10 +62,6 @@ class FallacyController extends Controller
 
         $_q = $q;
         $where = [];
-
-        if ($userId) {
-            $where['user_id'] = $userId;
-        }
 
         if ($status) {
             $where['status'] = $status;
@@ -87,6 +83,10 @@ class FallacyController extends Controller
 
         if (is_array($refIds)) {
             $fallacies = $fallacies->whereIn('ref_id', $refIds);
+        }
+
+        if (is_array($userIds)) {
+            $fallacies = $fallacies->whereIn('user_id', $userIds);
         }
 
         if ($tweetId) {

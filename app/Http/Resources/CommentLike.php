@@ -19,8 +19,8 @@ class CommentLike extends JsonResource
     {
         return [
             'id' => $this->id,
-            'comment' => new CommentResource($this->comment),
-            'response' => new ResponseResource($this->response),
+            // 'comment' => new CommentResource($this->comment),
+            // 'response' => new ResponseResource($this->response),
             'user' => new UserResource($this->user),
             'createdAt' => $this->created_at,
             'updatedAt' => $this->updated_at,

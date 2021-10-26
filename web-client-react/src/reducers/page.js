@@ -28,6 +28,12 @@ const reducer = (state, action) => {
 				loaded: true,
 				page: action.page
 			}
+		case "SET_PAGE_ERROR":
+			return {
+				...state,
+				error: true,
+				loaded: true
+			}
 		default:
 			throw new Error()
 	}

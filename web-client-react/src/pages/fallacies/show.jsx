@@ -2,6 +2,7 @@ import {
 	Button,
 	Card,
 	Divider,
+	Grid,
 	Header,
 	Icon,
 	Image,
@@ -21,6 +22,7 @@ import { tweetOptions } from "options/tweet"
 import { getConfig } from "options/toast"
 import { toast } from "react-toastify"
 import axios from "axios"
+import CommentList from "components/CommentList"
 import defaultImg from "images/images/image-square.png"
 import DefaultLayout from "layouts/default"
 import FallacyList from "components/FallacyList"
@@ -122,6 +124,7 @@ const Fallacy = ({ history, match }) => {
 	const [loadingMore, setLoadingMore] = useState(false)
 	// eslint-disable-next-line
 	const [pageNumber, setPageNumber] = useState(1)
+	const [verticalMode, setVerticalMode] = useState(true)
 	const [visible, setVisible] = useState(false)
 
 	useEffect(() => {
@@ -255,72 +258,132 @@ const Fallacy = ({ history, match }) => {
 							</Header>
 							<Transition animation="scale" duration={900} visible={visible}>
 								<Segment id="fallacyMaterial" stacked>
-									<>
-										{tweet && (
-											<Tweet
-												config={{
-													...tweetOptions,
-													highlightedText,
-													onClickCallback: (e, history, id) => {
-														e.stopPropagation()
-														const isLink =
-															e.target.classList.contains("linkify")
-														if (!isLink) {
-															onClickRedirect(
-																e,
-																history,
-																`/tweets/${id}`
-															)
+									{verticalMode ? (
+										<>
+											{tweet && (
+												<Tweet
+													config={{
+														...tweetOptions,
+														highlightedText,
+														onClickCallback: (e, history, id) => {
+															e.stopPropagation()
+															const isLink =
+																e.target.classList.contains(
+																	"linkify"
+																)
+															if (!isLink) {
+																onClickRedirect(
+																	e,
+																	history,
+																	`/tweets/${id}`
+																)
+															}
 														}
-													}
-												}}
-												counts={tweet.counts}
-												createdAt={tweet.createdAt}
-												extendedEntities={twitter.extendedEntities}
-												fullText={tweet.fullText}
-												history={history}
-												id={tweet.tweetId}
-												quoted={tweet.quoted}
-												retweeted={tweet.retweeted}
-												user={tweet.user}
-											/>
-										)}
-										{showDateDiff && (
-											<Divider
-												hidden
-												horizontal
-												id="fallacyDateDiff"
-												inverted={inverted}
-											>
-												<Icon
-													name="clock outline"
-													style={{ marginRight: "5px" }}
-												/>{" "}
-												<Moment ago from={dateOne}>
-													{dateTwo}
-												</Moment>{" "}
-												<div style={{ marginLeft: 3 }}>apart</div>
-											</Divider>
-										)}
-										{cTweet && (
-											<Tweet
-												config={{
-													...tweetOptions,
-													highlightedText: highlightedTextC
-												}}
-												counts={cTweet.counts}
-												createdAt={cTweet.createdAt}
-												entities={cTweet.entities}
-												extendedEntities={cTweet.extendedEntities}
-												fullText={cTweet.fullText}
-												history={history}
-												id={cTweet.tweetId}
-												quoted={cTweet.quoted}
-												retweeted={cTweet.retweeted}
-												user={cTweet.user}
-											/>
-										)}
-									</>
+													}}
+													counts={tweet.counts}
+													createdAt={tweet.createdAt}
+													extendedEntities={twitter.extendedEntities}
+													fullText={tweet.fullText}
+													history={history}
+													id={tweet.tweetId}
+													quoted={tweet.quoted}
+													retweeted={tweet.retweeted}
+													user={tweet.user}
+												/>
+											)}
+											{showDateDiff && (
+												<Divider
+													hidden
+													horizontal
+													id="fallacyDateDiff"
+													inverted={inverted}
+												>
+													<Icon
+														name="clock outline"
+														style={{ marginRight: "5px" }}
+													/>{" "}
+													<Moment ago from={dateOne}>
+														{dateTwo}
+													</Moment>{" "}
+													<div style={{ marginLeft: 3 }}>apart</div>
+												</Divider>
+											)}
+											{cTweet && (
+												<Tweet
+													config={{
+														...tweetOptions,
+														highlightedText: highlightedTextC
+													}}
+													counts={cTweet.counts}
+													createdAt={cTweet.createdAt}
+													entities={cTweet.entities}
+													extendedEntities={cTweet.extendedEntities}
+													fullText={cTweet.fullText}
+													history={history}
+													id={cTweet.tweetId}
+													quoted={cTweet.quoted}
+													retweeted={cTweet.retweeted}
+													user={cTweet.user}
+												/>
+											)}
+										</>
+									) : (
+										<Grid>
+											<Grid.Column width={8}>
+												{tweet && (
+													<Tweet
+														config={{
+															...tweetOptions,
+															highlightedText,
+															onClickCallback: (e, history, id) => {
+																e.stopPropagation()
+																const isLink =
+																	e.target.classList.contains(
+																		"linkify"
+																	)
+																if (!isLink) {
+																	onClickRedirect(
+																		e,
+																		history,
+																		`/tweets/${id}`
+																	)
+																}
+															}
+														}}
+														counts={tweet.counts}
+														createdAt={tweet.createdAt}
+														extendedEntities={twitter.extendedEntities}
+														fullText={tweet.fullText}
+														history={history}
+														id={tweet.tweetId}
+														quoted={tweet.quoted}
+														retweeted={tweet.retweeted}
+														user={tweet.user}
+													/>
+												)}
+											</Grid.Column>
+											<Grid.Column width={8}>
+												{cTweet && (
+													<Tweet
+														config={{
+															...tweetOptions,
+															highlightedText: highlightedTextC
+														}}
+														counts={cTweet.counts}
+														createdAt={cTweet.createdAt}
+														entities={cTweet.entities}
+														extendedEntities={cTweet.extendedEntities}
+														fullText={cTweet.fullText}
+														history={history}
+														id={cTweet.tweetId}
+														quoted={cTweet.quoted}
+														retweeted={cTweet.retweeted}
+														user={cTweet.user}
+													/>
+												)}
+											</Grid.Column>
+										</Grid>
+									)}
 								</Segment>
 							</Transition>
 
@@ -340,23 +403,33 @@ const Fallacy = ({ history, match }) => {
 										onCopy={() => toast.success("Copied")}
 										text={url}
 									>
-										<>
-											<Button circular color="blue" icon="paperclip" />{" "}
-										</>
+										<Button circular color="blue" icon="paperclip" />
 									</CopyToClipboard>
 								</List.Item>
 								{canScreenshot && (
-									<List.Item position="right">
-										<Button
-											circular
-											className="screenshotButton"
-											color="olive"
-											icon="camera"
-											loading={downloading}
-											onClick={captureScreenshot}
-											style={{ verticalAlign: "none" }}
-										/>
-									</List.Item>
+									<>
+										<List.Item position="right">
+											<Button
+												circular
+												className="screenshotButton"
+												color="olive"
+												icon="camera"
+												loading={downloading}
+												onClick={captureScreenshot}
+												style={{ verticalAlign: "none" }}
+											/>
+										</List.Item>
+										<List.Item position="right">
+											<Button
+												circular
+												color="yellow"
+												icon="shuffle"
+												loading={downloading}
+												onClick={() => setVerticalMode(!verticalMode)}
+												style={{ verticalAlign: "none" }}
+											/>
+										</List.Item>
+									</>
 								)}
 							</List>
 
@@ -389,13 +462,6 @@ const Fallacy = ({ history, match }) => {
 								<Header as="h3">{reference.name}</Header>
 								<p>{reference.description}</p>
 							</Segment>
-
-							<FallacyList
-								fallacies={internalState.fallacies}
-								loading={loading}
-								loadingMore={loadingMore}
-								onClickFallacy={onClickFallacy}
-							/>
 
 							<Divider />
 
@@ -475,6 +541,17 @@ const Fallacy = ({ history, match }) => {
 									)}
 								</Card.Content>
 							</Card>
+
+							<CommentList id={id} />
+
+							{/*
+							<FallacyList
+								fallacies={internalState.fallacies}
+								loading={loading}
+								loadingMore={loadingMore}
+								onClickFallacy={onClickFallacy}
+							/>
+							*/}
 						</>
 					)}
 				</>

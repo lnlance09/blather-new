@@ -29,7 +29,7 @@ const ImageUpload = ({
 				<section>
 					<div {...getRootProps()}>
 						<input {...getInputProps()} />
-						<Header className="imageUploadHeader" inverted size={headerSize}>
+						<Header className="imageUploadHeader" size={headerSize}>
 							{msg}
 						</Header>
 						<Button className="changePicBtn" color="blue" icon>
@@ -46,13 +46,13 @@ const ImageUpload = ({
 			{as === "image" && (
 				<Dimmer.Dimmable
 					as={Image}
-					circular
 					dimmed={active}
-					dimmer={{ active, content, inverted: false }}
+					dimmer={{ active, content, inverted: true }}
 					fluid={fluid}
 					onError={(i) => (i.target.src = ImagePic)}
 					onMouseEnter={() => setActive(true)}
 					onMouseLeave={() => setActive(false)}
+					rounded
 					size={fluid ? null : imgSize}
 					src={img}
 				/>

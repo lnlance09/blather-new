@@ -10,6 +10,7 @@ import Contact from "pages/about/contact"
 import Fallacy from "pages/fallacies/show"
 import Forgot from "pages/auth/forgot"
 import Grifters from "pages/grifters"
+import Groups from "pages/groups"
 import history from "history.js"
 import Login from "pages/auth/"
 import NotFound from "pages/notFound"
@@ -74,6 +75,8 @@ const App = () => {
 
 							<Route component={Grifters} exact path="/grifters" />
 
+							<Route component={Groups} exact path="/groups" />
+
 							<Route component={Login} exact path="/auth" />
 
 							<Route
@@ -97,8 +100,6 @@ const App = () => {
 								)}
 							/>
 
-							<Route component={Settings} exact path="/settings" />
-
 							<Route
 								path="/tweets/:id"
 								render={(props) => (
@@ -111,6 +112,14 @@ const App = () => {
 								path="/:username"
 								render={(props) => (
 									<User key={window.location.pathname} {...props} />
+								)}
+							/>
+
+							<Route
+								exact
+								path="/:username/settings"
+								render={(props) => (
+									<Settings key={window.location.pathname} {...props} />
 								)}
 							/>
 

@@ -1,0 +1,53 @@
+@import "../../scss/_colors.scss";
+
+.commentsSection {
+	width: 100%;
+
+  	.ui.large.comments {
+		max-width: none !important;
+		width: 100% !important;
+
+		&.commentsGroup {
+			margin-top: 20px !important;
+		}
+		
+		.comment {
+			width: 100% !important;
+
+			.actions span {
+				color: $lightGrey !important;
+				font-weight: bold;
+			}
+
+			.avatar {
+                cursor: pointer;
+			}
+
+			.metadata {
+				color: $lightGrey !important;
+			}
+
+			.likeCount {
+				font-weight: bold;
+				margin-left: 8px;
+			}
+
+			.content {
+				.text {
+					span {
+						white-space: pre-wrap !important;
+					}
+				}
+			}
+
+			.comments {
+				margin: 0 !important;
+				padding-bottom: 0 !important;
+			}
+		}
+	}
+	  
+	.replyBtn {
+		margin-top: 18px;
+	}
+}

@@ -6,7 +6,11 @@ export const DisplayMetaTags = ({ page, state }) => {
 	const siteName = "Blather"
 	const description = `${siteName} is a website and application that lets users assign logical fallacies to tweets. You can make political memes out of tweets and fallacies.`
 	const img = ""
-	let metaTags = {}
+	let metaTags = {
+		description,
+		img,
+		title: siteName
+	}
 
 	switch (page) {
 		case "about":
@@ -21,6 +25,13 @@ export const DisplayMetaTags = ({ page, state }) => {
 				description,
 				img,
 				title: `Activity - ${siteName}`
+			}
+			break
+		case "argument":
+			metaTags = {
+				description,
+				img,
+				title: `Arguments - ${siteName}`
 			}
 			break
 		case "arguments":
@@ -45,18 +56,12 @@ export const DisplayMetaTags = ({ page, state }) => {
 			}
 			break
 		case "fallacy":
-			metaTags = {
-				description,
-				img,
-				title: ` - ${siteName}`
-			}
-
 			const { fallacy } = state
 			if (state.loaded && !state.error) {
 				metaTags = {
 					description: fallacy.explanation,
 					img: fallacy.user.image,
-					title: `${fallacy.reference.name} fallacy by ${fallacy.page.name}`
+					title: `${fallacy.reference.name} Fallacy by ${fallacy.page.name}`
 				}
 			}
 			break
@@ -83,10 +88,12 @@ export const DisplayMetaTags = ({ page, state }) => {
 			break
 		case "page":
 			const { page } = state
-			metaTags = {
-				description,
-				img,
-				title: state.loaded ? `${page.name} - ${siteName}` : siteName
+			if (state.loaded && !state.error) {
+				metaTags = {
+					description: page.bio,
+					img: page.image,
+					title: `${page.name} - ${siteName}`
+				}
 			}
 			break
 		case "privacy":
@@ -131,12 +138,34 @@ export const DisplayMetaTags = ({ page, state }) => {
 				title: `Sign In - ${siteName}`
 			}
 			break
+		case "tweet":
+			const { tweet } = state
+			if (state.loaded && !state.error) {
+				metaTags = {
+					description,
+					img: tweet.user.img,
+					title: `Tweet by ${tweet.user.name} - ${siteName}`
+				}
+			}
+			break
 		case "user":
-			const { user } = state
-			metaTags = {
-				description: state.loaded ? user.bio : description,
-				img: state.loaded ? user.img : img,
-				title: state.loaded ? `${user.name} - ${siteName}` : siteName
+			const { member } = state
+			if (state.loaded && !state.error) {
+				metaTags = {
+					description: member.bio,
+					img: member.img,
+					title: `${member.name} - ${siteName}`
+				}
+			}
+			break
+		case "video":
+			const { video } = state
+			if (state.loaded && !state.error) {
+				metaTags = {
+					description: video.description,
+					img: video.img,
+					title: `${video.title} - ${siteName}`
+				}
 			}
 			break
 		default:

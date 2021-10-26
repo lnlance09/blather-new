@@ -9,13 +9,14 @@ import _ from "underscore"
 import ItemPic from "images/images/square-image.png"
 import Moment from "react-moment"
 import NumberFormat from "react-number-format"
+import PlaceholderPic from "images/images/image-square.png"
 import PropTypes from "prop-types"
 
 const Tweet = ({
 	config = tweetOptions,
 	counts = {},
 	createdAt,
-	defaultUserImg = "",
+	defaultUserImg = PlaceholderPic,
 	extendedEntities = {
 		media: []
 	},

@@ -1,16 +1,23 @@
-import { Image, Loader } from "semantic-ui-react"
+import { Divider, Grid, Header, Image, Loader, Menu, Visibility } from "semantic-ui-react"
 import { useContext, useEffect, useReducer, useState } from "react"
-// import { CopyToClipboard } from "react-copy-to-clipboard"
+import { ReactSVG } from "react-svg"
+import { onClickRedirect } from "utils/linkFunctions"
 import { DisplayMetaTags } from "utils/metaFunctions"
 import { getConfig } from "options/toast"
 import { toast } from "react-toastify"
 import axios from "axios"
 import DefaultLayout from "layouts/default"
+import FallacyList from "components/FallacyList"
 import ImageUpload from "components/ImageUpload"
 import initialState from "states/user"
+import linkifyHtml from "linkify-html"
 import logger from "use-reducer-logger"
+import Logo from "images/logos/agent.svg"
+import NumberFormat from "react-number-format"
+import PageList from "components/PageList"
 import PlaceholderPic from "images/avatar/large/steve.jpg"
 import PropTypes from "prop-types"
+import qs from "query-string"
 import reducer from "reducers/user"
 import ThemeContext from "themeContext"
 
@@ -18,6 +25,10 @@ const toastConfig = getConfig()
 toast.configure(toastConfig)
 
 const Member = ({ history, match }) => {
+	const query = qs.parse(window.location.search)
+	const { tab } = query
+	const tabs = ["fallacies", "contradictions", "comments", "likes", "targets"]
+
 	const { state } = useContext(ThemeContext)
 	const { auth, bearer, inverted, user } = state
 	const { username } = match.params
@@ -26,78 +37,59 @@ const Member = ({ history, match }) => {
 		process.env.NODE_ENV === "development" ? logger(reducer) : reducer,
 		initialState
 	)
-	const { loaded, member } = internalState
+	const { contradictions, error, fallacies, loaded, member, targets } = internalState
 
-	// const [activeItem, setActiveItem] = useState(null)
-	// eslint-disable-next-line
-	const [hasMore, setHasMore] = useState(false)
+	const [activeItem, setActiveItem] = useState(tabs.includes(tab) ? tab : "fallacies")
 	const [imageLoaded, setImageLoaded] = useState(false)
-	// eslint-disable-next-line
+
+	const [hasMore, setHasMore] = useState(false)
+	const [hasMoreC, setHasMoreC] = useState(false)
+	const [hasMoreCm, setHasMoreCm] = useState(false)
+	const [hasMoreL, setHasMoreL] = useState(false)
+	const [hasMoreT, setHasMoreT] = useState(false)
+
+	const [loading, setLoading] = useState(true)
+	const [loadingC, setLoadingC] = useState(true)
+	const [loadingCm, setLoadingCm] = useState(true)
+	const [loadingL, setLoadingL] = useState(true)
+	const [loadingT, setLoadingT] = useState(true)
+
 	const [loadingMore, setLoadingMore] = useState(false)
-	// eslint-disable-next-line
-	const [page, setPage] = useState(1)
+	const [loadingMoreC, setLoadingMoreC] = useState(false)
+	const [loadingMoreCm, setLoadingMoreCm] = useState(false)
+	const [loadingMoreL, setLoadingMoreL] = useState(false)
+	const [loadingMoreT, setLoadingMoreT] = useState(false)
+
+	const [pageNumber, setPageNumber] = useState(1)
+	const [pageNumberC, setPageNumberC] = useState(1)
+	const [pageNumberCm, setPageNumberCm] = useState(1)
+	const [pageNumberL, setPageNumberL] = useState(1)
+	const [pageNumberT, setPageNumberT] = useState(1)
 
 	useEffect(() => {
-		const getuser = async (user) => {
+		const getUser = async () => {
 			await axios
 				.get(`${process.env.REACT_APP_BASE_URL}users/${username}`)
 				.then(async (response) => {
 					const user = response.data.data
 					dispatch({
-						type: "GET_user",
+						type: "GET_USER",
 						user
 					})
-					getPredictions(user.id, null)
+					getFallacies([user.id])
+					getContradictions([user.id])
+					getTargets(user.id)
 				})
 				.catch(() => {
+					dispatch({
+						type: "SET_USER_ERROR"
+					})
 					toast.error("There was an error")
 				})
 		}
 
-		getuser(username)
+		getUser()
 	}, [username])
-
-	const getPredictions = async (userId, status, sort = "created_at", dir = "desc", page = 1) => {
-		dispatch({
-			type: "SET_LOADING_PREDICTIONS"
-		})
-
-		await axios
-			.get(`${process.env.REACT_APP_BASE_URL}predictions`, {
-				params: {
-					userId,
-					status,
-					sort,
-					dir,
-					page
-				}
-			})
-			.then((response) => {
-				const { data, meta } = response.data
-				dispatch({
-					type: "GET_PREDICTIONS",
-					predictions: data,
-					page
-				})
-				setPage(page + 1)
-				setHasMore(meta.current_page < meta.last_page)
-				if (page > 1) {
-					setLoadingMore(false)
-				}
-			})
-			.catch(() => {
-				toast.error("There was an error")
-			})
-	}
-
-	// eslint-disable-next-line
-	const onClickUser = (e, id) => {
-		if (!e.metaKey) {
-			history.push(`/${id}`)
-		} else {
-			window.open(`/${id}`, "_blank").focus()
-		}
-	}
 
 	const changeProfilePic = async (file) => {
 		const formData = new FormData()
@@ -114,9 +106,8 @@ const Member = ({ history, match }) => {
 			.then((response) => {
 				const { data } = response.data
 				localStorage.setItem("user", JSON.stringify(data))
-
 				dispatch({
-					type: "GET_user",
+					type: "GET_USER",
 					user: data
 				})
 			})
@@ -137,12 +128,138 @@ const Member = ({ history, match }) => {
 			})
 	}
 
-	// eslint-disable-next-line
+	const getComments = async (userIds, page = 1) => {
+		page === 1 ? setLoadingCm(true) : setLoadingMoreCm(true)
+		await axios
+			.get(`${process.env.REACT_APP_BASE_URL}comments`, {
+				params: {
+					page,
+					userIds
+				}
+			})
+			.then(async (response) => {
+				const { data, meta } = response.data
+				dispatch({
+					type: "GET_COMMENTS",
+					comments: data,
+					page
+				})
+				setPageNumberC(page + 1)
+				setHasMoreC(meta.current_page < meta.last_page)
+				pageNumberCm === 1 ? setLoadingCm(false) : setLoadingMoreCm(false)
+			})
+			.catch(() => {
+				toast.error("There was an error")
+			})
+	}
+
+	const getContradictions = async (userIds, page = 1) => {
+		page === 1 ? setLoadingC(true) : setLoadingMoreC(true)
+		await axios
+			.get(`${process.env.REACT_APP_BASE_URL}fallacies`, {
+				params: {
+					with: [
+						"contradictionTwitter.tweet",
+						"contradictionYouTube.video",
+						"twitter.tweet",
+						"youtube.video",
+						"reference"
+					],
+					includeContradictions: true,
+					page,
+					refIds: [21],
+					userIds
+				}
+			})
+			.then(async (response) => {
+				const { data, meta } = response.data
+				dispatch({
+					type: "GET_CONTRADICTIONS",
+					contradictions: data,
+					page
+				})
+				setPageNumberC(page + 1)
+				setHasMoreC(meta.current_page < meta.last_page)
+				pageNumberC === 1 ? setLoadingC(false) : setLoadingMoreC(false)
+			})
+			.catch(() => {
+				toast.error("There was an error")
+			})
+	}
+
+	const getFallacies = async (userIds, page = 1) => {
+		page === 1 ? setLoading(true) : setLoadingMore(true)
+		await axios
+			.get(`${process.env.REACT_APP_BASE_URL}fallacies`, {
+				params: {
+					with: [
+						"contradictionTwitter.tweet",
+						"contradictionYouTube.video",
+						"twitter.tweet",
+						"youtube.video",
+						"reference"
+					],
+					userIds,
+					page
+				}
+			})
+			.then((response) => {
+				const { data, meta } = response.data
+				dispatch({
+					type: "GET_FALLACIES",
+					fallacies: data,
+					page
+				})
+				setPageNumber(page + 1)
+				setHasMore(meta.current_page < meta.last_page)
+				pageNumber === 1 ? setLoading(false) : setLoadingMore(false)
+			})
+			.catch(() => {
+				toast.error("There was an error")
+			})
+	}
+
+	const getTargets = async (id, page = 1) => {
+		page === 1 ? setLoadingT(true) : setLoadingMoreT(true)
+		await axios
+			.get(`${process.env.REACT_APP_BASE_URL}users/getTargets`, {
+				params: {
+					id,
+					page
+				}
+			})
+			.then((response) => {
+				const { data, meta } = response.data
+				dispatch({
+					type: "GET_TARGETS",
+					targets: data,
+					page
+				})
+				setPageNumberT(page + 1)
+				setHasMoreT(meta.current_page < meta.last_page)
+				pageNumberT === 1 ? setLoadingT(false) : setLoadingMoreT(false)
+			})
+			.catch(() => {
+				toast.error("There was an error")
+			})
+	}
+
+	const handleItemClick = (e, { name }) => {
+		setActiveItem(name)
+	}
+
+	const onClickFallacy = (e, slug) => {
+		onClickRedirect(e, history, `/fallacies/${slug}`)
+	}
+
+	const onClickPage = (e, network, slug) => {
+		onClickRedirect(e, history, `/pages/${network}/${slug}`)
+	}
+
 	const isMyProfile = auth ? user.id === member.id : false
 
-	// eslint-disable-next-line
 	const ProfilePic = () => {
-		if (auth && user.id === member.id) {
+		if (isMyProfile) {
 			return (
 				<ImageUpload
 					callback={(file) => changeProfilePic(file)}
@@ -155,15 +272,12 @@ const Member = ({ history, match }) => {
 		return (
 			<Image
 				bordered
-				circular
 				className={`inverted smooth-image image-${imageLoaded ? "visible" : "hidden"}`}
+				fluid
 				onError={(i) => (i.target.src = PlaceholderPic)}
 				onLoad={() => setImageLoaded(true)}
-				style={{
-					height: 175,
-					width: 175
-				}}
-				src={user.image}
+				rounded
+				src={member.image}
 			/>
 		)
 	}
@@ -178,7 +292,243 @@ const Member = ({ history, match }) => {
 		>
 			<DisplayMetaTags page="user" state={internalState} />
 			{loaded ? (
-				<></>
+				<>
+					{error && (
+						<>
+							<div className="centeredLoader">
+								<Header as="h1" image textAlign="center">
+									<ReactSVG className="errorSvg" src={Logo} />
+									<Header.Content>This user does not exist</Header.Content>
+								</Header>
+							</div>
+						</>
+					)}
+
+					{!error && (
+						<>
+							<Grid stackable>
+								<Grid.Row>
+									<Grid.Column className="imgColumn" width={3}>
+										{ProfilePic()}
+									</Grid.Column>
+									<Grid.Column width={8}>
+										<Header as="h1" inverted={inverted}>
+											<Header.Content>
+												{member.name}
+												<Header.Subheader>
+													@{member.username}
+												</Header.Subheader>
+											</Header.Content>
+										</Header>
+										<Header
+											as="p"
+											inverted={inverted}
+											size="small"
+											style={{ marginTop: 0 }}
+										/>
+										<Header
+											inverted={inverted}
+											size="small"
+											style={{ marginTop: 0 }}
+										>
+											<div
+												dangerouslySetInnerHTML={{
+													__html: linkifyHtml(member.bio, {
+														className: "linkify"
+													})
+												}}
+											/>
+										</Header>
+									</Grid.Column>
+								</Grid.Row>
+							</Grid>
+
+							<Menu secondary pointing size="large">
+								<Menu.Item
+									active={activeItem === "fallacies"}
+									name="fallacies"
+									onClick={handleItemClick}
+								>
+									Fallacies
+									{member.fallaciesCount > 0 && (
+										<span className="count">
+											(
+											<NumberFormat
+												displayType={"text"}
+												thousandSeparator
+												value={member.fallaciesCount}
+											/>
+											)
+										</span>
+									)}
+								</Menu.Item>
+								<Menu.Item
+									active={activeItem === "contradictions"}
+									name="contradictions"
+									onClick={handleItemClick}
+								>
+									Contradictions
+									{member.contradictionsCount > 0 && (
+										<span className="count">
+											(
+											<NumberFormat
+												displayType={"text"}
+												thousandSeparator
+												value={member.contradictionsCount}
+											/>
+											)
+										</span>
+									)}
+								</Menu.Item>
+								<Menu.Item
+									active={activeItem === "comments"}
+									name="comments"
+									onClick={handleItemClick}
+								>
+									Comments
+									{member.commentsCount > 0 && (
+										<span className="count">
+											(
+											<NumberFormat
+												displayType={"text"}
+												thousandSeparator
+												value={member.commentsCount}
+											/>
+											)
+										</span>
+									)}
+								</Menu.Item>
+								<Menu.Item
+									active={activeItem === "likes"}
+									name="likes"
+									onClick={handleItemClick}
+								>
+									Likes
+									{member.likesCount > 0 && (
+										<span className="count">
+											(
+											<NumberFormat
+												displayType={"text"}
+												thousandSeparator
+												value={member.likesCount}
+											/>
+											)
+										</span>
+									)}
+								</Menu.Item>
+								<Menu.Item
+									active={activeItem === "targets"}
+									name="targets"
+									onClick={handleItemClick}
+								>
+									Targets
+									{member.targetsCount > 0 && (
+										<span className="count">
+											(
+											<NumberFormat
+												displayType={"text"}
+												thousandSeparator
+												value={member.targetsCount}
+											/>
+											)
+										</span>
+									)}
+								</Menu.Item>
+							</Menu>
+
+							{activeItem === "fallacies" && (
+								<Visibility
+									continuous
+									offset={[50, 50]}
+									onBottomVisible={() => {
+										if (!loading && !loadingMore && hasMore) {
+											getFallacies([member.id], pageNumber)
+										}
+									}}
+								>
+									<FallacyList
+										defaultUserImg={member.image}
+										fallacies={fallacies.data}
+										history={history}
+										inverted={inverted}
+										loading={!fallacies.loaded}
+										loadingMore={loadingMore}
+										onClickFallacy={onClickFallacy}
+									/>
+								</Visibility>
+							)}
+
+							{activeItem === "contradictions" && (
+								<Visibility
+									continuous
+									offset={[50, 50]}
+									onBottomVisible={() => {
+										if (!loadingC && !loadingMoreC && hasMoreC) {
+											getContradictions([member.id], pageNumberC)
+										}
+									}}
+								>
+									<FallacyList
+										defaultUserImg={member.image}
+										fallacies={contradictions.data}
+										history={history}
+										inverted={inverted}
+										loading={!contradictions.loaded}
+										loadingMore={loadingMoreC}
+										onClickFallacy={onClickFallacy}
+									/>
+								</Visibility>
+							)}
+
+							{activeItem === "comment" && (
+								<Visibility
+									continuous
+									offset={[50, 50]}
+									onBottomVisible={() => {
+										if (!loadingC && !loadingMoreC && hasMoreC) {
+											getContradictions([member.id], pageNumberC)
+										}
+									}}
+								></Visibility>
+							)}
+
+							{activeItem === "likes" && (
+								<Visibility
+									continuous
+									offset={[50, 50]}
+									onBottomVisible={() => {
+										if (!loadingC && !loadingMoreC && hasMoreC) {
+											getContradictions([member.id], pageNumberC)
+										}
+									}}
+								></Visibility>
+							)}
+
+							{activeItem === "targets" && (
+								<Visibility
+									continuous
+									offset={[50, 50]}
+									onBottomVisible={() => {
+										if (!loadingT && !loadingMoreT && hasMoreT) {
+											getTargets(member.id, pageNumberT)
+										}
+									}}
+								>
+									<PageList
+										history={history}
+										inverted={inverted}
+										loading={!targets.loaded}
+										loadingMore={loadingMoreT}
+										onClickPage={onClickPage}
+										pages={targets.data}
+									/>
+								</Visibility>
+							)}
+
+							<Divider hidden section />
+						</>
+					)}
+				</>
 			) : (
 				<>
 					<div className="centeredLoader">

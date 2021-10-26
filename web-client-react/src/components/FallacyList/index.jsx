@@ -94,7 +94,6 @@ const FallacyList = ({
 	}, [])
 
 	const showEmptyMsg = fallacies.length === 0 && !loading
-	// const showContent = fallacies.length > 0 && !loading
 
 	const PlaceholderSegment = (
 		<Placeholder fluid inverted={inverted}>
