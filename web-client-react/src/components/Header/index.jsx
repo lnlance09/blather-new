@@ -19,7 +19,7 @@ const PageHeader = ({ activeItem, history, q, simple }) => {
 	const { auth, inverted, notifications, user } = state
 
 	const username = auth ? user.username : "anonymous"
-	const { commentsCount, contradictionsCount, fallaciesCount, likesCount, targetsCount } = user
+	const { contradictionsCount, fallaciesCount, targetsCount } = user
 
 	// eslint-disable-next-line
 	const [internalState, dispatchInternal] = useReducer(
@@ -107,7 +107,7 @@ const PageHeader = ({ activeItem, history, q, simple }) => {
 			icon={false}
 			trigger={
 				<div className="trigger item">
-					<Icon circular color="yellow" name="bell" size="large" />
+					<Icon circular color="yellow" inverted name="bell" />
 					{notifications.length > 0 && (
 						<div className="top floating ui red label small">
 							{notifications.length}
@@ -174,19 +174,13 @@ const PageHeader = ({ activeItem, history, q, simple }) => {
 			className={`profileDropdown ${auth ? "auth" : ""}`}
 			icon={false}
 			trigger={
-				<>
-					{auth && (
-						<span style={{ marginLeft: "12px", marginRight: "12px" }}>{user.name}</span>
-					)}
-					<Image
-						bordered
-						circular
-						inline
-						onError={(i) => (i.target.src = defaultImg)}
-						size="mini"
-						src={user.image ? user.image : defaultImg}
-					/>
-				</>
+				<Image
+					circular
+					inline
+					onError={(i) => (i.target.src = defaultImg)}
+					size="mini"
+					src={user.image ? user.image : defaultImg}
+				/>
 			}
 		>
 			<Dropdown.Menu>
@@ -203,22 +197,6 @@ const PageHeader = ({ activeItem, history, q, simple }) => {
 					{contradictionsCount > 0 && (
 						<Label color="red" horizontal>
 							{contradictionsCount}
-						</Label>
-					)}
-				</Dropdown.Item>
-				<Dropdown.Item onClick={() => history.push(`/${username}?tab=comments`)}>
-					Comments
-					{commentsCount > 0 && (
-						<Label color="red" horizontal>
-							{commentsCount}
-						</Label>
-					)}
-				</Dropdown.Item>
-				<Dropdown.Item onClick={() => history.push(`/${username}?tab=targets`)}>
-					Likes
-					{likesCount > 0 && (
-						<Label color="red" horizontal>
-							{likesCount}
 						</Label>
 					)}
 				</Dropdown.Item>
@@ -276,6 +254,14 @@ const PageHeader = ({ activeItem, history, q, simple }) => {
 							Activity
 						</Menu.Item>
 						<Menu.Item
+							active={activeItem === "tweets"}
+							onClick={() => {
+								history.push("/tweets")
+							}}
+						>
+							Tweets
+						</Menu.Item>
+						<Menu.Item
 							active={activeItem === "grifters"}
 							onClick={() => history.push("/grifters")}
 						>
@@ -288,23 +274,36 @@ const PageHeader = ({ activeItem, history, q, simple }) => {
 							Groups
 						</Menu.Item>
 						<Menu.Item
-							active={activeItem === "search"}
-							onClick={() => history.push("/search")}
+							active={activeItem === "arguments"}
+							onClick={() => history.push("/arguments")}
 						>
-							Search
+							Args
 						</Menu.Item>
-						<Dropdown item simple text="Reference">
-							<Dropdown.Menu>
-								<Dropdown.Item onClick={() => history.push("/arguments")}>
-									Arguments
-								</Dropdown.Item>
-								<Dropdown.Item onClick={() => history.push("/reference")}>
-									Reference
-								</Dropdown.Item>
-							</Dropdown.Menu>
-						</Dropdown>
+						<Menu.Item
+							active={activeItem === "reference"}
+							onClick={() => history.push("/reference")}
+						>
+							Ref
+						</Menu.Item>
 						<Menu.Item position="right">
-							{BellDropdown}
+							<div className="iconsWrapper">
+								<Icon
+									circular
+									className="tweetsIcon"
+									inverted
+									name="twitter"
+									onClick={() => history.push("/tweets/saved")}
+								/>
+								<Icon
+									circular
+									className="searchIcon"
+									color="red"
+									inverted
+									name="search"
+									onClick={() => history.push("/search")}
+								/>
+								{BellDropdown}
+							</div>
 							{ProfileDropdown}
 						</Menu.Item>
 					</Container>

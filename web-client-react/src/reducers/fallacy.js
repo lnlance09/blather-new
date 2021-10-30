@@ -1,5 +1,15 @@
 const reducer = (state, action) => {
 	switch (action.type) {
+		case "GET_COMMENTS":
+			const comments =
+				action.page > 1 ? [...state.comments.data, ...action.comments] : action.comments
+			return {
+				...state,
+				comments: {
+					data: comments,
+					loaded: true
+				}
+			}
 		case "GET_FALLACY":
 			return {
 				...state,

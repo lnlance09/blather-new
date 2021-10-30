@@ -1,8 +1,5 @@
 const initialState = {
-	comments: {
-		data: [{}, {}, {}],
-		loaded: false
-	}
+	comments: [{}, {}, {}]
 }
 
 export default initialState

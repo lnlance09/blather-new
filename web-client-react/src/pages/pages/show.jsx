@@ -227,7 +227,7 @@ const Page = ({ history, match }) => {
 								</Grid.Row>
 							</Grid>
 
-							<Menu secondary pointing size="huge">
+							<Menu secondary pointing size="large">
 								<Menu.Item
 									active={activeItem === "fallacies"}
 									name="fallacies"

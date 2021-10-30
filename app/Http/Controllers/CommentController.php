@@ -28,7 +28,7 @@ class CommentController extends Controller
     public function index(Request $request)
     {
         $fallacyId = $request->input('fallacyId');
-        $userId = $request->input('userId');
+        $userIds = $request->input('userIds');
         $sort = $request->input('sort', 'created_at');
         $dir = $request->input('dir', 'desc');
 
@@ -42,8 +42,8 @@ class CommentController extends Controller
             $comments = $comments->where('fallacy_id', $fallacyId);
         }
 
-        if ($userId) {
-            $comments = $comments->where('user_id', $userId);
+        if ($userIds) {
+            $comments = $comments->whereIn('user_id', $userIds);
         }
 
         $comments = $comments->orderBy($sort, $dir)
@@ -61,7 +61,7 @@ class CommentController extends Controller
         $request->validate([
             'fallacyId' => 'bail|required|exists:fallacies,id',
             'msg' => 'bail|required',
-            'responseTo' => 'exists:comments,id'
+            'responseTo' => 'sometimes|nullable|exists:comments,id'
         ]);
 
         $fallacyId = $request->input('fallacyId');

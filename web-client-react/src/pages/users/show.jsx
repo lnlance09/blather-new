@@ -27,7 +27,7 @@ toast.configure(toastConfig)
 const Member = ({ history, match }) => {
 	const query = qs.parse(window.location.search)
 	const { tab } = query
-	const tabs = ["fallacies", "contradictions", "comments", "likes", "targets"]
+	const tabs = ["fallacies", "contradictions", "targets"]
 
 	const { state } = useContext(ThemeContext)
 	const { auth, bearer, inverted, user } = state
@@ -44,26 +44,18 @@ const Member = ({ history, match }) => {
 
 	const [hasMore, setHasMore] = useState(false)
 	const [hasMoreC, setHasMoreC] = useState(false)
-	const [hasMoreCm, setHasMoreCm] = useState(false)
-	const [hasMoreL, setHasMoreL] = useState(false)
 	const [hasMoreT, setHasMoreT] = useState(false)
 
 	const [loading, setLoading] = useState(true)
 	const [loadingC, setLoadingC] = useState(true)
-	const [loadingCm, setLoadingCm] = useState(true)
-	const [loadingL, setLoadingL] = useState(true)
 	const [loadingT, setLoadingT] = useState(true)
 
 	const [loadingMore, setLoadingMore] = useState(false)
 	const [loadingMoreC, setLoadingMoreC] = useState(false)
-	const [loadingMoreCm, setLoadingMoreCm] = useState(false)
-	const [loadingMoreL, setLoadingMoreL] = useState(false)
 	const [loadingMoreT, setLoadingMoreT] = useState(false)
 
 	const [pageNumber, setPageNumber] = useState(1)
 	const [pageNumberC, setPageNumberC] = useState(1)
-	const [pageNumberCm, setPageNumberCm] = useState(1)
-	const [pageNumberL, setPageNumberL] = useState(1)
 	const [pageNumberT, setPageNumberT] = useState(1)
 
 	useEffect(() => {
@@ -89,6 +81,7 @@ const Member = ({ history, match }) => {
 		}
 
 		getUser()
+		// eslint-disable-next-line
 	}, [username])
 
 	const changeProfilePic = async (file) => {
@@ -125,31 +118,6 @@ const Member = ({ history, match }) => {
 				}
 
 				toast.error(errorMsg)
-			})
-	}
-
-	const getComments = async (userIds, page = 1) => {
-		page === 1 ? setLoadingCm(true) : setLoadingMoreCm(true)
-		await axios
-			.get(`${process.env.REACT_APP_BASE_URL}comments`, {
-				params: {
-					page,
-					userIds
-				}
-			})
-			.then(async (response) => {
-				const { data, meta } = response.data
-				dispatch({
-					type: "GET_COMMENTS",
-					comments: data,
-					page
-				})
-				setPageNumberC(page + 1)
-				setHasMoreC(meta.current_page < meta.last_page)
-				pageNumberCm === 1 ? setLoadingCm(false) : setLoadingMoreCm(false)
-			})
-			.catch(() => {
-				toast.error("There was an error")
 			})
 	}
 
@@ -381,42 +349,6 @@ const Member = ({ history, match }) => {
 									)}
 								</Menu.Item>
 								<Menu.Item
-									active={activeItem === "comments"}
-									name="comments"
-									onClick={handleItemClick}
-								>
-									Comments
-									{member.commentsCount > 0 && (
-										<span className="count">
-											(
-											<NumberFormat
-												displayType={"text"}
-												thousandSeparator
-												value={member.commentsCount}
-											/>
-											)
-										</span>
-									)}
-								</Menu.Item>
-								<Menu.Item
-									active={activeItem === "likes"}
-									name="likes"
-									onClick={handleItemClick}
-								>
-									Likes
-									{member.likesCount > 0 && (
-										<span className="count">
-											(
-											<NumberFormat
-												displayType={"text"}
-												thousandSeparator
-												value={member.likesCount}
-											/>
-											)
-										</span>
-									)}
-								</Menu.Item>
-								<Menu.Item
 									active={activeItem === "targets"}
 									name="targets"
 									onClick={handleItemClick}
@@ -480,30 +412,6 @@ const Member = ({ history, match }) => {
 								</Visibility>
 							)}
 
-							{activeItem === "comment" && (
-								<Visibility
-									continuous
-									offset={[50, 50]}
-									onBottomVisible={() => {
-										if (!loadingC && !loadingMoreC && hasMoreC) {
-											getContradictions([member.id], pageNumberC)
-										}
-									}}
-								></Visibility>
-							)}
-
-							{activeItem === "likes" && (
-								<Visibility
-									continuous
-									offset={[50, 50]}
-									onBottomVisible={() => {
-										if (!loadingC && !loadingMoreC && hasMoreC) {
-											getContradictions([member.id], pageNumberC)
-										}
-									}}
-								></Visibility>
-							)}
-
 							{activeItem === "targets" && (
 								<Visibility
 									continuous
@@ -530,11 +438,9 @@ const Member = ({ history, match }) => {
 					)}
 				</>
 			) : (
-				<>
-					<div className="centeredLoader">
-						<Loader active inverted={inverted} size="big" />
-					</div>
-				</>
+				<div className="centeredLoader">
+					<Loader active inverted={inverted} size="big" />
+				</div>
 			)}
 		</DefaultLayout>
 	)

@@ -38,6 +38,7 @@ Route::get('/fallacies', [FallacyController::class, 'index']);
 Route::get('/fallacies/{slug}', [FallacyController::class, 'show']);
 Route::post('/fallacies/addImage', [FallacyController::class, 'addImage']);
 Route::post('/fallacies/create', [FallacyController::class, 'create'])->middleware('api');
+Route::post('/fallacies/update', [FallacyController::class, 'update'])->middleware('api');
 
 Route::get('/groups', [GroupController::class, 'index']);
 Route::get('/groups/getGroupsByMember', [GroupController::class, 'getGroupsByMember']);

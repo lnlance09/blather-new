@@ -2,7 +2,8 @@ import "./style.scss"
 import linkifyHtml from "linkify-html"
 import "linkify-plugin-hashtag"
 import "linkify-plugin-mention"
-import { Card, Icon, Image, Label, List, Popup } from "semantic-ui-react"
+import { Button, Card, Icon, Image, Label, List, Popup } from "semantic-ui-react"
+import { useEffect, useState } from "react"
 import { getHighlightedText } from "utils/textFunctions"
 import { tweetOptions } from "options/tweet"
 import _ from "underscore"
@@ -44,8 +45,10 @@ const Tweet = ({
 		onClickCallback,
 		opacity,
 		raised,
+		showSaveOption,
 		showStats
 	} = config
+
 	const { isRetweeted } = retweeted
 	const rUser = isRetweeted ? retweeted.user : {}
 
@@ -106,6 +109,19 @@ const Tweet = ({
 
 	const className = `tweet${!assignable ? " clickable" : ""}`
 
+	let imgUrl = headerImg
+	imgUrl += crossOriginAnonymous ? `?t=${new Date()}` : ""
+
+	const [canSave, setCanSave] = useState(false)
+
+	useEffect(() => {
+		const savedTweets = localStorage.getItem("savedTweets")
+		if (!_.isEmpty(savedTweets)) {
+			const canSave = JSON.parse(savedTweets).includes(id) ? false : true
+			setCanSave(canSave)
+		}
+	}, [id])
+
 	const parseMedia = (entities) => {
 		return entities.media.map((item, i) => {
 			if (item.type !== "photo" && item.type !== "video") {
@@ -141,6 +157,21 @@ const Tweet = ({
 		</List.Content>
 	)
 
+	const saveTweet = async (id) => {
+		const savedTweets = localStorage.getItem("savedTweets")
+		const tweets = _.isEmpty(savedTweets) ? [] : JSON.parse(savedTweets)
+		if (!tweets.includes(id)) {
+			tweets.push(id)
+			localStorage.setItem("savedTweets", JSON.stringify(tweets))
+			setCanSave(false)
+		} else {
+			const newTweets = await tweets.filter((t) => t.id !== id)
+			console.log("newTweets", id)
+			localStorage.setItem("savedTweets", JSON.stringify(newTweets))
+			setCanSave(true)
+		}
+	}
+
 	return (
 		<div
 			className={`tweet ${className}`}
@@ -158,13 +189,13 @@ const Tweet = ({
 						bordered
 						circular
 						className="tweetUserImg"
-						crossOrigin={crossOriginAnonymous ? "anonymous" : null}
+						crossOrigin={crossOriginAnonymous ? "true" : null}
 						floated="left"
 						onError={(i) => {
 							const newImg = headerImg !== defaultUserImg ? defaultUserImg : ItemPic
 							i.target.src = newImg
 						}}
-						src={headerImg}
+						src={imgUrl}
 					/>
 					<Card.Header
 						className={`tweetUserName ${externalLink ? "link" : ""}`}
@@ -277,6 +308,22 @@ const Tweet = ({
 								</List.Item>
 							</List>
 						)}
+						{showSaveOption && (
+							<List floated="right" horizontal>
+								<List.Item className="saveTweet">
+									<Button
+										className={!canSave ? "active" : ""}
+										color="green"
+										compact
+										content={canSave ? "Save" : "Saved!"}
+										onClick={(e) => {
+											e.stopPropagation()
+											saveTweet(id.toString())
+										}}
+									/>
+								</List.Item>
+							</List>
+						)}
 					</Card.Content>
 				)}
 			</Card>
@@ -296,6 +343,7 @@ Tweet.propTypes = {
 		onClickCallback: PropTypes.func,
 		opacity: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
 		raised: PropTypes.bool,
+		showSaveOption: PropTypes.bool,
 		showStats: PropTypes.bool
 	}),
 	createdAt: PropTypes.string,

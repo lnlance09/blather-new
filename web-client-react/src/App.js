@@ -18,11 +18,13 @@ import Page from "pages/pages/show"
 import Privacy from "pages/about/privacy"
 import Reference from "pages/reference"
 import Rules from "pages/about/rules"
+import SavedTweets from "pages/savedTweets"
 import ScrollToTop from "react-router-scroll-top"
 import Search from "pages/search"
 import Settings from "pages/users/settings"
 import ThemeProvider from "components/ThemeProvider"
 import Tweet from "pages/tweets/show"
+import Tweets from "pages/tweets/"
 import User from "pages/users/show"
 import Video from "pages/videos/show"
 
@@ -97,6 +99,29 @@ const App = () => {
 								path="/search"
 								render={(props) => (
 									<Search key={window.location.pathname} {...props} />
+								)}
+							/>
+
+							<Route
+								path="/tweet/:id"
+								render={(props) => (
+									<Tweet key={window.location.pathname} {...props} />
+								)}
+							/>
+
+							<Route
+								exact
+								path="/tweets/saved"
+								render={(props) => (
+									<SavedTweets key={window.location.pathname} {...props} />
+								)}
+							/>
+
+							<Route
+								exact
+								path="/tweets"
+								render={(props) => (
+									<Tweets key={window.location.pathname} {...props} />
 								)}
 							/>
 

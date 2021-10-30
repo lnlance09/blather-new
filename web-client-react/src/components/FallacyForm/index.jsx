@@ -4,11 +4,10 @@ import {
 	Divider,
 	Dropdown,
 	Form,
-	Header,
 	Image,
 	Label,
 	Placeholder,
-	Transition
+	Segment
 } from "semantic-ui-react"
 import { useEffect, useReducer, useRef, useState } from "react"
 import { getGroupsOptions } from "options/group"
@@ -57,10 +56,6 @@ const FallacyForm = ({
 
 	const onChangePage = (e, { value }) => {
 		setPageValue(value)
-	}
-
-	const onChangeRef = (e, { value }) => {
-		setRefValue(value)
 	}
 
 	const onChangeGroup = (e, { value }) => {
@@ -212,35 +207,23 @@ const FallacyForm = ({
 				)}
 				<Form.Field>
 					<div style={{ minHeight: "210px" }}>
-						<Transition
-							animation="pulse"
-							duration={400}
-							visible={refOptions.length > 0}
-						>
-							<>
-								<Label.Group color="blue" size="large">
-									{refOptions.map((ref, i) => (
-										<Label
-											className={`${refValue === ref.value ? "active" : ""}`}
-											color={refValue === ref.value ? "orange" : "blue"}
-											key={`refLabel${i}`}
-											onClick={() => setRefValue(ref.value)}
-										>
-											{ref.name}
-										</Label>
-									))}
-								</Label.Group>
-								<Divider inverted />
-								{activeRef && (
-									<>
-										<Header as="p" inverted size="small" textAlign="center">
-											{activeRef.description}
-										</Header>
-										<Divider inverted section />
-									</>
-								)}
-							</>
-						</Transition>
+						<Label.Group color="blue" size="large">
+							{refOptions.map((ref, i) => (
+								<Label
+									className={`${refValue === ref.value ? "active" : ""}`}
+									key={`refLabel${i}`}
+									onClick={() => setRefValue(ref.value)}
+								>
+									{ref.name}
+								</Label>
+							))}
+						</Label.Group>
+						<Divider hidden />
+						{activeRef && (
+							<Segment className="refDescSeg" placeholder textAlign="center">
+								{activeRef.description}
+							</Segment>
+						)}
 					</div>
 				</Form.Field>
 				<Form.Field>
@@ -291,7 +274,7 @@ const FallacyForm = ({
 						)}
 					</Image.Group>
 
-					{(images.length > 0 || imagesLoading) && <Divider inverted />}
+					{(images.length > 0 || imagesLoading) && <Divider />}
 
 					<ImageUpload
 						as="segment"
@@ -300,8 +283,7 @@ const FallacyForm = ({
 						inverted={inverted}
 						msg="add image"
 					/>
-				</Form.Field>
-				<Form.Field>
+
 					<Button color="blue" content="Submit" fluid loading={loading} size="large" />
 				</Form.Field>
 			</Form>

@@ -78,13 +78,19 @@ const TweetPage = ({ history, match }) => {
 					}
 				})
 				.then(async (response) => {
-					const { data } = response.data
+					const { archived, tweet } = response.data
 					dispatchInternal({
 						type: "GET_TWEET",
-						tweet: data
+						archived,
+						tweet
 					})
-					setNewArguments(data.argumentOptions)
-					return data.id
+					setNewArguments(tweet.argumentOptions)
+
+					if (archived) {
+						toast.info("Tweet archived!")
+					}
+
+					return tweet.id
 				})
 				.catch((e) => {
 					dispatchInternal({
@@ -243,7 +249,11 @@ const TweetPage = ({ history, match }) => {
 								color="blue"
 								content="Assign a fallacy"
 								icon="gavel"
-								onClick={() => history.push(`/assign?id=${tweet.tweetId}`)}
+								onClick={() =>
+									history.push(
+										`/assign?url=https://twitter.com/${tweet.user.username}/status/${tweet.tweetId}`
+									)
+								}
 							/>
 
 							{canEdit && (
@@ -294,12 +304,7 @@ const TweetPage = ({ history, match }) => {
 								</>
 							) : (
 								<Segment className="argPlaceholder" placeholder>
-									<Header
-										content="Unknown"
-										inverted
-										textAlign="center"
-										size="large"
-									/>
+									<Header content="Unknown" textAlign="center" size="large" />
 								</Segment>
 							)}
 

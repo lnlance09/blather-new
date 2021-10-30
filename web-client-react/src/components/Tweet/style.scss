@@ -28,10 +28,12 @@
 
 	  		.description {
 				font-size: 16px !important;
-				line-height: 1.4;
+				line-height: 1.8;
 
 				b {
-					border-bottom: solid 2px $red;
+					text-decoration: $red wavy underline 2px;
+					// text-decoration-thickness: 0.3px;
+					text-underline-offset: 4px;
 				}
 	  		}
 
@@ -46,6 +48,18 @@
 
 						&.favoriteItem {
 			  				margin-left: 0;
+						}
+
+						&.saveTweet {
+							margin-right: 12px;
+
+							.button.active {
+								background: $orange;
+						
+								&:hover {
+									background: $red;
+								}
+							}
 						}
 
 						.label {

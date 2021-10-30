@@ -3,6 +3,7 @@ import { Button, Comment, Form, Header, Icon, Placeholder, Segment } from "seman
 import { useContext, useEffect, useReducer, useRef, useState } from "react"
 import { getConfig } from "options/toast"
 import { toast } from "react-toastify"
+import _ from "underscore"
 import axios from "axios"
 import ImagePic from "images/images/image-square.png"
 import initialState from "./state"
@@ -23,23 +24,19 @@ const PlaceholderSegment = (
 			<Placeholder.Line />
 			<Placeholder.Line />
 		</Placeholder.Header>
-		<Placeholder.Paragraph>
-			<Placeholder.Line length="full" />
-			<Placeholder.Line length="long" />
-			<Placeholder.Line length="short" />
-		</Placeholder.Paragraph>
 	</Placeholder>
 )
 
 const CommentList = ({
 	allowReplies,
-	bearer,
-	// comments,
+	comments,
+	fallacyId,
 	history,
-	id,
 	redirectToComment = false,
 	showEmptyMsg = true,
-	showReplies = true
+	showForm = true,
+	showReplies = true,
+	size = "large"
 }) => {
 	const { state } = useContext(ThemeContext)
 	const { auth, inverted } = state
@@ -51,44 +48,22 @@ const CommentList = ({
 		process.env.NODE_ENV === "development" ? logger(reducer) : reducer,
 		initialState
 	)
-	const { comments } = internalState
+	const iComments = internalState.comments
 
-	const [message, setMessage] = useState("")
 	const [responseTo, setResponseTo] = useState(null)
 
 	useEffect(() => {
-		fetchComments(id)
-	}, [id])
+		dispatch({
+			type: "SET_COMMENTS",
+			comments
+		})
+	}, [comments])
 
 	const onSubmitForm = () => {
-		if (message === "") {
-			return
-		}
-
-		postComment(id, message, responseTo, () => {
-			setMessage("")
+		postComment(fallacyId, responseTo, () => {
 			setResponseTo(null)
+			textAreaRef.current.value = ""
 		})
-	}
-
-	const fetchComments = (id, page = 1) => {
-		axios
-			.get(`${process.env.REACT_APP_BASE_URL}comments`, {
-				params: {
-					fallacyId: id,
-					page
-				}
-			})
-			.then((response) => {
-				const comments = response.data.data
-				dispatch({
-					type: "GET_COMMENTS",
-					comments
-				})
-			})
-			.catch(() => {
-				toast.error("Error fetching comments")
-			})
 	}
 
 	const likeComment = (commentId, responseId = null) => {
@@ -109,7 +84,9 @@ const CommentList = ({
 			})
 	}
 
-	const postComment = (id, msg, responseTo, callback) => {
+	const postComment = (id, responseTo, callback) => {
+		const msg = _.isEmpty(textAreaRef.current) ? "" : textAreaRef.current.value
+
 		axios
 			.post(`${process.env.REACT_APP_BASE_URL}comments/create`, {
 				fallacyId: id,
@@ -118,11 +95,12 @@ const CommentList = ({
 			})
 			.then((response) => {
 				const comment = response.data.data
-				callback()
 				dispatch({
 					type: "POST_COMMENT",
-					data: comment
+					comment,
+					responseTo
 				})
+				callback(response)
 			})
 			.catch(() => {
 				toast.error("Error posting comment")
@@ -212,12 +190,12 @@ const CommentList = ({
 								<Comment.Action>
 									<span
 										onClick={() => {
-											setMessage(`@${user.username} `)
 											setResponseTo(commentId)
 											window.scrollTo({
 												behavior: "smooth",
 												top: blockRef.current.offsetTop
 											})
+											textAreaRef.current.value = `@${user.username} `
 											textAreaRef.current.focus()
 										}}
 									>
@@ -242,35 +220,41 @@ const CommentList = ({
 
 	return (
 		<div className="commentsSection">
-			<div ref={blockRef}>
-				<Form inverted={inverted} onSubmit={onSubmitForm} size="large">
-					<textarea
-						onChange={(e, { value }) => setMessage(value)}
-						placeholder={
-							comments.count === 0 ? "Be the first to comment..." : "Add a comment..."
-						}
-						ref={textAreaRef}
-						value={message}
-					/>
-					<Button
-						className="replyBtn"
-						color="blue"
-						content="Comment"
-						fluid
-						type="submit"
-						size="large"
-					/>
-				</Form>
-			</div>
+			{showForm && (
+				<div ref={blockRef}>
+					<Form inverted={inverted} onSubmit={onSubmitForm}>
+						<textarea
+							placeholder={
+								comments.count === 0
+									? "Be the first to comment..."
+									: "Add a comment..."
+							}
+							ref={textAreaRef}
+							rows={4}
+						/>
+						<Button
+							className="replyBtn"
+							color="blue"
+							content="Comment"
+							fluid
+							type="submit"
+						/>
+					</Form>
+				</div>
+			)}
 
-			{comments.data.length > 0 ? (
-				<Comment.Group className="commentsGroup" size="large">
-					{comments.data.map((comment, i) => {
-						const { responses } = comment
+			{iComments.length > 0 ? (
+				<Comment.Group className="commentsGroup" size={size}>
+					{iComments.map((comment, i) => {
 						if (typeof comment.id === "undefined") {
-							return <div key={`individualComment${i}`}>{PlaceholderSegment}</div>
+							return (
+								<Comment key={`individualComment${i}`}>
+									<Comment.Content>{PlaceholderSegment}</Comment.Content>
+								</Comment>
+							)
 						}
 
+						const { responses } = comment
 						return (
 							<Comment
 								className={`${redirectToComment ? "redirect" : ""}`}
@@ -280,7 +264,7 @@ const CommentList = ({
 								{SingleComment(comment, comment.id, false, `individualComment${i}`)}
 
 								{responses && responses.length > 0 && showReplies && (
-									<Comment.Group size="large">
+									<Comment.Group>
 										{responses.map((response, x) => {
 											if (response.id !== null) {
 												return (
@@ -326,9 +310,10 @@ const CommentList = ({
 }
 
 CommentList.propTypes = {
-	id: PropTypes.number,
+	fallacyId: PropTypes.number,
 	redirectToComment: PropTypes.bool,
 	showEmptyMsg: PropTypes.bool,
+	showForm: PropTypes.bool,
 	showReplies: PropTypes.bool
 }
 

@@ -1,10 +1,11 @@
-import { Divider, Grid, Header } from "semantic-ui-react"
+import { Divider, Grid, Header, Image } from "semantic-ui-react"
 import { useContext } from "react"
 import { DisplayMetaTags } from "utils/metaFunctions"
 import { grifters } from "options/grifters"
 import DefaultLayout from "layouts/default"
-import Gallery from "react-grid-gallery"
+import PlaceholderPic from "images/images/image-square.png"
 import PropTypes from "prop-types"
+import ReactTooltip from "react-tooltip"
 import ThemeContext from "themeContext"
 
 const Grifters = ({ history }) => {
@@ -47,8 +48,31 @@ const Grifters = ({ history }) => {
 					</p>
 
 					<div className="gallery-wrapper">
-						<Gallery images={maga} />
-						<div className="clearfix" />
+						<div className="tiles">
+							{maga.map((m, i) => (
+								<div className="tile">
+									<Image
+										data-for={`groupsMember${i}`}
+										data-iscapture="true"
+										data-tip={m.name}
+										onClick={() =>
+											history.push(`/pages/${m.network}/${m.username}`)
+										}
+										onError={(e) => (e.target.src = PlaceholderPic)}
+										rounded
+										src={m.src}
+									/>
+									<ReactTooltip
+										className="tooltipClass"
+										effect="solid"
+										id={`groupsMember${i}`}
+										multiline={false}
+										place="left"
+										type="dark"
+									/>
+								</div>
+							))}
+						</div>
 					</div>
 
 					<Header as="h1">MLM Grifters</Header>

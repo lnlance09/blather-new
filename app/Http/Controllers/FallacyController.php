@@ -284,7 +284,6 @@ class FallacyController extends Controller
      */
     public function edit(Fallacy $fallacy)
     {
-        //
     }
 
     /**
@@ -328,6 +327,20 @@ class FallacyController extends Controller
      */
     public function update(Request $request, Fallacy $fallacy)
     {
-        //
+        $request->validate([
+            'id' => 'bail|required|exists:fallacies,id',
+            'refId' => 'exists:reference,id',
+            'explanation' => 'bail|required'
+        ]);
+
+        $id = $request->input('id', null);
+        $refId = $request->input('refId');
+        $explanation = $request->input('explanation');
+
+        $fallacy = Fallacy::where('id', $id)->first();
+
+        $fallacy->explanation = $explanation;
+        $fallacy->ref_id = $refId;
+        $fallacy->save();
     }
 }

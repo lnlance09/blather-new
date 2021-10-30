@@ -300,7 +300,7 @@ const Settings = ({ history }) => {
 								<Header content="Change password" inverted={inverted} />
 								<Card className={inverted ? "inverted" : null} fluid>
 									<Card.Content>
-										<Form inverted={inverted} size="large">
+										<Form inverted={inverted}>
 											<Form.Field>
 												<label>Current password</label>
 												<Input
@@ -340,7 +340,6 @@ const Settings = ({ history }) => {
 													content="Change"
 													fluid
 													onClick={() => changePassword()}
-													size="large"
 												/>
 											</Form.Field>
 										</Form>

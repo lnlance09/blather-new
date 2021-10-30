@@ -14,6 +14,6 @@ class ArgumentExampleTweetSeeder extends Seeder
      */
     public function run()
     {
-        DB::unprepared(file_get_contents(__DIR__ . '/imports/argumentExampleTweets.sql'));
+        // DB::unprepared(file_get_contents(__DIR__ . '/imports/argumentExampleTweets.sql'));
     }
 }

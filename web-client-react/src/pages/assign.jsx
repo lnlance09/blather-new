@@ -4,10 +4,10 @@ import {
 	Form,
 	Grid,
 	Header,
-	Icon,
 	Input,
 	Loader,
 	Message,
+	Placeholder,
 	Segment
 } from "semantic-ui-react"
 import { useContext, useEffect, useReducer, useState } from "react"
@@ -79,7 +79,6 @@ const Assign = ({ history }) => {
 		initialState
 	)
 
-	// eslint-disable-next-line
 	const [groupId, setGroupId] = useState(null)
 	const [highlightedText, setHighlightedText] = useState("")
 	const [highlightedTextC, setHighlightedTextC] = useState("")
@@ -123,17 +122,21 @@ const Assign = ({ history }) => {
 				}
 			})
 			.then(async (response) => {
-				const { data } = response.data
+				const { archived, tweet } = response.data
 				const type = contradiction ? "GET_TWEET_CONTRADICTION" : "GET_TWEET"
 				dispatch({
 					type,
-					tweet: data
+					tweet
 				})
 				contradiction ? setTweetLoadingC(false) : setTweetLoading(false)
 				if (!contradiction) {
-					const pageId = data.user.id
+					const pageId = tweet.user.id
 					getGroupsByPage(pageId)
 					setPageId(pageId)
+				}
+
+				if (archived) {
+					toast.info("Tweet archived!")
 				}
 			})
 			.catch((e) => {
@@ -192,10 +195,12 @@ const Assign = ({ history }) => {
 		})
 	}
 
-	useEffect(() => {}, [])
-
-	console.log("groupId", groupId)
-	console.log("pageId", pageId)
+	useEffect(() => {
+		if (_url !== "") {
+			onPasteCallback(_url)
+		}
+		// eslint-disable-next-line
+	}, [_url])
 
 	return (
 		<DefaultLayout
@@ -204,13 +209,13 @@ const Assign = ({ history }) => {
 			history={history}
 			inverted={inverted}
 			textAlign="center"
-			useContainer={false}
 		>
 			<DisplayMetaTags page="assign" />
-			<Segment className="assignSegment">
+			<div className="assignSegment">
 				<Container>
-					<Header as="h1" inverted>
+					<Header as="h1">
 						Assign a Logical Fallacy
+						<Header.Subheader>Call out misinformation</Header.Subheader>
 					</Header>
 					<Form>
 						<Form.Field>
@@ -219,7 +224,6 @@ const Assign = ({ history }) => {
 								fluid
 								icon="twitter"
 								iconPosition="left"
-								inverted
 								onKeyUp={(e) =>
 									onKeyUp(e, () => {
 										setUrl("")
@@ -240,7 +244,6 @@ const Assign = ({ history }) => {
 								fluid
 								icon="twitter"
 								iconPosition="left"
-								inverted
 								onKeyUp={(e) =>
 									onKeyUp(e, () => {
 										setUrlC("")
@@ -257,7 +260,7 @@ const Assign = ({ history }) => {
 						</Form.Field>
 					</Form>
 
-					<Divider inverted />
+					<Divider hidden />
 
 					<Grid className={`${tweetLoaded ? "" : "loading"}`}>
 						<Grid.Column width={8}>
@@ -285,10 +288,10 @@ const Assign = ({ history }) => {
 								) : (
 									<>
 										{tweetLoading ? (
-											<Segment style={{ opacity: 0.5 }}>
-												<div className="centeredLoader tweet">
-													<Loader active size="big" />
-												</div>
+											<Segment>
+												<Placeholder fluid style={{ height: "210px" }}>
+													<Placeholder.Image />
+												</Placeholder>
 											</Segment>
 										) : (
 											<>{sampleTweet}</>
@@ -323,12 +326,12 @@ const Assign = ({ history }) => {
 									<>
 										{tweetLoadingC ? (
 											<Segment>
-												<div className="centeredLoader tweet">
-													<Loader active size="big" />
-												</div>
+												<Placeholder fluid style={{ height: "210px" }}>
+													<Placeholder.Image />
+												</Placeholder>
 											</Segment>
 										) : (
-											<>{!tweetLoaded && sampleTweetC}</>
+											<>{!tweetLoaded && _url === "" ? sampleTweetC : ""}</>
 										)}
 									</>
 								)}
@@ -338,44 +341,39 @@ const Assign = ({ history }) => {
 
 					{showGroups && (
 						<>
-							<Divider inverted />
+							<Divider hidden />
 
 							{groups.map((group) => (
-								<div className="msgWrapper">
-									<Message icon key={`groupMsg${group.id}`}>
-										<Icon color="green" name="checkmark" />
-										<Message.Content>
-											<Message.Header>
-												Member of the {group.name} group
-											</Message.Header>
-											<p>
-												Tweets from{" "}
-												{group.members.data.map((item, i, { length }) => {
-													const x = i + 1
-													const url = `/pages/twitter/${item.page.username}`
-													const link = (
-														<Link target="_blank" to={url}>
-															{item.page.name}
-														</Link>
-													)
-													let text = <>{link}, </>
-													if (x === length) {
-														text = <>and {link} </>
-													}
-													return (
-														<span key={`member${item.id}`}>{text}</span>
-													)
-												})}
-												can be assigned under one umbrella.
-											</p>
-										</Message.Content>
-									</Message>
-								</div>
+								<Message key={`groupMsg${group.id}`}>
+									<Message.Content>
+										<Message.Header>
+											Member of the {group.name} group
+										</Message.Header>
+										<p>
+											Tweets from{" "}
+											{group.members.data.map((item, i, { length }) => {
+												const x = i + 1
+												const url = `/pages/twitter/${item.page.username}`
+												const link = (
+													<Link target="_blank" to={url}>
+														{item.page.name}
+													</Link>
+												)
+												let text = <>{link}, </>
+												if (x === length) {
+													text = <>and {link} </>
+												}
+												return <span key={`member${item.id}`}>{text}</span>
+											})}
+											can be assigned under one umbrella.
+										</p>
+									</Message.Content>
+								</Message>
 							))}
 						</>
 					)}
 
-					<Divider inverted />
+					<Divider hidden />
 
 					<FallacyForm
 						groupId={groupId}
@@ -387,7 +385,7 @@ const Assign = ({ history }) => {
 				</Container>
 
 				<Divider hidden section />
-			</Segment>
+			</div>
 		</DefaultLayout>
 	)
 }

@@ -65,20 +65,15 @@ const ImageUpload = ({
 							<section>
 								<div {...getRootProps()}>
 									<input {...getInputProps()} />
-									<Header
-										className="imageUploadHeader"
-										inverted
-										size={headerSize}
-									>
-										<Button
+									<div className="imageUploadHeader">
+										<Icon
 											circular
-											color="green"
-											icon="plus"
+											color="blue"
+											name="image"
 											onClick={(e) => e.preventDefault()}
-											size={headerSize}
 										/>
-										<Header.Content>{msg}</Header.Content>
-									</Header>
+										<span>{msg}</span>
+									</div>
 								</div>
 							</section>
 						)}

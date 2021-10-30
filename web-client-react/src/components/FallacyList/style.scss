@@ -15,59 +15,16 @@
             &:first-of-type {
                 border-top-left-radius: 3px;
                 border-top-right-radius: 3px;
+                margin-top: 0;
             }
 
-            .segment {
-                width: 100%;
-            
-                .explanation {
-                    // display: flex;
-                    font-size: 17px;
-
-                    img {
-                        border: solid 1px $twitterExtraLightGrey;
-                        border-radius: 4px;
-                        padding: 8px;
-                        width: 300px;
-                    }
-                }
-
-                &.contradictionSegment {
-                    cursor: pointer;
-                }
-
-                .ui.grid {
-                    margin-bottom: 0;
-                    margin-top: 0;
-                } 
-            }
-
-            &:not(.loading) {
-                .segment {
-                    // border-bottom:  1px $twitterLightGrey !important;
-
-                    .label.ribbon {
-                        text-transform: capitalize;
-                    }
-                }
-            }
-
-            .eight.wide.column, .sixteen.wide.column {
-                padding-bottom: 0;
+            .sixteen.wide.column.normal {
                 padding-left: 0;
-
-                &:last-of-type {
-                    padding-right: 0;
-                }
+                padding-right: 0;
             }
-        }
-    }
 
-    .card {
-        .explanation {
-            p {
-                // display: flex;
-                font-size: 17px;
+            .fallacyExample {
+                cursor: pointer;
             }
         }
     }

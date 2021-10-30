@@ -2,29 +2,31 @@ import {
 	Button,
 	Card,
 	Divider,
-	Grid,
+	Form,
 	Header,
 	Icon,
 	Image,
 	List,
 	Placeholder,
 	Segment,
-	Transition
+	Transition,
+	Visibility
 } from "semantic-ui-react"
-import { useContext, useEffect, useReducer, useState } from "react"
+import { useContext, useEffect, useReducer, useRef, useState } from "react"
 import { RedditShareButton, TwitterShareButton } from "react-share"
 import { CopyToClipboard } from "react-copy-to-clipboard"
 import { Link } from "react-router-dom"
 import { ReactSVG } from "react-svg"
 import { onClickRedirect } from "utils/linkFunctions"
 import { DisplayMetaTags } from "utils/metaFunctions"
-import { tweetOptions } from "options/tweet"
 import { getConfig } from "options/toast"
 import { toast } from "react-toastify"
+import _ from "underscore"
 import axios from "axios"
 import CommentList from "components/CommentList"
 import defaultImg from "images/images/image-square.png"
 import DefaultLayout from "layouts/default"
+import FallacyExample from "components/FallacyExample"
 import FallacyList from "components/FallacyList"
 import html2canvas from "html2canvas"
 import initialState from "states/fallacy"
@@ -35,97 +37,52 @@ import Moment from "react-moment"
 import PropTypes from "prop-types"
 import reducer from "reducers/fallacy"
 import ThemeContext from "themeContext"
-import Tweet from "components/Tweet"
 
 const toastConfig = getConfig()
 toast.configure(toastConfig)
 
 const PlaceholderSegment = (
-	<Placeholder fluid>
-		<Placeholder.Header image>
-			<Placeholder.Line />
-			<Placeholder.Line />
-		</Placeholder.Header>
-		<Placeholder.Paragraph>
-			<Placeholder.Line length="full" />
-			<Placeholder.Line length="long" />
-			<Placeholder.Line length="short" />
-		</Placeholder.Paragraph>
+	<Placeholder fluid style={{ height: 220 }}>
+		<Placeholder.Image image />
 	</Placeholder>
 )
 
 const Fallacy = ({ history, match }) => {
 	const { state } = useContext(ThemeContext)
-	const { inverted } = state
+	const { auth, inverted } = state
+	const authUser = state.user
+
 	const { slug } = match.params
 	const url = `${window.location.origin}/fallacies/${slug}`
+
+	const explanationRef = useRef(null)
 
 	const [internalState, dispatch] = useReducer(
 		process.env.NODE_ENV === "development" ? logger(reducer) : reducer,
 		initialState
 	)
-	const { error, fallacy, loaded } = internalState
-	const {
-		contradictionTwitter,
-		contradictionYouTube,
-		createdAt,
-		explanation,
-		id,
-		page,
-		reference,
-		retracted,
-		twitter,
-		user,
-		youtube
-	} = fallacy
+	const { comments, error, fallacy, loaded } = internalState
+	const { createdAt, id, page, reference, retracted, title, user } = fallacy
+	const { contradictionTweet, contradictionYouTube, twitter, youtube } = fallacy
 
-	let title = ""
-	let dateOne = ""
-	let dateTwo = ""
-	let tweet = null
-	let cTweet = null
-	let highlightedText = ""
-	let highlightedTextC = ""
-	let video = null
-	let cVideo = null
-
-	if (loaded && !error) {
-		title = `${reference.name} #${id}`
-
-		if (typeof twitter !== "undefined" && twitter !== null) {
-			tweet = twitter.tweet
-			highlightedText = twitter.highlightedText === null ? "" : twitter.highlightedText
-			dateOne = tweet.createdAt
-		}
-		if (typeof contradictionTwitter !== "undefined" && contradictionTwitter !== null) {
-			cTweet = contradictionTwitter.tweet
-			highlightedTextC = contradictionTwitter.highlightedText
-			highlightedTextC = highlightedTextC === null ? "" : highlightedTextC
-			dateTwo = cTweet.createdAt
-		}
-		if (typeof youtube !== "undefined" && youtube !== null) {
-			video = youtube.video
-			dateOne = video.createdAt
-		}
-		if (typeof contradictionYouTube !== "undefined" && contradictionYouTube !== null) {
-			cVideo = contradictionYouTube.video
-			dateTwo = cVideo.createdAt
-		}
-	}
-
-	const showDateDiff = (tweet || video) && (cTweet || cVideo)
-	const canScreenshot = tweet || (tweet && cTweet)
+	const canScreenshot =
+		(twitter && contradictionYouTube === null) || (twitter && contradictionTweet)
 	const canRetract = false
+	const canEdit = auth ? authUser.id === user.id : false
 
-	// eslint-disable-next-line
 	const [downloading, setDownloading] = useState(false)
-	const [hasMore, setHasMore] = useState(false)
-	const [loading, setLoading] = useState(true)
-	const [loadingMore, setLoadingMore] = useState(false)
-	// eslint-disable-next-line
-	const [pageNumber, setPageNumber] = useState(1)
+	const [editingExp, setEditingExp] = useState(false)
 	const [verticalMode, setVerticalMode] = useState(true)
 	const [visible, setVisible] = useState(false)
+
+	const [hasMore, setHasMore] = useState(false)
+	const [hasMoreC, setHasMoreC] = useState(false)
+	const [loading, setLoading] = useState(true)
+	const [loadingC, setLoadingC] = useState(true)
+	const [loadingMore, setLoadingMore] = useState(false)
+	const [loadingMoreC, setLoadingMoreC] = useState(false)
+	const [pageNumber, setPageNumber] = useState(1)
+	const [pageNumberC, setPageNumberC] = useState(1)
 
 	useEffect(() => {
 		const getFallacy = async (slug) => {
@@ -138,6 +95,7 @@ const Fallacy = ({ history, match }) => {
 						fallacy
 					})
 					setVisible(true)
+					getComments(fallacy.id)
 				})
 				.catch(() => {
 					dispatch({
@@ -177,6 +135,31 @@ const Fallacy = ({ history, match }) => {
 
 			setDownloading(false)
 		})
+	}
+
+	const getComments = async (fallacyId, page = 1) => {
+		page === 1 ? setLoadingC(true) : setLoadingMoreC(true)
+		await axios
+			.get(`${process.env.REACT_APP_BASE_URL}comments`, {
+				params: {
+					page,
+					fallacyId
+				}
+			})
+			.then(async (response) => {
+				const { data, meta } = response.data
+				dispatch({
+					type: "GET_COMMENTS",
+					comments: data,
+					page
+				})
+				setPageNumberC(page + 1)
+				setHasMoreC(meta.current_page < meta.last_page)
+				pageNumberC === 1 ? setLoadingC(false) : setLoadingMoreC(false)
+			})
+			.catch(() => {
+				toast.error("There was an error")
+			})
 	}
 
 	// eslint-disable-next-line
@@ -229,6 +212,26 @@ const Fallacy = ({ history, match }) => {
 			})
 	}
 
+	const updateFallacy = async (id) => {
+		const explanation = _.isEmpty(explanationRef.current) ? "" : explanationRef.current.value
+
+		await axios
+			.post(`${process.env.REACT_APP_BASE_URL}fallacies/update`, {
+				id,
+				explanation
+			})
+			.then((response) => {
+				const { data } = response.data
+				dispatch({
+					type: "UPDATE_FALLACY",
+					data
+				})
+			})
+			.catch(() => {
+				toast.error("Error updating fallacy")
+			})
+	}
+
 	return (
 		<DefaultLayout
 			activeItem="fallacies"
@@ -240,154 +243,54 @@ const Fallacy = ({ history, match }) => {
 			{loaded ? (
 				<>
 					{error && (
-						<>
-							<div className="centeredLoader">
-								<Header as="h1" image textAlign="center">
-									<ReactSVG className="errorSvg" src={Logo} />
-									<Header.Content>This fallacy does not exist</Header.Content>
-								</Header>
-							</div>
-						</>
+						<div className="centeredLoader">
+							<Header as="h1" image textAlign="center">
+								<ReactSVG className="errorSvg" src={Logo} />
+								<Header.Content>This fallacy does not exist</Header.Content>
+							</Header>
+						</div>
 					)}
 
 					{!error && (
 						<>
 							<Header as="h1" className="fallacyHeader">
-								{title}
-								<Header.Subheader>Assigned to {page.name}</Header.Subheader>
+								{title} #{id}
+								<Header.Subheader>
+									Assigned to{" "}
+									<Link to={`/pages/${page.network}/${page.username}`}>
+										{page.name}
+									</Link>
+								</Header.Subheader>
 							</Header>
 							<Transition animation="scale" duration={900} visible={visible}>
-								<Segment id="fallacyMaterial" stacked>
-									{verticalMode ? (
-										<>
-											{tweet && (
-												<Tweet
-													config={{
-														...tweetOptions,
-														highlightedText,
-														onClickCallback: (e, history, id) => {
-															e.stopPropagation()
-															const isLink =
-																e.target.classList.contains(
-																	"linkify"
-																)
-															if (!isLink) {
-																onClickRedirect(
-																	e,
-																	history,
-																	`/tweets/${id}`
-																)
-															}
-														}
-													}}
-													counts={tweet.counts}
-													createdAt={tweet.createdAt}
-													extendedEntities={twitter.extendedEntities}
-													fullText={tweet.fullText}
-													history={history}
-													id={tweet.tweetId}
-													quoted={tweet.quoted}
-													retweeted={tweet.retweeted}
-													user={tweet.user}
-												/>
-											)}
-											{showDateDiff && (
-												<Divider
-													hidden
-													horizontal
-													id="fallacyDateDiff"
-													inverted={inverted}
-												>
-													<Icon
-														name="clock outline"
-														style={{ marginRight: "5px" }}
-													/>{" "}
-													<Moment ago from={dateOne}>
-														{dateTwo}
-													</Moment>{" "}
-													<div style={{ marginLeft: 3 }}>apart</div>
-												</Divider>
-											)}
-											{cTweet && (
-												<Tweet
-													config={{
-														...tweetOptions,
-														highlightedText: highlightedTextC
-													}}
-													counts={cTweet.counts}
-													createdAt={cTweet.createdAt}
-													entities={cTweet.entities}
-													extendedEntities={cTweet.extendedEntities}
-													fullText={cTweet.fullText}
-													history={history}
-													id={cTweet.tweetId}
-													quoted={cTweet.quoted}
-													retweeted={cTweet.retweeted}
-													user={cTweet.user}
-												/>
-											)}
-										</>
-									) : (
-										<Grid>
-											<Grid.Column width={8}>
-												{tweet && (
-													<Tweet
-														config={{
-															...tweetOptions,
-															highlightedText,
-															onClickCallback: (e, history, id) => {
-																e.stopPropagation()
-																const isLink =
-																	e.target.classList.contains(
-																		"linkify"
-																	)
-																if (!isLink) {
-																	onClickRedirect(
-																		e,
-																		history,
-																		`/tweets/${id}`
-																	)
-																}
-															}
-														}}
-														counts={tweet.counts}
-														createdAt={tweet.createdAt}
-														extendedEntities={twitter.extendedEntities}
-														fullText={tweet.fullText}
-														history={history}
-														id={tweet.tweetId}
-														quoted={tweet.quoted}
-														retweeted={tweet.retweeted}
-														user={tweet.user}
-													/>
-												)}
-											</Grid.Column>
-											<Grid.Column width={8}>
-												{cTweet && (
-													<Tweet
-														config={{
-															...tweetOptions,
-															highlightedText: highlightedTextC
-														}}
-														counts={cTweet.counts}
-														createdAt={cTweet.createdAt}
-														entities={cTweet.entities}
-														extendedEntities={cTweet.extendedEntities}
-														fullText={cTweet.fullText}
-														history={history}
-														id={cTweet.tweetId}
-														quoted={cTweet.quoted}
-														retweeted={cTweet.retweeted}
-														user={cTweet.user}
-													/>
-												)}
-											</Grid.Column>
-										</Grid>
-									)}
-								</Segment>
+								<div id="fallacyMaterial">
+									<FallacyExample
+										colored={fallacy.reference.id === 21}
+										contradictionTwitter={fallacy.contradictionTwitter}
+										contradictionYouTube={fallacy.contradictionYouTube}
+										createdAt={fallacy.createdAt}
+										crossOriginAnonymous
+										defaultUserImg={fallacy.page.image}
+										explanation={fallacy.explanation}
+										history={history}
+										id={fallacy.id}
+										onClickFallacy={onClickFallacy}
+										onClickTweet={(e, history, id) =>
+											onClickRedirect(e, history, `/tweets/${id}`)
+										}
+										reference={fallacy.reference}
+										showExplanation={false}
+										slug={fallacy.slug}
+										stacked
+										twitter={fallacy.twitter}
+										youtube={fallacy.youtube}
+										user={fallacy.user}
+										verticalMode={verticalMode}
+									/>
+								</div>
 							</Transition>
 
-							<List className="shareList" horizontal size="tiny">
+							<List className="shareList" horizontal size="mini">
 								<List.Item>
 									<TwitterShareButton title={title} url={url}>
 										<Button circular color="twitter" icon="twitter" />
@@ -407,33 +310,28 @@ const Fallacy = ({ history, match }) => {
 									</CopyToClipboard>
 								</List.Item>
 								{canScreenshot && (
-									<>
-										<List.Item position="right">
-											<Button
-												circular
-												className="screenshotButton"
-												color="olive"
-												icon="camera"
-												loading={downloading}
-												onClick={captureScreenshot}
-												style={{ verticalAlign: "none" }}
-											/>
-										</List.Item>
-										<List.Item position="right">
-											<Button
-												circular
-												color="yellow"
-												icon="shuffle"
-												loading={downloading}
-												onClick={() => setVerticalMode(!verticalMode)}
-												style={{ verticalAlign: "none" }}
-											/>
-										</List.Item>
-									</>
+									<List.Item position="right">
+										<Button
+											circular
+											className="screenshotButton"
+											color="olive"
+											icon="camera"
+											loading={downloading}
+											onClick={captureScreenshot}
+											style={{ verticalAlign: "none" }}
+										/>
+									</List.Item>
 								)}
+								<List.Item position="right">
+									<Button
+										circular
+										color="yellow"
+										icon="shuffle"
+										onClick={() => setVerticalMode(!verticalMode)}
+										style={{ verticalAlign: "none" }}
+									/>
+								</List.Item>
 							</List>
-
-							<Divider />
 
 							<Segment basic className="explanationSegment">
 								<Header>
@@ -446,24 +344,58 @@ const Fallacy = ({ history, match }) => {
 										{user.name}
 										<Header.Subheader>
 											<Moment date={fallacy.createdAt} fromNow />
+											{canEdit && (
+												<>
+													{" "}
+													•{" "}
+													<span
+														className={`editExp ${
+															editingExp ? "red" : "blue"
+														}`}
+														onClick={() => setEditingExp(!editingExp)}
+													>
+														{editingExp ? "Cancel" : "Edit"}
+													</span>
+												</>
+											)}
 										</Header.Subheader>
 									</Header.Content>
 								</Header>
-								<div
-									dangerouslySetInnerHTML={{
-										__html: Marked(explanation)
-									}}
-								/>
+								{editingExp ? (
+									<Form>
+										<Form.Field>
+											<textarea
+												defaultValue={fallacy.explanation}
+												placeholder="Explain why this is fallacious"
+												ref={explanationRef}
+											/>
+										</Form.Field>
+										<Form.Field>
+											<Button
+												color="blue"
+												content="Save"
+												fluid
+												onClick={() => updateFallacy(id)}
+											/>
+										</Form.Field>
+									</Form>
+								) : (
+									<div
+										dangerouslySetInnerHTML={{
+											__html: Marked(fallacy.explanation)
+										}}
+									/>
+								)}
 							</Segment>
 
-							<Divider />
+							<Divider hidden />
 
 							<Segment secondary>
 								<Header as="h3">{reference.name}</Header>
 								<p>{reference.description}</p>
 							</Segment>
 
-							<Divider />
+							<Divider hidden />
 
 							<Card className="retractionCard" fluid>
 								<Card.Content>
@@ -542,7 +474,25 @@ const Fallacy = ({ history, match }) => {
 								</Card.Content>
 							</Card>
 
-							<CommentList id={id} />
+							<Header content="Comments" />
+
+							<Visibility
+								continuous
+								offset={[50, 50]}
+								onBottomVisible={() => {
+									if (!loadingC && !loadingMoreC && hasMoreC) {
+										getComments(fallacy.id, pageNumberC)
+									}
+								}}
+							>
+								<CommentList
+									comments={comments.data}
+									fallacyId={id}
+									showEmptyMsg={false}
+								/>
+							</Visibility>
+
+							<Divider hidden section />
 
 							{/*
 							<FallacyList
@@ -559,9 +509,9 @@ const Fallacy = ({ history, match }) => {
 				<div className="placeholderWrapper">
 					<Segment basic style={{ height: "50px" }}></Segment>
 					<Segment stacked>
-						<Segment>{PlaceholderSegment}</Segment>
+						{PlaceholderSegment}
 						<Divider section />
-						<Segment>{PlaceholderSegment}</Segment>
+						{PlaceholderSegment}
 					</Segment>
 				</div>
 			)}

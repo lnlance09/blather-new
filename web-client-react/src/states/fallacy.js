@@ -1,5 +1,9 @@
 const initialState = {
 	error: false,
+	comments: {
+		data: [{}, {}, {}],
+		loaded: false
+	},
 	fallacies: [{}, {}, {}],
 	fallacy: {
 		contradictionTwitter: {

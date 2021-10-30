@@ -24,6 +24,7 @@ class TweetController extends Controller
     public function index(Request $request)
     {
         $q = $request->input('q');
+        $ids = $request->input('ids');
         $pageIds = $request->input('pageIds', null);
         $sort = $request->input('sort', 'id');
         $dir = $request->input('dir', 'asc');
@@ -40,6 +41,10 @@ class TweetController extends Controller
 
         if (is_array($pageIds)) {
             $tweets = $tweets->whereIn('page_id', $pageIds);
+        }
+
+        if (is_array($ids)) {
+            $tweets = $tweets->whereIn('tweet_id', $ids);
         }
 
         $tweets = $tweets->with(['page'])
@@ -144,6 +149,7 @@ class TweetController extends Controller
     public function show($id)
     {
         $tweet = null;
+        $archived = false;
 
         // Get the tweet from twitter's api
         try {
@@ -177,6 +183,8 @@ class TweetController extends Controller
                 $tweetDb->refresh();
                 $tweet = $tweetDb;
             } else {
+                $archived = true;
+
                 $user = $tweet['user'];
                 $isQuoted = $tweet['is_quote_status'];
                 $isRetweeted = array_key_exists('retweeted_status', $tweet) ? $tweet['retweeted_status'] : false;
@@ -311,7 +319,10 @@ class TweetController extends Controller
             ], 404);
         }
 
-        return new TweetResource($tweet);
+        return response([
+            'archived' => $archived,
+            'tweet' => new TweetResource($tweet)
+        ]);
     }
 
     public function showTwitterList(Request $request)

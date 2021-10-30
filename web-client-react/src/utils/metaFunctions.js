@@ -79,6 +79,13 @@ export const DisplayMetaTags = ({ page, state }) => {
 				title: `Grifters - ${siteName}`
 			}
 			break
+		case "groups":
+			metaTags = {
+				description: "Groups",
+				img,
+				title: `Groups - ${siteName}`
+			}
+			break
 		case "notFound":
 			metaTags = {
 				description,
@@ -146,6 +153,13 @@ export const DisplayMetaTags = ({ page, state }) => {
 					img: tweet.user.img,
 					title: `Tweet by ${tweet.user.name} - ${siteName}`
 				}
+			}
+			break
+		case "tweets":
+			metaTags = {
+				description,
+				img,
+				title: `Tweets - ${siteName}`
 			}
 			break
 		case "user":

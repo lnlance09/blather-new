@@ -9,20 +9,17 @@ const NotFound = ({ history }) => {
 	const { inverted } = useContext(ThemeContext)
 
 	return (
-		<div className="notFoundPage">
+		<DefaultLayout
+			activeItem=""
+			containerClassName="notFoundPage"
+			history={history}
+			inverted={inverted}
+		>
 			<DisplayMetaTags page="notFound" />
-
-			<DefaultLayout
-				activeItem=""
-				containerClassName="notFoundPage"
-				history={history}
-				inverted={inverted}
-			>
-				<Header as="h1" className="notFoundHeader" inverted={inverted} size="large">
-					This page does not exist!
-				</Header>
-			</DefaultLayout>
-		</div>
+			<Header as="h1" className="notFoundHeader" inverted={inverted} size="large">
+				This page does not exist!
+			</Header>
+		</DefaultLayout>
 	)
 }
 
