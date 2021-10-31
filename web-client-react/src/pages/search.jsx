@@ -169,6 +169,7 @@ const Search = ({ history, match }) => {
 			.get(`${process.env.REACT_APP_BASE_URL}search/counts`, {
 				params: {
 					q,
+					refIds,
 					pageIds,
 					pageIdsF,
 					pageIdsC
@@ -382,10 +383,6 @@ const Search = ({ history, match }) => {
 
 	const onClickPage = (e, network, slug) => {
 		onClickRedirect(e, history, `/pages/${network}/${slug}`)
-	}
-
-	const onClickTweet = (e, id) => {
-		onClickRedirect(e, history, `/tweets/${id}`)
 	}
 
 	const onChangeContradictionsUser = async (e, { value }) => {
@@ -602,7 +599,6 @@ const Search = ({ history, match }) => {
 						offset={[50, 50]}
 						onBottomVisible={() => {
 							if (!loadingF && !loadingMoreF && hasMoreF) {
-								console.log("pagenumberf", pageNumberF)
 								getFallacies(q, refIds, pageIdsF, pageNumberF)
 							}
 						}}
@@ -744,7 +740,7 @@ const Search = ({ history, match }) => {
 							inverted={inverted}
 							loading={!tweets.loaded}
 							loadingMore={loadingMoreT}
-							onClickPage={onClickTweet}
+							showSaveOption
 							tweets={tweets.data}
 						/>
 					</Visibility>

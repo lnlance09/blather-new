@@ -92,10 +92,18 @@ class Tweet extends JsonResource
             }
         }
 
+        if ($request->input('tweets') == 1) {
+            $arguments = [];
+            $argumentOptions = [];
+        } else {
+            $arguments = new ArgumentExampleTweetCollection($this->arguments);
+            $argumentOptions = array_column($this->arguments->toArray(), 'argument_id');
+        }
+
         return [
             'id' => $this->id,
-            'arguments' => new ArgumentExampleTweetCollection($this->arguments),
-            'argumentOptions' => array_column($this->arguments->toArray(), 'argument_id'),
+            'arguments' => $arguments,
+            'argumentOptions' => $argumentOptions,
             'contradictionCount' => $this->contradictions_count,
             'counts' => [
                 'fallacies' => $this->fallacies_count,

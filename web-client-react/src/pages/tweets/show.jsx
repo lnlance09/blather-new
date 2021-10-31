@@ -230,7 +230,8 @@ const TweetPage = ({ history, match }) => {
 							<Tweet
 								config={{
 									...tweetOptions,
-									externalLink: true
+									externalLink: true,
+									showSaveOption: true
 								}}
 								counts={tweet.counts}
 								createdAt={tweet.createdAt}

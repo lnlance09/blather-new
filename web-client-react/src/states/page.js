@@ -9,7 +9,11 @@ const initialState = {
 		loaded: false
 	},
 	loaded: false,
-	page: {}
+	page: {},
+	tweets: {
+		data: [{}, {}, {}],
+		loaded: false
+	}
 }
 
 export default initialState

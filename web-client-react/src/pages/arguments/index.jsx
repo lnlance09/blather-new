@@ -3,9 +3,12 @@ import { useContext, useEffect, useReducer } from "react"
 import { getArgumentOptions } from "options/arguments"
 import { DisplayMetaTags } from "utils/metaFunctions"
 import { argumentOptions } from "options/arguments"
+import { onClickRedirect } from "utils/linkFunctions"
+import { formatPlural } from "utils/textFunctions"
 import { getConfig } from "options/toast"
 import { toast } from "react-toastify"
 import _ from "underscore"
+import ArgumentForm from "components/ArgumentForm"
 import axios from "axios"
 import DefaultLayout from "layouts/default"
 import initialState from "states/arguments"
@@ -13,7 +16,6 @@ import logger from "use-reducer-logger"
 import PropTypes from "prop-types"
 import reducer from "reducers/arguments"
 import ThemeContext from "themeContext"
-import ArgumentForm from "components/ArgumentForm"
 
 const toastConfig = getConfig()
 toast.configure(toastConfig)
@@ -169,8 +171,14 @@ const Arguments = ({ history }) => {
 									)}
 								</Card.Content>
 								<Card.Content extra>
-									<Button color="blue" compact>
-										See examples
+									<Button
+										color="blue"
+										compact
+										onClick={(e) =>
+											onClickRedirect(e, history, `/arguments/${arg.slug}`)
+										}
+									>
+										{arg.tweetCount} {formatPlural(arg.tweetCount, "example")}
 										<Icon name="arrow right" />
 									</Button>
 								</Card.Content>

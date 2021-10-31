@@ -3,11 +3,19 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\Argument as ArgumentResource;
+use App\Http\Resources\ArgumentImage as ArgumentImageResource;
 use App\Http\Resources\ArgumentCollection;
 use App\Http\Resources\ArgumentOptionCollection;
+use App\Http\Resources\FallacyCollection;
+use App\Http\Resources\PageCollection;
 use App\Models\Argument;
 use App\Models\ArgumentContradiction;
+use App\Models\ArgumentImage;
+use App\Models\Fallacy;
+use App\Models\Page;
+use App\Models\Tweet;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class ArgumentController extends Controller
@@ -32,6 +40,30 @@ class ArgumentController extends Controller
             ->withCount(['contradictions', 'images', 'tweets'])
             ->get();
         return new ArgumentCollection($args);
+    }
+
+    public function addImage(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|image',
+        ]);
+
+        $id = $request->input('id', null);
+        $file = $request->file('file');
+
+        $img = 'arguments/' . Str::random(24) . '.jpg';
+        Storage::disk('s3')->put($img, file_get_contents($file));
+
+        $image = ArgumentImage::create([
+            'argument_id' => $id,
+            's3_link' => $img
+        ]);
+
+        return response([
+            'image' => new ArgumentImageResource($image),
+            's3Link' => $img
+        ]);
+        return new ArgumentImageResource($image);
     }
 
     /**
@@ -66,6 +98,37 @@ class ArgumentController extends Controller
         //
     }
 
+    public function getFallaciesByArg(Request $request)
+    {
+        $id = $request->input('id', null);
+
+        $fallacies = Fallacy::whereHas('twitter.tweet.arguments', function ($query) use ($id) {
+            $query->where('argument_id', $id);
+        })
+            ->paginate(15);
+
+        return new FallacyCollection($fallacies);
+    }
+
+    public function getPagesByArg(Request $request)
+    {
+        $id = $request->input('id', null);
+
+        $pages = Page::whereHas('tweets.arguments', function ($query) use ($id) {
+            $query->where('argument_id', $id);
+        })
+            ->withCount(['tweets' => function ($query) use ($id) {
+                $query->whereHas('arguments', function ($query) use ($id) {
+                    $query->where('argument_id', $id);
+                });
+            }])
+            ->orderBy('tweets_count', 'desc')
+            ->limit(5)
+            ->get();
+
+        return new PageCollection($pages);
+    }
+
     /**
      * Display the specified resource.
      *
@@ -77,8 +140,8 @@ class ArgumentController extends Controller
         $arg = Argument::where([
             'slug' => $slug
         ])
-            ->with(['contradictions', 'images', 'tweets'])
-            ->withCounts(['contradictions', 'images', 'tweets'])
+            ->with(['contradictions', 'images'])
+            ->withCount(['contradictions', 'images', 'tweets'])
             ->first();
 
         if (empty($arg)) {

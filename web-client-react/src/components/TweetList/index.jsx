@@ -13,7 +13,8 @@ const TweetList = ({
 	inverted,
 	loading,
 	loadingMore,
-	onClickTweet,
+	onClickTweet = null,
+	showSaveOption = false,
 	tweets
 }) => {
 	const showEmptyMsg = tweets.length === 0 && !loading
@@ -29,41 +30,47 @@ const TweetList = ({
 
 	return (
 		<div className="tweetList">
-			{tweets.map((tweet, i) => {
+			{tweets.map((_tweet, i) => {
+				let tweet = _tweet
+				// NOTE: To account for how tweets are passed in on the argument page
+				if (typeof _tweet.tweet !== "undefined") {
+					tweet = _tweet.tweet
+				}
+
 				const { extendedEntities, id } = tweet
 				return (
-					<div
-						className={`tweetWrapper ${loading ? "loading" : null}`}
-						key={`tweet${i}`}
-						onClick={(e) => onClickTweet(e, id)}
-					>
+					<div className={`tweetWrapper ${loading ? "loading" : ""}`} key={`tweet${i}`}>
 						{loading && <Segment>{PlaceholderSegment}</Segment>}
 						{!loading && (
-							<>
-								<Tweet
-									config={{
-										...tweetOptions,
-										highlightedText,
-										onClickCallback: (e, history, id) => {
-											e.stopPropagation()
-											const isLink = e.target.classList.contains("linkify")
-											if (!isLink) {
-												onClickRedirect(e, history, `/tweets/${id}`)
-											}
+							<Tweet
+								config={{
+									...tweetOptions,
+									highlightedText,
+									onClickCallback: (e, history, id) => {
+										e.stopPropagation()
+										if (onClickTweet) {
+											onClickTweet(e, id)
+											return
 										}
-									}}
-									counts={tweet.counts}
-									createdAt={tweet.createdAt}
-									defaultUserImg={defaultUserImg}
-									extendedEntities={extendedEntities}
-									fullText={tweet.fullText}
-									history={history}
-									id={tweet.tweetId}
-									quoted={tweet.quoted}
-									retweeted={tweet.retweeted}
-									user={tweet.user}
-								/>
-							</>
+
+										const isLink = e.target.classList.contains("linkify")
+										if (!isLink) {
+											onClickRedirect(e, history, `/tweets/${id}`)
+										}
+									},
+									showSaveOption
+								}}
+								counts={tweet.counts}
+								createdAt={tweet.createdAt}
+								defaultUserImg={defaultUserImg}
+								extendedEntities={extendedEntities}
+								fullText={tweet.fullText}
+								history={history}
+								id={tweet.tweetId}
+								quoted={tweet.quoted}
+								retweeted={tweet.retweeted}
+								user={tweet.user}
+							/>
 						)}
 					</div>
 				)
@@ -76,7 +83,7 @@ const TweetList = ({
 			{showEmptyMsg && (
 				<Segment placeholder>
 					<Header icon>
-						<Icon color="twitter" name="twitter" />
+						<Icon className="twitter" name="twitter" />
 						{emptyMsg}
 					</Header>
 				</Segment>
@@ -93,6 +100,7 @@ TweetList.propTypes = {
 	loading: PropTypes.bool,
 	loadingMore: PropTypes.bool,
 	onClickTweet: PropTypes.func,
+	showSaveOption: PropTypes.bool,
 	tweets: PropTypes.arrayOf(PropTypes.shape({}))
 }
 

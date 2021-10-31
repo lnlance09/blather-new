@@ -1,22 +1,19 @@
 import "./style.scss"
 import { Card, Image, Placeholder } from "semantic-ui-react"
-import { formatPlural } from "utils/textFunctions"
 import PlaceholderPic from "images/avatar/large/steve.jpg"
 import PropTypes from "prop-types"
 
 const UserList = ({ inverted, loading, loadingMore, onClickUser, users }) => {
 	const PlaceholderSegment = (
-		<>
-			<Card.Content>
-				<Placeholder className="placeholderParagraphWrapper" inverted={inverted} fluid>
-					<Placeholder.Paragraph>
-						<Placeholder.Line />
-						<Placeholder.Line />
-						<Placeholder.Line />
-					</Placeholder.Paragraph>
-				</Placeholder>
-			</Card.Content>
-		</>
+		<Card.Content>
+			<Placeholder className="placeholderParagraphWrapper" inverted={inverted} fluid>
+				<Placeholder.Paragraph>
+					<Placeholder.Line />
+					<Placeholder.Line />
+					<Placeholder.Line />
+				</Placeholder.Paragraph>
+			</Placeholder>
+		</Card.Content>
 	)
 
 	return (

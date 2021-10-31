@@ -124,6 +124,13 @@ export const DisplayMetaTags = ({ page, state }) => {
 				title: `Rules - ${siteName}`
 			}
 			break
+		case "savedTweets":
+			metaTags = {
+				description,
+				img,
+				title: `Saved Tweets - ${siteName}`
+			}
+			break
 		case "search":
 			metaTags = {
 				description,

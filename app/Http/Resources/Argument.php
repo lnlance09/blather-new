@@ -32,6 +32,7 @@ class Argument extends JsonResource
             'description' => $this->description,
             'explanation' => $this->explanation,
             'imageCount' => $this->images_count,
+            'imageOptions' => array_column($this->images->toArray(), 's3_link'),
             'images' => new ImageCollection($this->images),
             'slug' => $this->slug,
             'tweetCount' => $this->tweets_count,

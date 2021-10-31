@@ -17,7 +17,8 @@ class ArgumentContradiction extends JsonResource
         return [
             'id' => $this->id,
             'description' => $this->contradiction->description,
-            'explanation' => $this->explanation
+            'explanation' => $this->explanation,
+            'slug' => $this->contradiction->slug
         ];
     }
 }

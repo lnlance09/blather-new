@@ -5,7 +5,6 @@ import {
 	Grid,
 	Header,
 	Input,
-	Loader,
 	Message,
 	Placeholder,
 	Segment
@@ -169,7 +168,7 @@ const Assign = ({ history }) => {
 		const url = e.clipboardData.getData("Text")
 		const _url = new URL(url)
 		const { hostname, pathname } = _url
-		if (hostname !== "twitter.com") {
+		if (!["twitter.com", "blather.io", "127.0.0.1"].includes(hostname)) {
 			return
 		}
 		callback(url, pathname)

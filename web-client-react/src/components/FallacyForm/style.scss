@@ -1,7 +1,5 @@
 @import "../../scss/_colors.scss";
 
-$pillBlue: rgba(41, 128, 185, 0.8);
-
 .fallacyFormComponent {
     .imageUpload {
         margin: 10px 5px;
@@ -13,14 +11,13 @@ $pillBlue: rgba(41, 128, 185, 0.8);
         }
     }
 
-    .ui.label {
-        background: $pillBlue !important;
+    .ui.label.ref {
         cursor: pointer;
         transition: 0.3s;
     
         &:not(.active) {
             &:hover {
-                background: lighten($pillBlue, 6%) !important;
+                background: lighten($blue, 6%) !important;
             }
         }
 

@@ -210,7 +210,7 @@ const FallacyForm = ({
 						<Label.Group color="blue" size="large">
 							{refOptions.map((ref, i) => (
 								<Label
-									className={`${refValue === ref.value ? "active" : ""}`}
+									className={`ref ${refValue === ref.value ? "active" : ""}`}
 									key={`refLabel${i}`}
 									onClick={() => setRefValue(ref.value)}
 								>
@@ -261,8 +261,9 @@ const FallacyForm = ({
 										explanationRef.current.focus()
 									}
 								}}
+								onLoad={(e) => (e.target.src = img)}
 								rounded
-								src={img}
+								src={PlaceholderPic}
 							/>
 						))}
 						{imagesLoading && (

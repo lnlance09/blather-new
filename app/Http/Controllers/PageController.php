@@ -63,6 +63,32 @@ class PageController extends Controller
         return new PageCollection($pages);
     }
 
+    public function countByNetwork(Request $request)
+    {
+        $_q = $request->input('q', null);
+        $network = $request->input('network', 'twitter');
+
+        $pages = Page::where('network', $network);
+
+        if (!empty($_q)) {
+            $pages = $pages->where(function ($q) use ($_q) {
+                $q->where(function ($query) use ($_q) {
+                    $query->where('name', 'LIKE', '%' . $_q . '%');
+                })->orWhere(function ($query) use ($_q) {
+                    $query->where('username', 'LIKE', '%' . $_q . '%');
+                })->orWhere(function ($query) use ($_q) {
+                    $query->where('bio', 'LIKE', '%' . $_q . '%');
+                });
+            });
+        }
+
+        $count = $pages->count();
+
+        return response([
+            'count' => $count
+        ]);
+    }
+
     /**
      * Show the form for creating a new resource.
      *
@@ -150,32 +176,6 @@ class PageController extends Controller
     public function store(Request $request)
     {
         //
-    }
-
-    public function countByNetwork(Request $request)
-    {
-        $_q = $request->input('q', null);
-        $network = $request->input('network', 'twitter');
-
-        $pages = Page::where('network', $network);
-
-        if (!empty($_q)) {
-            $pages = $pages->where(function ($q) use ($_q) {
-                $q->where(function ($query) use ($_q) {
-                    $query->where('name', 'LIKE', '%' . $_q . '%');
-                })->orWhere(function ($query) use ($_q) {
-                    $query->where('username', 'LIKE', '%' . $_q . '%');
-                })->orWhere(function ($query) use ($_q) {
-                    $query->where('bio', 'LIKE', '%' . $_q . '%');
-                });
-            });
-        }
-
-        $count = $pages->count();
-
-        return response([
-            'count' => $count
-        ]);
     }
 
     /**

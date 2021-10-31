@@ -28,6 +28,16 @@ const reducer = (state, action) => {
 				loaded: true,
 				page: action.page
 			}
+		case "GET_TWEETS":
+			const tweets =
+				action.page > 1 ? [...state.tweets.data, ...action.tweets] : action.tweets
+			return {
+				...state,
+				tweets: {
+					data: tweets,
+					loaded: true
+				}
+			}
 		case "SET_PAGE_ERROR":
 			return {
 				...state,

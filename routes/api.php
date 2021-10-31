@@ -24,8 +24,11 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/arguments', [ArgumentController::class, 'index']);
+Route::get('/arguments/getFallaciesByArg', [ArgumentController::class, 'getFallaciesByArg']);
+Route::get('/arguments/getPagesByArg', [ArgumentController::class, 'getPagesByArg']);
 Route::get('/arguments/showOptions', [ArgumentController::class, 'showOptions']);
-Route::get('/arguments/{id}', [ArgumentController::class, 'show']);
+Route::get('/arguments/{slug}', [ArgumentController::class, 'show']);
+Route::post('/arguments/addImage', [ArgumentController::class, 'addImage'])->middleware(['auth:api', 'verified']);
 Route::post('/arguments/{id}/update', [ArgumentController::class, 'update'])->middleware(['auth:api', 'verified']);
 
 Route::get('/comments', [CommentController::class, 'index']);
@@ -38,7 +41,7 @@ Route::get('/fallacies', [FallacyController::class, 'index']);
 Route::get('/fallacies/{slug}', [FallacyController::class, 'show']);
 Route::post('/fallacies/addImage', [FallacyController::class, 'addImage']);
 Route::post('/fallacies/create', [FallacyController::class, 'create'])->middleware('api');
-Route::post('/fallacies/update', [FallacyController::class, 'update'])->middleware('api');
+Route::post('/fallacies/update', [FallacyController::class, 'update'])->middleware(['auth:api', 'verified']);
 
 Route::get('/groups', [GroupController::class, 'index']);
 Route::get('/groups/getGroupsByMember', [GroupController::class, 'getGroupsByMember']);
@@ -56,6 +59,7 @@ Route::post('/reference/{id}/update', [ReferenceController::class, 'update'])->m
 Route::get('/search/counts', [SearchController::class, 'counts']);
 
 Route::get('/tweets', [TweetController::class, 'index']);
+Route::get('/tweets/showTwitterFeed', [TweetController::class, 'showTwitterFeed']);
 Route::get('/tweets/showTwitterList', [TweetController::class, 'showTwitterList']);
 Route::get('/tweets/{id}', [TweetController::class, 'show']);
 Route::post('/tweets/{id}/addArguments', [TweetController::class, 'addArguments'])->middleware(['auth:api', 'verified']);

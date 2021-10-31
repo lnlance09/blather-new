@@ -4,6 +4,7 @@ import "./scss/app.scss"
 import { Route, Router, Switch } from "react-router-dom"
 import About from "pages/about/"
 import Activity from "pages/activity"
+import Argument from "pages/arguments/show"
 import Arguments from "pages/arguments/"
 import Assign from "pages/assign"
 import Contact from "pages/about/contact"
@@ -47,7 +48,21 @@ const App = () => {
 
 							<Route component={Activity} exact path="/activity" />
 
-							<Route component={Arguments} exact path="/arguments" />
+							<Route
+								exact
+								path="/arguments"
+								render={(props) => (
+									<Arguments key={window.location.pathname} {...props} />
+								)}
+							/>
+
+							<Route
+								exact
+								path="/arguments/:slug"
+								render={(props) => (
+									<Argument key={window.location.pathname} {...props} />
+								)}
+							/>
 
 							<Route
 								exact

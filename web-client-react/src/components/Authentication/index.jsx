@@ -317,7 +317,12 @@ const Authentication = ({ history, inverted, showLogin = true, size }) => {
 								<Form.Field>
 									<Input
 										inverted={inverted}
-										label="email"
+										label={{
+											// basic: true,
+											color: "black",
+											content: "email",
+											inverted: true
+										}}
 										onChange={(e, { value }) => {
 											setEmail(value)
 										}}
@@ -328,7 +333,11 @@ const Authentication = ({ history, inverted, showLogin = true, size }) => {
 								<Form.Field>
 									<Input
 										inverted={inverted}
-										label="pass"
+										label={{
+											// basic: true,
+											color: "black",
+											content: "pass"
+										}}
 										onChange={(e, { value }) => {
 											setPassword(value)
 										}}
@@ -360,7 +369,11 @@ const Authentication = ({ history, inverted, showLogin = true, size }) => {
 								<Form.Field>
 									<Input
 										inverted={inverted}
-										label="email"
+										label={{
+											// basic: true,
+											color: "black",
+											content: "email"
+										}}
 										onChange={(e, { value }) => {
 											setRegEmail(value)
 										}}
@@ -371,7 +384,11 @@ const Authentication = ({ history, inverted, showLogin = true, size }) => {
 								<Form.Field>
 									<Input
 										inverted={inverted}
-										label="pass"
+										label={{
+											// basic: true,
+											color: "black",
+											content: "pass"
+										}}
 										onChange={(e, { value }) => {
 											setRegPassword(value)
 										}}
@@ -384,7 +401,11 @@ const Authentication = ({ history, inverted, showLogin = true, size }) => {
 									<Input
 										autoComplete="off"
 										inverted={inverted}
-										label="name"
+										label={{
+											// basic: true,
+											color: "black",
+											content: "name"
+										}}
 										onChange={(e, { value }) => {
 											setName(value)
 										}}
@@ -395,7 +416,11 @@ const Authentication = ({ history, inverted, showLogin = true, size }) => {
 								<Form.Field>
 									<Input
 										inverted={inverted}
-										label="@"
+										label={{
+											// basic: true,
+											color: "black",
+											content: "@"
+										}}
 										onChange={(e, { value }) => {
 											setUsername(value)
 										}}
@@ -419,12 +444,26 @@ const Authentication = ({ history, inverted, showLogin = true, size }) => {
 			</Segment>
 
 			{showFooter && (
-				<Header as="p" className="footerText" inverted={inverted}>
-					{footerText}{" "}
-					<span className="footerLink" onClick={() => toggleLogin()}>
-						{footerLinkText}
-					</span>
-				</Header>
+				<>
+					<Divider horizontal>Or</Divider>
+
+					<Segment>
+						<Button
+							color="twitter"
+							content="Sign in with Twitter"
+							fluid
+							icon="twitter"
+							size="large"
+						/>
+					</Segment>
+
+					<Header as="p" className="footerText" inverted={inverted}>
+						{footerText}{" "}
+						<span className="footerLink" onClick={() => toggleLogin()}>
+							{footerLinkText}
+						</span>
+					</Header>
+				</>
 			)}
 
 			{login && (

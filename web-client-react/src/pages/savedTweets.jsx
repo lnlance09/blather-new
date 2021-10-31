@@ -1,5 +1,5 @@
-import { Divider, Header, Placeholder } from "semantic-ui-react"
-import { useContext, useEffect, useReducer, useState } from "react"
+import { Button, Divider, Header, Icon, Placeholder, Segment } from "semantic-ui-react"
+import { useContext, useEffect, useReducer } from "react"
 import { DisplayMetaTags } from "utils/metaFunctions"
 import { onClickRedirect } from "utils/linkFunctions"
 import { getConfig } from "options/toast"
@@ -24,6 +24,7 @@ const SavedTweets = ({ history }) => {
 
 	let savedTweets = localStorage.getItem("savedTweets")
 	savedTweets = _.isEmpty(savedTweets) ? [] : JSON.parse(savedTweets)
+	const isEmpty = savedTweets.length === 0
 
 	const [internalState, dispatch] = useReducer(
 		process.env.NODE_ENV === "development" ? logger(reducer) : reducer,
@@ -32,6 +33,10 @@ const SavedTweets = ({ history }) => {
 	const { loaded, tweets } = internalState
 
 	useEffect(() => {
+		if (isEmpty) {
+			return
+		}
+
 		getTweets(savedTweets)
 	}, [])
 
@@ -39,7 +44,8 @@ const SavedTweets = ({ history }) => {
 		axios
 			.get(`${process.env.REACT_APP_BASE_URL}tweets`, {
 				params: {
-					ids
+					ids,
+					page
 				}
 			})
 			.then((response) => {
@@ -54,6 +60,14 @@ const SavedTweets = ({ history }) => {
 			})
 	}
 
+	const clearTweet = () => {
+		localStorage.setItem("savedTweets", JSON.stringify([]))
+		dispatch({
+			type: "GET_TWEETS",
+			tweets: []
+		})
+	}
+
 	return (
 		<DefaultLayout
 			activeItem=""
@@ -64,47 +78,73 @@ const SavedTweets = ({ history }) => {
 		>
 			<DisplayMetaTags page="savedTweets" />
 
-			<Header as="h1">Saved Tweets</Header>
+			<Header as="h1">
+				{!isEmpty && (
+					<Button
+						compact
+						content="Clear all"
+						color="red"
+						onClick={clearTweet}
+						style={{ float: "right" }}
+					/>
+				)}
+				<Header.Content>Saved Tweets</Header.Content>
+			</Header>
 
-			<div className="tweetList">
-				{tweets.map((tweet, i) => {
-					return (
-						<div className="tweetWrapper">
-							{!loaded ? (
-								<Placeholder inverted={inverted} fluid>
-									<Placeholder.Paragraph>
-										<Placeholder.Line />
-										<Placeholder.Line />
-										<Placeholder.Line />
-									</Placeholder.Paragraph>
-								</Placeholder>
-							) : (
-								<Tweet
-									config={{
-										...tweetOptions,
-										onClickCallback: (e, history, id) => {
-											e.stopPropagation()
-											const isLink = e.target.classList.contains("linkify")
-											if (!isLink) {
-												onClickRedirect(e, history, `/tweets/${id}`)
-											}
-										}
-									}}
-									counts={tweet.counts}
-									createdAt={tweet.createdAt}
-									extendedEntities={tweet.extendedEntities}
-									fullText={tweet.fullText}
-									history={history}
-									id={tweet.tweetId}
-									quoted={tweet.quoted}
-									retweeted={tweet.retweeted}
-									user={tweet.user}
-								/>
-							)}
-						</div>
-					)
-				})}
-			</div>
+			{isEmpty && (
+				<Segment placeholder>
+					<Header icon inverted={inverted} textAlign="center">
+						<Icon color="blue" inverted={inverted} name="twitter" />
+						You haven't saved any tweets yet...
+					</Header>
+				</Segment>
+			)}
+
+			{!isEmpty && (
+				<div className="tweetList">
+					{tweets.map((tweet, i) => {
+						return (
+							<div className="tweetWrapper" key={`tweetWrapper${i}`}>
+								{!loaded ? (
+									<Segment>
+										<Placeholder inverted={inverted} fluid>
+											<Placeholder.Paragraph>
+												<Placeholder.Line />
+												<Placeholder.Line />
+												<Placeholder.Line />
+											</Placeholder.Paragraph>
+										</Placeholder>
+									</Segment>
+								) : (
+									<Tweet
+										config={{
+											...tweetOptions,
+											onClickCallback: (e, history, id) => {
+												e.stopPropagation()
+												const isLink =
+													e.target.classList.contains("linkify")
+												if (!isLink) {
+													onClickRedirect(e, history, `/tweets/${id}`)
+												}
+											},
+											showSaveOption: true
+										}}
+										counts={tweet.counts}
+										createdAt={tweet.createdAt}
+										extendedEntities={tweet.extendedEntities}
+										fullText={tweet.fullText}
+										history={history}
+										id={tweet.tweetId}
+										quoted={tweet.quoted}
+										retweeted={tweet.retweeted}
+										user={tweet.user}
+									/>
+								)}
+							</div>
+						)
+					})}
+				</div>
+			)}
 			<Divider hidden section />
 		</DefaultLayout>
 	)

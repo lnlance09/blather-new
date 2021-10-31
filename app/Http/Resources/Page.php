@@ -32,6 +32,7 @@ class Page extends JsonResource
             'name' => $this->name,
             'network' => $network,
             'socialMediaId' => $socialMediaId,
+            'tweetCount' => $this->tweets_count, // NOTE: for the tweets by argument count
             'username' => $username
         ];
     }

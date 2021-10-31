@@ -19,6 +19,7 @@ import PlaceholderPic from "images/images/image-square.png"
 import PropTypes from "prop-types"
 import reducer from "reducers/page"
 import ThemeContext from "themeContext"
+import TweetList from "components/TweetList"
 
 const toastConfig = getConfig()
 toast.configure(toastConfig)
@@ -32,18 +33,22 @@ const Page = ({ history, match }) => {
 		process.env.NODE_ENV === "development" ? logger(reducer) : reducer,
 		initialState
 	)
-	const { contradictions, error, fallacies, loaded, page } = internalState
+	const { contradictions, error, fallacies, loaded, page, tweets } = internalState
 
 	const [activeItem, setActiveItem] = useState("fallacies")
 	const [hasMore, setHasMore] = useState(false)
 	const [hasMoreC, setHasMoreC] = useState(false)
+	const [hasMoreT, setHasMoreT] = useState(false)
 	const [loading, setLoading] = useState(true)
 	const [loadingC, setLoadingC] = useState(true)
+	const [loadingT, setLoadingT] = useState(true)
 	const [loadingMore, setLoadingMore] = useState(false)
 	const [loadingMoreC, setLoadingMoreC] = useState(false)
+	const [loadingMoreT, setLoadingMoreT] = useState(false)
 	const [imageLoaded, setImageLoaded] = useState(false)
 	const [pageNumber, setPageNumber] = useState(1)
 	const [pageNumberC, setPageNumberC] = useState(1)
+	const [pageNumberT, setPageNumberT] = useState(1)
 
 	useEffect(() => {
 		const getPage = async (slug) => {
@@ -57,6 +62,7 @@ const Page = ({ history, match }) => {
 					})
 					getFallacies([page.id])
 					getContradictions([page.id])
+					getTweets(page.socialMediaId)
 				})
 				.catch(() => {
 					dispatchInternal({
@@ -95,7 +101,7 @@ const Page = ({ history, match }) => {
 					contradictions: data,
 					page
 				})
-				setPageNumberC(pageNumberC + 1)
+				setPageNumberC(page + 1)
 				setHasMoreC(meta.current_page < meta.last_page)
 				pageNumberC === 1 ? setLoadingC(false) : setLoadingMoreC(false)
 			})
@@ -121,12 +127,37 @@ const Page = ({ history, match }) => {
 					fallacies: data,
 					page
 				})
-				setPageNumber(pageNumber + 1)
+				setPageNumber(page + 1)
 				setHasMore(meta.current_page < meta.last_page)
 				pageNumber === 1 ? setLoading(false) : setLoadingMore(false)
 			})
 			.catch(() => {
 				toast.error("There was an error")
+			})
+	}
+
+	const getTweets = async (pageId, page = 1) => {
+		page === 1 ? setLoadingT(true) : setLoadingMoreT(true)
+		await axios
+			.get(`${process.env.REACT_APP_BASE_URL}tweets/showTwitterFeed`, {
+				params: {
+					pageId,
+					page
+				}
+			})
+			.then((response) => {
+				const { data } = response.data
+				dispatchInternal({
+					type: "GET_TWEETS",
+					tweets: data,
+					page
+				})
+				setPageNumberT(page + 1)
+				setHasMoreT(true)
+				pageNumberT === 1 ? setLoadingT(false) : setLoadingMoreT(false)
+			})
+			.catch(() => {
+				console.error("There was an error")
 			})
 	}
 
@@ -150,14 +181,12 @@ const Page = ({ history, match }) => {
 			{loaded ? (
 				<>
 					{error && (
-						<>
-							<div className="centeredLoader">
-								<Header as="h1" image textAlign="center">
-									<ReactSVG className="errorSvg" src={Logo} />
-									<Header.Content>This page does not exist</Header.Content>
-								</Header>
-							</div>
-						</>
+						<div className="centeredLoader">
+							<Header as="h1" image textAlign="center">
+								<ReactSVG className="errorSvg" src={Logo} />
+								<Header.Content>This page does not exist</Header.Content>
+							</Header>
+						</div>
 					)}
 
 					{!error && (
@@ -264,6 +293,13 @@ const Page = ({ history, match }) => {
 										</span>
 									)}
 								</Menu.Item>
+								<Menu.Item
+									active={activeItem === "tweets"}
+									name="tweets"
+									onClick={handleItemClick}
+								>
+									Tweets
+								</Menu.Item>
 							</Menu>
 
 							{activeItem === "fallacies" && (
@@ -306,6 +342,27 @@ const Page = ({ history, match }) => {
 										loading={!contradictions.loaded}
 										loadingMore={loadingMoreC}
 										onClickFallacy={onClickFallacy}
+									/>
+								</Visibility>
+							)}
+
+							{activeItem === "tweets" && (
+								<Visibility
+									continuous
+									offset={[50, 50]}
+									onBottomVisible={() => {
+										if (!loadingT && !loadingMoreT && hasMoreT) {
+											getTweets(page.socialMediaId, pageNumberT)
+										}
+									}}
+								>
+									<TweetList
+										history={history}
+										inverted={inverted}
+										loading={!tweets.loaded}
+										loadingMore={loadingMoreT}
+										showSaveOption
+										tweets={tweets.data}
 									/>
 								</Visibility>
 							)}

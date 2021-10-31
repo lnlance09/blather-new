@@ -10,7 +10,6 @@ use App\Models\Fallacy;
 use App\Models\FallacyTwitter;
 use App\Models\FallacyYouTube;
 use App\Models\GroupMember;
-use App\Models\Page;
 use App\Models\Reference;
 use App\Models\Tweet;
 use Illuminate\Http\Request;
@@ -127,7 +126,7 @@ class FallacyController extends Controller
      */
     public function create(Request $request)
     {
-        $user = $request->user();
+        $user = auth('api')->user();
         $userId = $user ? $user->id : 6;
 
         $request->validate([
@@ -338,7 +337,6 @@ class FallacyController extends Controller
         $explanation = $request->input('explanation');
 
         $fallacy = Fallacy::where('id', $id)->first();
-
         $fallacy->explanation = $explanation;
         $fallacy->ref_id = $refId;
         $fallacy->save();

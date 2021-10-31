@@ -25,7 +25,9 @@ class TweetController extends Controller
     {
         $q = $request->input('q');
         $ids = $request->input('ids');
+        $argIds = $request->input('argIds', null);
         $pageIds = $request->input('pageIds', null);
+        $limit = $request->input('limit', 15);
         $sort = $request->input('sort', 'id');
         $dir = $request->input('dir', 'asc');
 
@@ -47,10 +49,23 @@ class TweetController extends Controller
             $tweets = $tweets->whereIn('tweet_id', $ids);
         }
 
+        if (is_array($ids)) {
+            $idsOrdered = implode(',', $ids);
+            $tweets = $tweets->orderByRaw("FIELD(id, $idsOrdered)");
+        } else {
+            $tweets = $tweets->orderBy($sort, $dir);
+        }
+
+        if (is_array($argIds)) {
+            $tweets = $tweets->whereHas('arguments', function ($query) use ($argIds) {
+                $query->whereIn('argument_id', $argIds);
+            });
+        }
+
         $tweets = $tweets->with(['page'])
             ->withCount(['fallacies'])
-            ->orderBy($sort, $dir)
-            ->paginate(15);
+            ->paginate($limit);
+
         return new TweetCollection($tweets);
     }
 
@@ -331,6 +346,20 @@ class TweetController extends Controller
 
         $tweets = Twitter::getListStatuses([
             'list_id' => 1095482595847127040,
+            'page' => $page,
+            'tweet_mode' => 'extended'
+        ]);
+        return new TweetLiveCollection($tweets);
+    }
+
+    public function showTwitterFeed(Request $request)
+    {
+        $page = $request->input('page', 1);
+        $pageId = $request->input('pageId');
+
+        $tweets = Twitter::getUserTimeline([
+            'user_id' => $pageId,
+            'exclude_replies' => true,
             'page' => $page,
             'tweet_mode' => 'extended'
         ]);

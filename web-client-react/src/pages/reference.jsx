@@ -94,7 +94,7 @@ const Reference = ({ history }) => {
 						key={`refSegment${i}`}
 						onClick={() => {
 							if (loaded && !canEdit) {
-								history.push(`/search/fallacies?types[]=${item.id}`)
+								history.push(`/search/?type=fallacies&refIds[]=${item.id}`)
 							}
 						}}
 					>

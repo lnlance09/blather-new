@@ -300,7 +300,7 @@ const PageHeader = ({ activeItem, history, q, simple }) => {
 									color="red"
 									inverted
 									name="search"
-									onClick={() => history.push("/search")}
+									onClick={() => history.push("/search/")}
 								/>
 								{BellDropdown}
 							</div>

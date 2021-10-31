@@ -1,7 +1,6 @@
 import { Divider, Visibility } from "semantic-ui-react"
 import { useContext, useEffect, useReducer, useState } from "react"
 import { getConfig } from "options/toast"
-import { onClickRedirect } from "utils/linkFunctions"
 import { DisplayMetaTags } from "utils/metaFunctions"
 import { toast } from "react-toastify"
 import axios from "axios"
@@ -58,10 +57,6 @@ const Tweets = ({ history }) => {
 			})
 	}
 
-	const onClickTweet = (e, id) => {
-		onClickRedirect(e, history, `/tweets/${id}`)
-	}
-
 	return (
 		<DefaultLayout
 			activeItem="tweets"
@@ -86,7 +81,7 @@ const Tweets = ({ history }) => {
 					inverted={inverted}
 					loading={!tweets.loaded}
 					loadingMore={loadingMore}
-					onClickPage={onClickTweet}
+					showSaveOption={true}
 					tweets={tweets.data}
 				/>
 			</Visibility>

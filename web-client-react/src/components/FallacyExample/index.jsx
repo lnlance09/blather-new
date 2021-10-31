@@ -74,7 +74,7 @@ const FallacyExample = ({
 				<Tweet
 					config={{
 						...tweetOptions,
-						crossOriginAnonymous,
+						// crossOriginAnonymous,
 						defaultUserImg,
 						highlightedText,
 						onClickCallback: (e, history, id) => {
@@ -105,7 +105,7 @@ const FallacyExample = ({
 				<Tweet
 					config={{
 						...tweetOptions,
-						crossOriginAnonymous,
+						// crossOriginAnonymous,
 						defaultUserImg,
 						highlightedText: highlightedTextC,
 						onClickCallback: (e, history, id) => {

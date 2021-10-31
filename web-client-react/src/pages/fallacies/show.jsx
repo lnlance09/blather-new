@@ -269,7 +269,7 @@ const Fallacy = ({ history, match }) => {
 										contradictionTwitter={fallacy.contradictionTwitter}
 										contradictionYouTube={fallacy.contradictionYouTube}
 										createdAt={fallacy.createdAt}
-										crossOriginAnonymous
+										crossOriginAnonymous={true}
 										defaultUserImg={fallacy.page.image}
 										explanation={fallacy.explanation}
 										history={history}

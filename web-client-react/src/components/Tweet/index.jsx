@@ -6,12 +6,18 @@ import { Button, Card, Icon, Image, Label, List, Popup } from "semantic-ui-react
 import { useEffect, useState } from "react"
 import { getHighlightedText } from "utils/textFunctions"
 import { tweetOptions } from "options/tweet"
+import { getConfig } from "options/toast"
+import { toast } from "react-toastify"
+import axios from "axios"
 import _ from "underscore"
 import ItemPic from "images/images/square-image.png"
 import Moment from "react-moment"
 import NumberFormat from "react-number-format"
 import PlaceholderPic from "images/images/image-square.png"
 import PropTypes from "prop-types"
+
+const toastConfig = getConfig()
+toast.configure(toastConfig)
 
 const Tweet = ({
 	config = tweetOptions,
@@ -112,13 +118,15 @@ const Tweet = ({
 	let imgUrl = headerImg
 	imgUrl += crossOriginAnonymous ? `?t=${new Date()}` : ""
 
-	const [canSave, setCanSave] = useState(false)
+	const [hasSaved, setHasSaved] = useState(false)
+	const [saveLoading, setSaveLoading] = useState(false)
+	const [hovering, setHovering] = useState(false)
 
 	useEffect(() => {
 		const savedTweets = localStorage.getItem("savedTweets")
 		if (!_.isEmpty(savedTweets)) {
-			const canSave = JSON.parse(savedTweets).includes(id) ? false : true
-			setCanSave(canSave)
+			const hasSaved = JSON.parse(savedTweets).includes(id)
+			setHasSaved(hasSaved)
 		}
 	}, [id])
 
@@ -143,33 +151,36 @@ const Tweet = ({
 		})
 	}
 
-	const trigger = (
-		<List.Content>
-			<List.Header>
-				<Icon
-					name="twitter"
-					onClick={() =>
-						window.open(`https://twitter.com/${user.screenName}/status/${id}`, "_blank")
-					}
-					size="large"
-				/>
-			</List.Header>
-		</List.Content>
-	)
+	const archiveTweet = async (id) => {
+		return await axios
+			.get(`${process.env.REACT_APP_BASE_URL}tweets/${id}`)
+			.then(() => true)
+			.catch(() => false)
+	}
 
 	const saveTweet = async (id) => {
 		const savedTweets = localStorage.getItem("savedTweets")
 		const tweets = _.isEmpty(savedTweets) ? [] : JSON.parse(savedTweets)
+
 		if (!tweets.includes(id)) {
-			tweets.push(id)
-			localStorage.setItem("savedTweets", JSON.stringify(tweets))
-			setCanSave(false)
-		} else {
-			const newTweets = await tweets.filter((t) => t.id !== id)
-			console.log("newTweets", id)
+			setSaveLoading(true)
+			const archived = await archiveTweet(id)
+			setSaveLoading(false)
+			if (!archived) {
+				return
+			}
+
+			const newTweets = [id, ...tweets]
 			localStorage.setItem("savedTweets", JSON.stringify(newTweets))
-			setCanSave(true)
+			setHasSaved(true)
+			toast.info("Tweet added!")
+			return
 		}
+
+		const newTweets = await tweets.filter((t) => t !== id)
+		localStorage.setItem("savedTweets", JSON.stringify(newTweets))
+		toast.error("Tweet removed!")
+		setHasSaved(false)
 	}
 
 	return (
@@ -296,6 +307,32 @@ const Tweet = ({
 								</List.Item>
 							)}
 						</List>
+						{showSaveOption && (
+							<List floated="right" horizontal>
+								<List.Item className="saveTweet">
+									<Button
+										className={hasSaved ? "saved" : ""}
+										content={hasSaved ? (hovering ? "Clear" : "Saved") : "Save"}
+										compact
+										color={hasSaved ? (hovering ? "red" : "teal") : "blue"}
+										icon={
+											hasSaved ? (hovering ? "close" : "checkmark") : "save"
+										}
+										loading={saveLoading}
+										name={
+											hasSaved ? (hovering ? "cancel" : "checkmark") : "save"
+										}
+										onBlur={(e) => setHovering(!hovering)}
+										onClick={(e) => {
+											e.stopPropagation()
+											saveTweet(id.toString())
+										}}
+										onMouseEnter={() => setHovering(true)}
+										onMouseLeave={() => setHovering(false)}
+									/>
+								</List.Item>
+							</List>
+						)}
 						{externalLink && (
 							<List floated="right" horizontal>
 								<List.Item className="externalLinkListItem">
@@ -303,23 +340,22 @@ const Tweet = ({
 										className="twitterExternalPopup"
 										content="View on Twitter"
 										position="bottom left"
-										trigger={trigger}
-									/>
-								</List.Item>
-							</List>
-						)}
-						{showSaveOption && (
-							<List floated="right" horizontal>
-								<List.Item className="saveTweet">
-									<Button
-										className={!canSave ? "active" : ""}
-										color="green"
-										compact
-										content={canSave ? "Save" : "Saved!"}
-										onClick={(e) => {
-											e.stopPropagation()
-											saveTweet(id.toString())
-										}}
+										trigger={
+											<List.Content>
+												<List.Header>
+													<Icon
+														name="twitter"
+														onClick={() =>
+															window.open(
+																`https://twitter.com/${user.username}/status/${id}`,
+																"_blank"
+															)
+														}
+														size="large"
+													/>
+												</List.Header>
+											</List.Content>
+										}
 									/>
 								</List.Item>
 							</List>

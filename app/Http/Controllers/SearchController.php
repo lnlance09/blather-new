@@ -81,6 +81,10 @@ class SearchController extends Controller
             $fallacies = $fallacies->whereIn('page_id', $pageIdsF);
         }
 
+        if ($refIds) {
+            $fallacies = $fallacies->whereIn('ref_id', $refIds);
+        }
+
         $fallacyCount = $fallacies->count();
 
         // Contradiction count
