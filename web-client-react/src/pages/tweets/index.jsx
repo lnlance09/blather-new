@@ -58,13 +58,7 @@ const Tweets = ({ history }) => {
 	}
 
 	return (
-		<DefaultLayout
-			activeItem="tweets"
-			containerClassName="tweetsPage"
-			history={history}
-			inverted={inverted}
-			textAlign="center"
-		>
+		<DefaultLayout activeItem="tweets" containerClassName="tweetsPage" history={history}>
 			<DisplayMetaTags page="tweets" />
 
 			<Visibility

@@ -10,13 +10,7 @@ const Privacy = ({ history }) => {
 	const { inverted } = state
 
 	return (
-		<DefaultLayout
-			activeItem="privacy"
-			containerClassName="privacyPage"
-			history={history}
-			inverted={inverted}
-			textAlign="center"
-		>
+		<DefaultLayout activeItem="privacy" containerClassName="privacyPage" history={history}>
 			<DisplayMetaTags page="privacy" />
 
 			<Header as="h1" className="massive" content="Privacy" inverted={inverted} />

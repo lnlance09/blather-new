@@ -48,12 +48,7 @@ const Groups = ({ history }) => {
 	}, [])
 
 	return (
-		<DefaultLayout
-			activeItem="groups"
-			containerClassName="groupsPage"
-			history={history}
-			inverted={inverted}
-		>
+		<DefaultLayout activeItem="groups" containerClassName="groupsPage" history={history}>
 			<DisplayMetaTags page="groups" />
 
 			<Header as="h1" content="Groups" />

@@ -251,13 +251,7 @@ const Member = ({ history, match }) => {
 	}
 
 	return (
-		<DefaultLayout
-			activeItem="users"
-			containerClassName="userPage"
-			history={history}
-			inverted={inverted}
-			textAlign="center"
-		>
+		<DefaultLayout activeItem="users" containerClassName="userPage" history={history}>
 			<DisplayMetaTags page="user" state={internalState} />
 			{loaded ? (
 				<>

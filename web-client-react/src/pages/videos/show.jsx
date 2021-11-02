@@ -11,13 +11,7 @@ const Video = ({ history }) => {
 	useEffect(() => {}, [])
 
 	return (
-		<DefaultLayout
-			activeItem="video"
-			containerClassName="videoPage"
-			history={history}
-			inverted={inverted}
-			textAlign="center"
-		>
+		<DefaultLayout activeItem="video" containerClassName="videoPage" history={history}>
 			<DisplayMetaTags page="video" />
 		</DefaultLayout>
 	)

@@ -15,7 +15,6 @@ const SignIn = ({ history }) => {
 		<DefaultLayout
 			containerClassName="signInPage"
 			history={history}
-			inverted={state.inverted}
 			showFooter={false}
 			simpleHeader
 		>

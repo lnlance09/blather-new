@@ -178,10 +178,8 @@ const Settings = ({ history }) => {
 	return (
 		<DefaultLayout
 			activeItem="settings"
-			containerClassName={`settingsPage ${inverted ? "inverted" : null}`}
+			containerClassName={`settingsPage ${inverted ? "inverted" : ""}`}
 			history={history}
-			inverted={inverted}
-			textAlign="center"
 		>
 			<DisplayMetaTags page="settings" />
 
@@ -213,7 +211,7 @@ const Settings = ({ history }) => {
 						{activeItem === "profile_info" && (
 							<>
 								<Header content="Update bio" inverted={inverted} />
-								<Card className={inverted ? "inverted" : null} fluid>
+								<Card className={inverted ? "inverted" : ""} fluid>
 									<Card.Content>
 										<Form inverted={inverted}>
 											<Form.Field>
@@ -237,7 +235,7 @@ const Settings = ({ history }) => {
 
 								<Header content="Change username" inverted={inverted} />
 
-								<Card className={inverted ? "inverted" : null} fluid>
+								<Card className={inverted ? "inverted" : ""} fluid>
 									<Card.Content>
 										<Form inverted={inverted}>
 											<Form.Group style={{ marginBottom: 0 }}>
@@ -298,7 +296,7 @@ const Settings = ({ history }) => {
 						{activeItem === "password" && (
 							<>
 								<Header content="Change password" inverted={inverted} />
-								<Card className={inverted ? "inverted" : null} fluid>
+								<Card className={inverted ? "inverted" : ""} fluid>
 									<Card.Content>
 										<Form inverted={inverted}>
 											<Form.Field>

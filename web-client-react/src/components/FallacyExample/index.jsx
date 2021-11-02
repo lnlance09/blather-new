@@ -1,6 +1,7 @@
 import "./style.scss"
 import { useEffect } from "react"
 import { Card, Divider, Grid, Icon, Image, Label, Segment } from "semantic-ui-react"
+import { Link } from "react-router-dom"
 import renderer, { tweetOptions } from "options/tweet"
 import Marked from "marked"
 import Moment from "react-moment"
@@ -161,6 +162,17 @@ const FallacyExample = ({
 		<div className={`fallacyExample ${colored ? "colored" : ""}`}>
 			{useSegment && (
 				<Segment stacked={stacked} onClick={(e) => onClickFallacy(e, slug)}>
+					<Label attached="top" basic size="large">
+						<span
+							className="blue"
+							onClick={(e) => {
+								e.stopPropagation()
+								history.push("/groups")
+							}}
+						>
+							PragerU
+						</span>
+					</Label>
 					{useRibbon && (
 						<Label as="a" color="blue" ribbon size="large">
 							<Icon name="clock" />

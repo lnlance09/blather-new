@@ -12,13 +12,7 @@ const About = ({ history }) => {
 	useEffect(() => {}, [])
 
 	return (
-		<DefaultLayout
-			activeItem="about"
-			containerClassName="aboutPage"
-			history={history}
-			inverted={inverted}
-			textAlign="center"
-		>
+		<DefaultLayout activeItem="about" containerClassName="aboutPage" history={history}>
 			<DisplayMetaTags page="about" />
 
 			<Header as="h1" content="About" inverted={inverted} />

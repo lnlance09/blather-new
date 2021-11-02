@@ -170,12 +170,7 @@ const Page = ({ history, match }) => {
 	}
 
 	return (
-		<DefaultLayout
-			activeItem=""
-			containerClassName="socialMediaPage"
-			history={history}
-			inverted={inverted}
-		>
+		<DefaultLayout activeItem="" containerClassName="socialMediaPage" history={history}>
 			<DisplayMetaTags page="page" state={internalState} />
 
 			{loaded ? (
@@ -217,7 +212,7 @@ const Page = ({ history, match }) => {
 											<Button
 												circular
 												className={`networkBtn ${
-													inverted ? "inverted" : null
+													inverted ? "inverted" : ""
 												}`}
 												color={network}
 												compact

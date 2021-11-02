@@ -11,13 +11,7 @@ const Rules = ({ history }) => {
 	const { inverted } = state
 
 	return (
-		<DefaultLayout
-			activeItem="rules"
-			containerClassName="rulesPage"
-			history={history}
-			inverted={inverted}
-			textAlign="center"
-		>
+		<DefaultLayout activeItem="rules" containerClassName="rulesPage" history={history}>
 			<DisplayMetaTags page="rules" />
 
 			<Header as="h1" content="Rules" inverted={inverted} />

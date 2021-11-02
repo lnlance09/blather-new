@@ -471,13 +471,7 @@ const Search = ({ history, match }) => {
 	}
 
 	return (
-		<DefaultLayout
-			activeItem="search"
-			containerClassName="searchPage"
-			history={history}
-			inverted={inverted}
-			textAlign="center"
-		>
+		<DefaultLayout activeItem="search" containerClassName="searchPage" history={history}>
 			<DisplayMetaTags page="search" />
 
 			<div className={`ui left icon input large fluid ${inverted ? "inverted" : ""}`}>

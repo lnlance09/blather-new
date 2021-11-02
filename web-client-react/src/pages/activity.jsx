@@ -66,13 +66,7 @@ const Activity = ({ history }) => {
 	}
 
 	return (
-		<DefaultLayout
-			activeItem="activity"
-			containerClassName="activityPage"
-			history={history}
-			inverted={inverted}
-			textAlign="center"
-		>
+		<DefaultLayout activeItem="activity" containerClassName="activityPage" history={history}>
 			<DisplayMetaTags page="activity" />
 
 			<Header as="h1" content="Activity" />

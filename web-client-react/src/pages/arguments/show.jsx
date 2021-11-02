@@ -297,13 +297,7 @@ const Argument = ({ history, match }) => {
 	)
 
 	return (
-		<DefaultLayout
-			activeItem="arguments"
-			containerClassName="argumentPage"
-			history={history}
-			inverted={inverted}
-			textAlign="center"
-		>
+		<DefaultLayout activeItem="arguments" containerClassName="argumentPage" history={history}>
 			<DisplayMetaTags page="argument" />
 
 			{loaded ? (

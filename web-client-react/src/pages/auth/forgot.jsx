@@ -87,13 +87,7 @@ const Forgot = ({ history }) => {
 	}
 
 	return (
-		<DefaultLayout
-			activeItem="forgot"
-			containerClassName="forgotPage"
-			history={history}
-			inverted={inverted}
-			textAlign="center"
-		>
+		<DefaultLayout activeItem="forgot" containerClassName="forgotPage" history={history}>
 			<DisplayMetaTags page="forgot" />
 
 			<Container style={{ padding: 0 }} text>
@@ -107,7 +101,7 @@ const Forgot = ({ history }) => {
 							style={{ marginTop: 40 }}
 							textAlign="center"
 						/>
-						<Card className={inverted ? "inverted" : null} fluid>
+						<Card className={inverted ? "inverted" : ""} fluid>
 							<Card.Content>
 								<Form inverted={inverted} size="large">
 									<Form.Field>

@@ -70,13 +70,7 @@ const SavedTweets = ({ history }) => {
 	}
 
 	return (
-		<DefaultLayout
-			activeItem=""
-			containerClassName="savedTweetsPage"
-			history={history}
-			inverted={inverted}
-			textAlign="center"
-		>
+		<DefaultLayout activeItem="" containerClassName="savedTweetsPage" history={history}>
 			<DisplayMetaTags page="savedTweets" />
 
 			<Header as="h1">

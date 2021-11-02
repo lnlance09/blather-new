@@ -204,13 +204,7 @@ const TweetPage = ({ history, match }) => {
 	}
 
 	return (
-		<DefaultLayout
-			activeItem="tweet"
-			containerClassName="tweetPage"
-			history={history}
-			inverted={inverted}
-			textAlign="center"
-		>
+		<DefaultLayout activeItem="tweet" containerClassName="tweetPage" history={history}>
 			<DisplayMetaTags page="tweet" state={internalState} />
 
 			{loaded ? (

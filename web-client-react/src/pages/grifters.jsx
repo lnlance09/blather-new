@@ -16,13 +16,7 @@ const Grifters = ({ history }) => {
 	const { maga } = grifters
 
 	return (
-		<DefaultLayout
-			activeItem="grifters"
-			containerClassName="griftersPage"
-			history={history}
-			inverted={inverted}
-			textAlign="center"
-		>
+		<DefaultLayout activeItem="grifters" containerClassName="griftersPage" history={history}>
 			<DisplayMetaTags page="grifters" />
 
 			<Grid>

@@ -247,7 +247,7 @@ const Authentication = ({ history, inverted, showLogin = true, size }) => {
 
 			<Segment basic className="authSegment" inverted={inverted}>
 				{forgot && (
-					<Card className={inverted ? "inverted" : null} fluid>
+					<Card className={inverted ? "inverted" : ""} fluid>
 						<Card.Content>
 							<Form inverted={inverted} onSubmit={submitForgotPassword} size={size}>
 								<Form.Field>
@@ -283,7 +283,7 @@ const Authentication = ({ history, inverted, showLogin = true, size }) => {
 				</Transition>
 
 				<Transition animation="scale" duration={500} visible={state.verify}>
-					<Card className={inverted ? "inverted" : null} fluid>
+					<Card className={inverted ? "inverted" : ""} fluid>
 						<Card.Content>
 							<Form inverted={inverted} onSubmit={submitVerificationForm} size={size}>
 								<Form.Field>
@@ -311,7 +311,7 @@ const Authentication = ({ history, inverted, showLogin = true, size }) => {
 				</Transition>
 
 				{login && !state.verify ? (
-					<Card className={inverted ? "inverted" : null} fluid>
+					<Card className={inverted ? "inverted" : ""} fluid>
 						<Card.Content>
 							<Form inverted={inverted} size={size}>
 								<Form.Field>
@@ -363,7 +363,7 @@ const Authentication = ({ history, inverted, showLogin = true, size }) => {
 				) : null}
 
 				{register && !state.verify ? (
-					<Card className={inverted ? "inverted" : null} fluid>
+					<Card className={inverted ? "inverted" : ""} fluid>
 						<Card.Content>
 							<Form inverted={inverted} size={size}>
 								<Form.Field>

@@ -202,13 +202,7 @@ const Assign = ({ history }) => {
 	}, [_url])
 
 	return (
-		<DefaultLayout
-			activeItem="assign"
-			containerClassName="assignPage"
-			history={history}
-			inverted={inverted}
-			textAlign="center"
-		>
+		<DefaultLayout activeItem="assign" containerClassName="assignPage" history={history}>
 			<DisplayMetaTags page="assign" />
 			<div className="assignSegment">
 				<Container>

@@ -225,12 +225,7 @@ const Fallacy = ({ history, match }) => {
 	}
 
 	return (
-		<DefaultLayout
-			activeItem="fallacies"
-			containerClassName="fallacyPage"
-			history={history}
-			inverted={inverted}
-		>
+		<DefaultLayout activeItem="fallacies" containerClassName="fallacyPage" history={history}>
 			<DisplayMetaTags page="fallacy" state={internalState} />
 			{loaded ? (
 				<>

@@ -14,12 +14,14 @@ import ThemeContext from "themeContext"
 
 window.Pusher = require("pusher-js")
 
-const PageHeader = ({ activeItem, history, q, simple }) => {
+const PageHeader = ({ activeItem, history, simple }) => {
 	const { state, dispatch } = useContext(ThemeContext)
 	const { auth, inverted, notifications, user } = state
 
 	const username = auth ? user.username : "anonymous"
 	const { contradictionsCount, fallaciesCount, targetsCount } = user
+
+	const showBanner = !auth && !simple
 
 	// eslint-disable-next-line
 	const [internalState, dispatchInternal] = useReducer(
@@ -102,7 +104,7 @@ const PageHeader = ({ activeItem, history, q, simple }) => {
 
 	const BellDropdown = (
 		<Dropdown
-			className={`bellDropdown ${inverted ? "inverted" : null}`}
+			className={`bellDropdown ${inverted ? "inverted" : ""}`}
 			direction="right"
 			icon={false}
 			trigger={
@@ -328,6 +330,14 @@ const PageHeader = ({ activeItem, history, q, simple }) => {
 				</Menu>
 			)}
 
+			{showBanner && (
+				<div className="twitterBanner">
+					<Container>
+						<p>Link your Twitter account for optimal experience.</p>
+					</Container>
+				</div>
+			)}
+
 			<Sidebar
 				as={Menu}
 				direction="bottom"
@@ -364,14 +374,11 @@ const PageHeader = ({ activeItem, history, q, simple }) => {
 PageHeader.propTypes = {
 	activeItem: PropTypes.string,
 	history: PropTypes.object,
-	q: PropTypes.string,
-	simple: PropTypes.bool,
-	toggleSearchMode: PropTypes.func
+	simple: PropTypes.bool
 }
 
 PageHeader.defaultProps = {
 	activeItem: null,
-	q: "",
 	simple: false
 }
 

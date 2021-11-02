@@ -1,29 +1,31 @@
 import { Container, Grid, Segment } from "semantic-ui-react"
+import { useContext } from "react"
 import PageFooter from "components/Footer"
 import PageHeader from "components/Header"
 import PropTypes from "prop-types"
+import ThemeContext from "themeContext"
 
 const DefaultLayout = ({
 	activeItem,
 	children,
 	containerClassName,
 	history,
-	inverted,
-	q,
 	showFooter = true,
-	showResults,
-	useContainer = true,
 	simpleHeader,
+	useContainer = true,
 	useGrid
 }) => {
+	const { state } = useContext(ThemeContext)
+	const { auth, inverted } = state
+
+	const appClass = `appWrapper ${inverted ? "inverted" : ""} ${auth ? "auth" : ""}`
+
 	const mainPage = (
 		<>
 			<PageHeader
 				activeItem={activeItem}
 				history={history}
 				inverted={inverted}
-				q={q}
-				showResults={showResults}
 				simple={simpleHeader}
 			/>
 			{useGrid ? (
@@ -38,7 +40,7 @@ const DefaultLayout = ({
 	)
 
 	return (
-		<div className={`appWrapper ${inverted ? "inverted" : ""}`}>
+		<div className={appClass}>
 			<>
 				{useContainer ? (
 					<Container
@@ -70,9 +72,7 @@ DefaultLayout.propTypes = {
 	containerClassName: PropTypes.string,
 	history: PropTypes.object,
 	inverted: PropTypes.bool,
-	q: PropTypes.string,
 	showFooter: PropTypes.bool,
-	showResults: PropTypes.bool,
 	simpleHeader: PropTypes.bool,
 	useContainer: PropTypes.bool,
 	useGrid: PropTypes.bool

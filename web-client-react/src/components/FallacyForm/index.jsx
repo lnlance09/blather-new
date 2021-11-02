@@ -171,7 +171,7 @@ const FallacyForm = ({
 	}, [])
 
 	return (
-		<div className={`fallacyFormComponent ${inverted ? "inverted" : null}`}>
+		<div className={`fallacyFormComponent ${inverted ? "inverted" : ""}`}>
 			<Form inverted onSubmit={submitFallacy} size="large">
 				{showPageSelection && (
 					<Form.Group>

@@ -104,13 +104,7 @@ const Arguments = ({ history }) => {
 	)
 
 	return (
-		<DefaultLayout
-			activeItem="arguments"
-			containerClassName="argumentsPage"
-			history={history}
-			inverted={inverted}
-			textAlign="center"
-		>
+		<DefaultLayout activeItem="arguments" containerClassName="argumentsPage" history={history}>
 			<DisplayMetaTags page="arguments" />
 
 			<Header as="h1" content="Arguments" inverted={inverted} />

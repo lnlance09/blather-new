@@ -24,6 +24,8 @@ $logoHeight: 36px;
         border-radius: 50%;
         cursor: pointer;
         display: inline-block;
+        height: 54px;
+        width: 54px;
         padding: 8px;
         transition: 0.3s;
 
@@ -42,12 +44,21 @@ $logoHeight: 36px;
         }
     }
 
-    .basicHeaderContainer {
-        padding: 10px 0;
+    .twitterBanner {
+        background: $twitter;
+        border-bottom: solid 1px $lightBlack;
+        bottom: auto;
+        left: 0;
+        padding: 8px 0;
+        position: fixed;
+        right: auto;
+        top: 75px;
+        width: 100%;
+        z-index: 8;
 
-        svg {
-            height: 45px;
-            width: 45px;
+        p {
+            color: $white;
+            padding: 0 16px;
         }
     }
 

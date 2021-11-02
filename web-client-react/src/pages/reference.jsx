@@ -76,13 +76,7 @@ const Reference = ({ history }) => {
 	}
 
 	return (
-		<DefaultLayout
-			activeItem="reference"
-			containerClassName="referencePage"
-			history={history}
-			inverted={inverted}
-			textAlign="center"
-		>
+		<DefaultLayout activeItem="reference" containerClassName="referencePage" history={history}>
 			<DisplayMetaTags page="reference" />
 
 			<Header as="h1">Reference</Header>

@@ -50,13 +50,7 @@ const Contact = ({ history }) => {
 	}
 
 	return (
-		<DefaultLayout
-			activeItem="contact"
-			containerClassName="contactPage"
-			history={history}
-			inverted={inverted}
-			textAlign="center"
-		>
+		<DefaultLayout activeItem="contact" containerClassName="contactPage" history={history}>
 			<DisplayMetaTags page="contact" />
 
 			<Header as="h1" content="Contact Us" inverted={inverted} />
