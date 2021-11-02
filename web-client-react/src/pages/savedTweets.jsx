@@ -38,6 +38,7 @@ const SavedTweets = ({ history }) => {
 		}
 
 		getTweets(savedTweets)
+		// eslint-disable-next-line
 	}, [])
 
 	const getTweets = async (ids, page = 1) => {

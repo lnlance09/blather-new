@@ -14,7 +14,6 @@ import Grifters from "pages/grifters"
 import Groups from "pages/groups"
 import history from "history.js"
 import Login from "pages/auth/"
-import NotFound from "pages/notFound"
 import Page from "pages/pages/show"
 import Privacy from "pages/about/privacy"
 import Reference from "pages/reference"
@@ -148,6 +147,13 @@ const App = () => {
 							/>
 
 							<Route
+								path="/videos/:id"
+								render={(props) => (
+									<Video key={window.location.pathname} {...props} />
+								)}
+							/>
+
+							<Route
 								exact
 								path="/:username"
 								render={(props) => (
@@ -162,15 +168,6 @@ const App = () => {
 									<Settings key={window.location.pathname} {...props} />
 								)}
 							/>
-
-							<Route
-								path="/videos/:id"
-								render={(props) => (
-									<Video key={window.location.pathname} {...props} />
-								)}
-							/>
-
-							<Route path="*" render={(props) => <NotFound {...props} />} />
 						</Switch>
 					</ScrollToTop>
 				</ThemeProvider>

@@ -37,5 +37,3 @@ export const getHighlightedText = (text, higlight, className = "") => {
 
 	return newText
 }
-
-export const setImage = (img) => img.replace("64x64", "128x128")

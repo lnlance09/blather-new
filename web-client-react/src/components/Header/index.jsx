@@ -118,11 +118,9 @@ const PageHeader = ({ activeItem, history, q, simple }) => {
 		>
 			<Dropdown.Menu>
 				{notifications.length === 0 ? (
-					<>
-						<Dropdown.Item>
-							<Dropdown.Header>You're all up to date!</Dropdown.Header>
-						</Dropdown.Item>
-					</>
+					<Dropdown.Item>
+						<Dropdown.Header>You're all up to date!</Dropdown.Header>
+					</Dropdown.Item>
 				) : (
 					<>
 						<div style={{ maxHeight: 360, overflowY: "scroll" }}>

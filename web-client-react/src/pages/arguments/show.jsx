@@ -6,7 +6,6 @@ import {
 	Feed,
 	Grid,
 	Header,
-	Icon,
 	Image,
 	Loader,
 	Modal,
@@ -15,14 +14,13 @@ import {
 } from "semantic-ui-react"
 import { useContext, useEffect, useReducer, useState } from "react"
 import { Link } from "react-router-dom"
+import { s3Url } from "options/aws"
 import { DisplayMetaTags } from "utils/metaFunctions"
 import { onClickRedirect } from "utils/linkFunctions"
 import { formatPlural } from "utils/textFunctions"
-import { tweetOptions } from "options/tweet"
 import { getConfig } from "options/toast"
 import { Carousel } from "react-responsive-carousel"
 import { toast } from "react-toastify"
-import _ from "underscore"
 import axios from "axios"
 import DefaultLayout from "layouts/default"
 import ImageUpload from "components/ImageUpload"
@@ -37,8 +35,6 @@ import TweetList from "components/TweetList"
 const toastConfig = getConfig()
 toast.configure(toastConfig)
 
-const s3Url = "https://blather-new.s3.us-west-2.amazonaws.com/"
-
 const Argument = ({ history, match }) => {
 	const { state } = useContext(ThemeContext)
 	const { inverted } = state
@@ -48,7 +44,7 @@ const Argument = ({ history, match }) => {
 		process.env.NODE_ENV === "development" ? logger(reducer) : reducer,
 		initialState
 	)
-	const { argument, error, fallacies, loaded, modalTweets, purveyors, tweets } = internalState
+	const { argument, fallacies, loaded, modalTweets, purveyors, tweets } = internalState
 	const { contradictions, description, explanation, id, imageOptions, images, tweetCount } =
 		argument
 

@@ -56,7 +56,8 @@ class SetBuildFiles extends Command
             if ($i < count($cssFiles) ? $cssFiles[$i] !== $newCssFiles[$i] : false) {
                 exec('rm ' . $publicPath . 'css/' . $cssFiles[$i]);
             }
-            $file = str_replace($cssFiles[$i], $newCssFiles[$i], $file);
+            $cssFile = array_key_exists($i, $cssFiles) ? $cssFiles[$i] : "";
+            $file = str_replace($cssFile, $newCssFiles[$i], $file);
         }
 
         for ($i = 0; $i < count($newJsFiles); $i++) {
@@ -65,7 +66,8 @@ class SetBuildFiles extends Command
             if ($i < count($jsFiles) ? $jsFiles[$i] !== $newJsFiles[$i] : false) {
                 exec('rm ' . $publicPath . 'js/' . $jsFiles[$i]);
             }
-            $file = str_replace($jsFiles[$i], $newJsFiles[$i], $file);
+            $jsFile = array_key_exists($i, $jsFiles) ? $jsFiles[$i] : "";
+            $file = str_replace($jsFile, $newJsFiles[$i], $file);
         }
 
         for ($i = 0; $i < count($newMediaFiles); $i++) {
@@ -74,7 +76,8 @@ class SetBuildFiles extends Command
             if ($i < count($mediaFiles) ? $mediaFiles[$i] !== $newMediaFiles[$i] && !empty($mediaFiles[$i]) : false) {
                 exec('rm ' . $publicPath . 'media/' . $mediaFiles[$i]);
             }
-            $file = str_replace($mediaFiles[$i], $newMediaFiles[$i], $file);
+            $mediaFile = array_key_exists($i, $mediaFiles) ? $mediaFiles[$i] : "";
+            $file = str_replace($mediaFile, $newMediaFiles[$i], $file);
         }
 
         $content = file_get_contents(base_path() . '/web-client-react/build/asset-manifest.json');

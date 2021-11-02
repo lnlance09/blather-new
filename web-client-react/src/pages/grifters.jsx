@@ -2,6 +2,7 @@ import { Divider, Grid, Header, Image } from "semantic-ui-react"
 import { useContext } from "react"
 import { DisplayMetaTags } from "utils/metaFunctions"
 import { grifters } from "options/grifters"
+import { s3Url } from "options/aws"
 import DefaultLayout from "layouts/default"
 import PlaceholderPic from "images/images/image-square.png"
 import PropTypes from "prop-types"
@@ -60,7 +61,7 @@ const Grifters = ({ history }) => {
 										}
 										onError={(e) => (e.target.src = PlaceholderPic)}
 										rounded
-										src={m.src}
+										src={`${s3Url}${m.src}`}
 									/>
 									<ReactTooltip
 										className="tooltipClass"

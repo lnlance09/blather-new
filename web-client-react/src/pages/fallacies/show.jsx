@@ -27,7 +27,6 @@ import CommentList from "components/CommentList"
 import defaultImg from "images/images/image-square.png"
 import DefaultLayout from "layouts/default"
 import FallacyExample from "components/FallacyExample"
-import FallacyList from "components/FallacyList"
 import html2canvas from "html2canvas"
 import initialState from "states/fallacy"
 import logger from "use-reducer-logger"
@@ -63,7 +62,7 @@ const Fallacy = ({ history, match }) => {
 	)
 	const { comments, error, fallacy, loaded } = internalState
 	const { createdAt, id, page, reference, retracted, title, user } = fallacy
-	const { contradictionTweet, contradictionYouTube, twitter, youtube } = fallacy
+	const { contradictionTweet, contradictionYouTube, twitter } = fallacy
 
 	const canScreenshot =
 		(twitter && contradictionYouTube === null) || (twitter && contradictionTweet)
@@ -75,13 +74,9 @@ const Fallacy = ({ history, match }) => {
 	const [verticalMode, setVerticalMode] = useState(true)
 	const [visible, setVisible] = useState(false)
 
-	const [hasMore, setHasMore] = useState(false)
 	const [hasMoreC, setHasMoreC] = useState(false)
-	const [loading, setLoading] = useState(true)
 	const [loadingC, setLoadingC] = useState(true)
-	const [loadingMore, setLoadingMore] = useState(false)
 	const [loadingMoreC, setLoadingMoreC] = useState(false)
-	const [pageNumber, setPageNumber] = useState(1)
 	const [pageNumberC, setPageNumberC] = useState(1)
 
 	useEffect(() => {
@@ -106,6 +101,7 @@ const Fallacy = ({ history, match }) => {
 		}
 
 		getFallacy(slug)
+		// eslint-disable-next-line
 	}, [slug])
 
 	const captureScreenshot = () => {
@@ -164,7 +160,6 @@ const Fallacy = ({ history, match }) => {
 
 	// eslint-disable-next-line
 	const getRelatedFallacies = async (fallacyId, page = 1) => {
-		page === 1 ? setLoading(true) : setLoadingMore(true)
 		await axios
 			.get(`${process.env.REACT_APP_BASE_URL}fallacies/related`, {
 				params: {
@@ -173,15 +168,12 @@ const Fallacy = ({ history, match }) => {
 				}
 			})
 			.then((response) => {
-				const { data, meta } = response.data
+				const { data } = response.data
 				dispatch({
 					type: "GET_FALLACIES",
 					fallacies: data,
 					page
 				})
-				setPageNumber(page + 1)
-				setHasMore(meta.current_page < meta.last_page)
-				page === 1 ? setLoading(false) : setLoadingMore(false)
 			})
 			.catch(() => {
 				toast.error("There was an error")
@@ -493,15 +485,6 @@ const Fallacy = ({ history, match }) => {
 							</Visibility>
 
 							<Divider hidden section />
-
-							{/*
-							<FallacyList
-								fallacies={internalState.fallacies}
-								loading={loading}
-								loadingMore={loadingMore}
-								onClickFallacy={onClickFallacy}
-							/>
-							*/}
 						</>
 					)}
 				</>

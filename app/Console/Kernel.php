@@ -24,18 +24,6 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('predictions:correct')
-            ->everySixHours();
-
-        $schedule->command('predictions:create')
-            ->everyFifteenMinutes()
-            // ->between('6:00', '10:00')
-            ->timezone('America/New_York');
-
-        $schedule->command('users:create')
-            ->everyThirtyMinutes()
-            // ->between('6:30', '17:00')
-            ->timezone('America/New_York');
     }
 
     /**

@@ -1,7 +1,9 @@
 <?php
 
-use App\Models\Coin;
-use App\Models\Prediction;
+use App\Models\Argument;
+use App\Models\Fallacy;
+use App\Models\Page;
+use App\Models\Tweet;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\App;
@@ -20,23 +22,23 @@ use Illuminate\Support\Facades\URL;
 |
 */
 
-$awsUrl = env('AWS_URL', 'https://preditc.s3.us-west-2.amazonaws.com/');
-$baseUrl = env('APP_URL', 'https://preditc.com/');
-$siteName = env('APP_NAME', 'Preditc');
-$twitterHandle = env('TWITTER_HANDLE', '@preditcapp');
+$awsUrl = env('AWS_URL', 'https://blather-new.s3.us-west-2.amazonaws.com/');
+$baseUrl = env('APP_URL', 'https://blather.io/');
+$siteName = env('APP_NAME', 'Blather');
+$twitterHandle = env('TWITTER_HANDLE', '@blatherio');
 
 $seo = [
     'author' => null,
     'authorUrl' => null,
     'awsUrl' => $awsUrl,
     'baseUrl' => $baseUrl,
-    'description' => $siteName . ' is a social network that is used to share ideas and opinions about cryptocurrencies and their future performances',
+    'description' => $siteName . ' is a website and application that lets users assign logical fallacies to tweets. You can make political memes out of tweets and fallacies.',
     'img' => [
-        'height' => 313,
-        'width' => 313,
-        'src' => $awsUrl . 'public/blockchain.png'
+        'height' => 100,
+        'width' => 100,
+        'src' => $awsUrl . 'public/brain.png'
     ],
-    'keywords' => 'cryptocurrency,coins,tokens,predictions,bitcoin,ethereum,influencers,technical analysis,wall street',
+    'keywords' => 'politics,logical fallacies,conservatives,trump,sycophants,critical thinking',
     'schema' => '',
     'siteName' => $siteName,
     'title' => $siteName,
@@ -45,7 +47,7 @@ $seo = [
 ];
 
 Route::get('/', function () use ($seo) {
-    $seo['title'] = 'Home - ' . $seo['siteName'];
+    $seo['title'] = 'Assign a Logical Fallacy - ' . $seo['siteName'];
     return view('index', $seo);
 });
 
@@ -55,88 +57,114 @@ Route::get('/about', function () use ($seo) {
     return view('index', $seo);
 });
 
-Route::get('/applications', function () use ($seo) {
-    $seo['title'] = 'Applications - ' . $seo['siteName'];
-    $seo['url'] = $seo['baseUrl'] . 'applications';
+Route::get('/activity', function () use ($seo) {
+    $seo['title'] = 'Activity - ' . $seo['siteName'];
+    $seo['url'] = $seo['baseUrl'] . 'activity';
     return view('index', $seo);
 });
 
-Route::get('/coins/{slug}', function ($slug) use ($seo) {
-    $coin = Coin::where('slug', $slug)->first();
+Route::get('/arguments', function () use ($seo) {
+    $seo['title'] = 'Arguments - ' . $seo['siteName'];
+    $seo['description'] = "These are some of the most ubiquitous right-wing talking points. These aren't particularly good arguments but they're certainly some of the most common. Plenty of people have crafted personal brands and built entire careers as pundits by doing nothing more than repeating a handful of these tired talking points.";
+    $seo['url'] = $seo['baseUrl'] . 'arguments';
+    return view('index', $seo);
+});
 
-    if (empty($coin)) {
+Route::get('/arguments/{slug}', function ($slug) use ($seo) {
+    $arg = Argument::where('slug', $slug)->first();
+    if (empty($arg)) {
         return view('index', $seo);
     }
 
-    $img = $seo['awsUrl'] . $coin->logo;
+    $img = $seo['awsUrl'] . $arg->logo;
     $imgData = getimagesize($img);
     $width = $imgData[0];
     $height = $imgData[1];
 
-    $seo['description'] = $coin->description;
     $seo['img'] = [
         'height' => $height,
         'src' => $img,
         'width' => $width
     ];
-    $seo['title'] = $coin->name . ' - ' . $seo['siteName'];
-    $seo['url'] = $seo['baseUrl'] . 'coins/' . $slug;
+    $seo['description'] = $arg->explanation;
+    $seo['title'] = $arg->description . ' - ' . $seo['siteName'];
+    $seo['url'] = $seo['baseUrl'] . 'arguments/' . $slug;
 
     return view('index', $seo);
 });
 
-Route::get('/coins', function () use ($seo) {
-    $seo['description'] = 'Browse cryptocurrencies, tokens and coins on preditc.com';
-    $seo['title'] = 'Coins - ' . $seo['siteName'];
-    $seo['url'] = $seo['baseUrl'] . 'coins';
+Route::get('/auth', function () use ($seo) {
+    $seo['title'] = 'Sign In - ' . $seo['siteName'];
+    $seo['url'] = $seo['baseUrl'] . 'auth';
     return view('index', $seo);
 });
 
 Route::get('/contact', function () use ($seo) {
-    $seo['title'] = 'Contact - ' . $seo['siteName'];
+    $seo['title'] = 'Contact Us - ' . $seo['siteName'];
     $seo['url'] = $seo['baseUrl'] . 'contact';
     return view('index', $seo);
 });
 
-Route::get('/predictions/{id}', function ($id) use ($seo) {
-    $prediction = Prediction::where('id', $id)->with(['coin', 'user'])->first();
-
-    if (empty($prediction)) {
+Route::get('/fallacies/{slug}', function ($slug) use ($seo) {
+    $fallacy = Fallacy::where('slug', $slug)->first();
+    if (empty($fallacy)) {
         return view('index', $seo);
     }
 
-    $user = $prediction->user;
-    $coin = $prediction->coin;
-    $price = $prediction->prediction_price > 1 ? round($prediction->prediction_price, 2) : round($prediction->prediction_price, 6);
-    $date = date_format($prediction->target_date, 'M d, Y');
+    $seo['description'] = $fallacy->explanation;
+    $seo['title'] = $fallacy->title . ' - ' . $seo['siteName'];
+    $seo['url'] = $seo['baseUrl'] . 'fallacies/' . $slug;
 
-    $img = $seo['awsUrl'] . $user->img;
+    return view('index', $seo);
+});
+
+Route::get('/grifters', function () use ($seo) {
+    $seo['title'] = 'Grifters - ' . $seo['siteName'];
+    $seo['url'] = $seo['baseUrl'] . 'grifters';
+    return view('index', $seo);
+});
+
+Route::get('/groups', function () use ($seo) {
+    $seo['title'] = 'Groups - ' . $seo['siteName'];
+    $seo['url'] = $seo['baseUrl'] . 'groups';
+    return view('index', $seo);
+});
+
+Route::get('/pages/{network}/{username}', function ($network, $username) use ($seo) {
+    $page = Page::where([
+        'network' => $network,
+        'username' => $username
+    ])->first();
+    if (empty($page)) {
+        return view('index', $seo);
+    }
+
+    $img = $seo['awsUrl'] . $page->logo;
     $imgData = getimagesize($img);
     $width = $imgData[0];
     $height = $imgData[1];
 
-    $seo['description'] = $prediction->explanation;
     $seo['img'] = [
         'height' => $height,
         'src' => $img,
         'width' => $width
     ];
-    $seo['title'] = $coin->name . ' to $' . $price . ' on ' . $date . ' - ' . $user->name . ' - ' . $seo['siteName'];
-    $seo['url'] = $seo['baseUrl'] . 'predictions/' . $id;
+    $seo['description'] = $page->bio;
+    $seo['title'] = $page->name . ' - ' . $seo['siteName'];
+    $seo['url'] = $seo['baseUrl'] . 'pages/' . $network . '/' . $username;
 
-    return view('index', $seo);
-});
-
-Route::get('/predictions', function () use ($seo) {
-    $seo['description'] = 'Browse cryptocurrency predictions on preditc.com';
-    $seo['title'] = 'Predictions - ' . $seo['siteName'];
-    $seo['url'] = $seo['baseUrl'] . 'predictions';
     return view('index', $seo);
 });
 
 Route::get('/privacy', function () use ($seo) {
     $seo['title'] = 'Privacy - ' . $seo['siteName'];
-    $seo['url'] = $seo['baseUrl'] . 'sitemap';
+    $seo['url'] = $seo['baseUrl'] . 'privacy';
+    return view('index', $seo);
+});
+
+Route::get('/reference', function () use ($seo) {
+    $seo['title'] = 'Reference - ' . $seo['siteName'];
+    $seo['url'] = $seo['baseUrl'] . 'reference';
     return view('index', $seo);
 });
 
@@ -146,9 +174,15 @@ Route::get('/rules', function () use ($seo) {
     return view('index', $seo);
 });
 
-Route::get('/settings', function () use ($seo) {
-    $seo['title'] = 'Settings - ' . $seo['siteName'];
-    $seo['url'] = $seo['baseUrl'] . 'settings';
+Route::get('/saved/tweets', function () use ($seo) {
+    $seo['title'] = 'Saved Tweets - ' . $seo['siteName'];
+    $seo['url'] = $seo['baseUrl'] . 'saved/tweets';
+    return view('index', $seo);
+});
+
+Route::get('/search', function () use ($seo) {
+    $seo['title'] = 'Search - ' . $seo['siteName'];
+    $seo['url'] = $seo['baseUrl'] . 'search';
     return view('index', $seo);
 });
 
@@ -157,36 +191,50 @@ Route::get('sitemap', function () {
     $sitemap->setCache('laravel.sitemap', 60);
 
     if (!$sitemap->isCached()) {
-        // home page
-        $sitemap->add(URL::to('/'), Carbon::now()->subMinutes(52), '1.0', 'daily');
+        // static pages
+        $sitemap->add(URL::to('/'), Carbon::now(), '1.0', 'monthly'); // home/assign page
+        $sitemap->add(URL::to('/activity'), null, '0.7', 'daily');
+        $sitemap->add(URL::to('/auth'), null, '0.4', 'monthly');
+        $sitemap->add(URL::to('/grifters'), null, '0.8', 'monthly');
+        $sitemap->add(URL::to('/groups'), null, '0.6', 'monthly');
+        $sitemap->add(URL::to('/reference'), null, '0.7', 'monthly');
+        $sitemap->add(URL::to('/search'), null, '0.6', 'monthly');
+        $sitemap->add(URL::to('/search?q=&type=fallacies'), null, '0.6', 'monthly');
+        $sitemap->add(URL::to('/search?q=&type=tweets'), null, '0.6', 'monthly');
+        $sitemap->add(URL::to('/search?q=&type=contradictions'), null, '0.6', 'monthly');
+        $sitemap->add(URL::to('/search?q=&type=pages'), null, '0.6', 'monthly');
 
-        // create a wallet
-        $sitemap->add(URL::to('/wallet/create'), null, '0.9', 'monthly');
-        $coins = DB::table('coins')->where('has_wallet', 1)->orderBy('id', 'asc')->get();
-        foreach ($coins as $c) {
-            $sitemap->add(URL::to('/wallet/create/' . $c->symbol), $c->updated_at, '0.9', 'd');
+        // arguments
+        $args = DB::table('args')->orderBy('id', 'asc')->get();
+        foreach ($args as $a) {
+            $sitemap->add(URL::to('/arguments/' . $a->slug), $a->updated_at, '0.9', 'weekly');
+        }
+        $sitemap->add(URL::to('/arguments'), null, '0.9', 'monthly');
+
+        // fallacies
+        $fallacies = DB::table('fallacies')->orderBy('id', 'asc')->get();
+        foreach ($fallacies as $f) {
+            $sitemap->add(URL::to('/fallacies/' . $f->slug), $f->updated_at, '0.9', 'weekly');
         }
 
-        // predictions
-        $predictions = DB::table('predictions')->orderBy('id', 'asc')->get();
-        foreach ($predictions as $p) {
-            $sitemap->add(URL::to('/predictions/' . $p->id), $p->updated_at, '0.9', 'daily');
+        // pages
+        $pages = DB::table('pages')->orderBy('id', 'asc')->get();
+        foreach ($pages as $p) {
+            $sitemap->add(URL::to('/pages/' . $p->network . '/' . $p->username), $p->updated_at, '0.7', 'weekly');
         }
-        $sitemap->add(URL::to('/predictions'), Carbon::now()->subMinutes(29), '0.9', 'hourly');
 
-        // coins
-        $coins = DB::table('coins')->orderBy('id', 'asc')->get();
-        foreach ($coins as $c) {
-            $sitemap->add(URL::to('/coins/' . $c->slug), $c->updated_at, '0.8', 'daily');
+        // tweets
+        $tweets = DB::table('tweets')->orderBy('id', 'asc')->get();
+        foreach ($tweets as $t) {
+            $sitemap->add(URL::to('/tweets/' . $t->tweet_id), $t->updated_at, '0.6', 'weekly');
         }
-        $sitemap->add(URL::to('/coins'), Carbon::now()->subDays(11), '0.8', 'weekly');
+        $sitemap->add(URL::to('/tweets'), null, '0.7', 'monthly');
 
-        // traders
+        // users
         $users = DB::table('users')->orderBy('id', 'asc')->get();
         foreach ($users as $u) {
-            $sitemap->add(URL::to('/' . $u->username), $u->updated_at, '0.7', 'daily');
+            $sitemap->add(URL::to('/' . $u->username), $u->updated_at, '0.6', 'weekly');
         }
-        $sitemap->add(URL::to('/traders'), Carbon::now()->subMinutes(48), '0.7', 'hourly');
 
         // filler pages
         $sitemap->add(URL::to('/contact'), null, '0.4', 'monthly');
@@ -198,18 +246,39 @@ Route::get('sitemap', function () {
     return $sitemap->render('xml');
 });
 
-Route::get('/traders', function () use ($seo) {
-    $seo['description'] = 'Browse some of the best cryptocurrency traders on preditc.com';
-    $seo['title'] = 'Traders - ' . $seo['siteName'];
-    $seo['url'] = $seo['baseUrl'] . 'traders';
+Route::get('/tweets', function () use ($seo) {
+    $seo['title'] = 'Tweets - ' . $seo['siteName'];
+    $seo['url'] = $seo['baseUrl'] . 'tweets';
+    return view('index', $seo);
+});
+
+Route::get('/tweets/{id}', function ($id) use ($seo) {
+    $tweet = Tweet::where('tweet_id', $id)->first();
+    if (empty($tweet)) {
+        return view('index', $seo);
+    }
+
+    $img = $seo['awsUrl'] . $tweet->logo;
+    $imgData = getimagesize($img);
+    $width = $imgData[0];
+    $height = $imgData[1];
+
+    $seo['img'] = [
+        'height' => $height,
+        'src' => $img,
+        'width' => $width
+    ];
+    $seo['description'] = $tweet->explanation;
+    $seo['title'] = $tweet->title . ' - ' . $seo['siteName'];
+    $seo['url'] = $seo['baseUrl'] . 'tweets/' . $id;
+
     return view('index', $seo);
 });
 
 Route::get('/{username}', function ($username) use ($seo) {
     $user = User::where('username', $username)->withCount([
-        'predictions',
-        'incorrectPredictions',
-        'correctPredictions'
+        'fallacies',
+        'contradictions'
     ])->first();
 
     if (empty($user)) {
@@ -221,33 +290,16 @@ Route::get('/{username}', function ($username) use ($seo) {
     $width = $imgData[0];
     $height = $imgData[1];
 
-    $total = $user->predictions_count;
-    $correct = $user->correct_predictions_count;
-    $incorrect = $user->incorrect_predictions_count;
-    $defaultBio = $user->name . ' has ' . $total . ' predictions. ' . $correct . ' correct. ' . $incorrect . ' incorrect';
-    $seo['description'] = empty($user->bio) ? $defaultBio : $user->bio;
     $seo['img'] = [
         'height' => $height,
         'src' => $img,
         'width' => $width
     ];
+
+    $defaultBio = $user->name . ' has ' . $user->fallacies_count . ' fallacies and ' . $user->contradictions_count . ' contradictions';
+    $seo['description'] = empty($user->bio) ? $defaultBio : $user->bio;
     $seo['title'] = $user->name . ' - ' . $seo['siteName'];
     $seo['url'] = $seo['baseUrl']  . $username;
 
-    return view('index', $seo);
-});
-
-Route::get('/wallet/create', function () use ($seo) {
-    $seo['title'] = 'Generate Ether Address Online - ' . $seo['siteName'];
-    $seo['description'] = 'Generate an ether wallet online that includes address, public key and private key. Fast. Free. Secure.';
-    $seo['url'] = $seo['baseUrl'] . 'wallet/create';
-    return view('index', $seo);
-});
-
-Route::get('/wallet/create/{symbol}', function ($symbol) use ($seo) {
-    $coin = Coin::where('symbol', $symbol)->first();
-    $seo['title'] = 'Generate ' . $coin->name . ' Address Online - ' . $seo['siteName'];
-    $seo['description'] = 'Generate an ' . $coin->name . ' wallet online that includes address, public key and private key. Fast. Free. Secure.';
-    $seo['url'] = $seo['baseUrl'] . 'wallet/create/' . $symbol;
     return view('index', $seo);
 });

@@ -37,7 +37,7 @@ const TweetList = ({
 					tweet = _tweet.tweet
 				}
 
-				const { extendedEntities, id } = tweet
+				const { extendedEntities } = tweet
 				return (
 					<div className={`tweetWrapper ${loading ? "loading" : ""}`} key={`tweet${i}`}>
 						{loading && <Segment>{PlaceholderSegment}</Segment>}
