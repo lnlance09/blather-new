@@ -1,9 +1,9 @@
 const reducer = (state, action) => {
 	switch (action.type) {
-		case "SET_WALLETS":
+		case "SET_TWITTER_INFO":
 			return {
 				...state,
-				wallets: action.wallets
+				twitter: action.twitter
 			}
 		default:
 			throw new Error()

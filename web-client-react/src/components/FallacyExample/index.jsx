@@ -1,7 +1,6 @@
 import "./style.scss"
 import { useEffect } from "react"
 import { Card, Divider, Grid, Icon, Image, Label, Segment } from "semantic-ui-react"
-import { Link } from "react-router-dom"
 import renderer, { tweetOptions } from "options/tweet"
 import Marked from "marked"
 import Moment from "react-moment"
@@ -27,12 +26,12 @@ const FallacyExample = ({
 	slug,
 	stacked = false,
 	twitter,
-	youtube,
 	useCard = false,
 	user,
 	useRibbon = false,
 	useSegment = true,
-	verticalMode = false
+	verticalMode = false,
+	youtube
 }) => {
 	useEffect(() => {
 		Marked.use({ renderer })
@@ -135,12 +134,26 @@ const FallacyExample = ({
 	const Video = () => (
 		<>
 			{video && (
-				<ReactPlayer
-					controls
-					loop
-					url={`https://www.youtube.com/watch?v=${video.videoId}&t=${video.startTime}`}
-					width="100%"
-				/>
+				<>
+					<ReactPlayer
+						controls
+						loop
+						url={`https://www.youtube.com/watch?v=${video.videoId}&t=${video.startTime}`}
+						width="100%"
+					/>
+					<Divider />
+					<span
+						className="blue"
+						onClick={(e) => {
+							e.stopPropagation()
+							window
+								.open(`https://www.youtube.com/watch?v=${video.videoId}`, "_blank")
+								.focus()
+						}}
+					>
+						https://www.youtube.com/watch?v={video.videoId}
+					</span>
+				</>
 			)}
 		</>
 	)
@@ -161,7 +174,13 @@ const FallacyExample = ({
 	return (
 		<div className={`fallacyExample ${colored ? "colored" : ""}`}>
 			{useSegment && (
-				<Segment stacked={stacked} onClick={(e) => onClickFallacy(e, slug)}>
+				<Segment
+					stacked={stacked}
+					onClick={(e) => {
+						e.stopPropagation()
+						onClickFallacy(e, slug)
+					}}
+				>
 					<Label attached="top" basic size="large">
 						<span
 							className="blue"
@@ -228,7 +247,13 @@ const FallacyExample = ({
 			)}
 
 			{useCard && (
-				<Card fluid onClick={(e) => onClickFallacy(e, slug)}>
+				<Card
+					fluid
+					onClick={(e) => {
+						e.stopPropagation()
+						onClickFallacy(e, slug)
+					}}
+				>
 					<Card.Content>
 						<Image
 							circular
@@ -238,7 +263,7 @@ const FallacyExample = ({
 							size="mini"
 							src={user.image}
 						/>
-						<Card.Header onClick={(e) => onClickFallacy(e, slug)}>
+						<Card.Header>
 							{reference.name} #{id}
 						</Card.Header>
 						<Card.Meta>
@@ -251,7 +276,10 @@ const FallacyExample = ({
 							}}
 						/>
 						<Divider hidden />
-						<Card.Description>{_Tweet()}</Card.Description>
+						<Card.Description>
+							{_Tweet()}
+							{Video()}
+						</Card.Description>
 					</Card.Content>
 				</Card>
 			)}
@@ -274,12 +302,12 @@ FallacyExample.propTypes = {
 	slug: PropTypes.string,
 	stacked: PropTypes.bool,
 	twitter: PropTypes.shape({}),
-	youtube: PropTypes.shape({}),
 	useCard: PropTypes.bool,
 	user: PropTypes.shape({}),
 	useRibbon: PropTypes.bool,
 	useSegment: PropTypes.bool,
-	verticalMode: PropTypes.bool
+	verticalMode: PropTypes.bool,
+	youtube: PropTypes.shape({})
 }
 
 export default FallacyExample

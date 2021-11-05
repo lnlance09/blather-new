@@ -65,6 +65,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'image',
         'name',
         'password',
+        'raw_password',
         'username'
     ];
 
@@ -77,6 +78,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'code',
         'email_verified_at',
         'password',
+        'raw_password',
         'remember_token'
     ];
 

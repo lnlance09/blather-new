@@ -46,7 +46,6 @@ $logoHeight: 36px;
 
     .twitterBanner {
         background: $twitter;
-        border-bottom: solid 1px $lightBlack;
         bottom: auto;
         left: 0;
         padding: 8px 0;
@@ -59,6 +58,11 @@ $logoHeight: 36px;
         p {
             color: $white;
             padding: 0 16px;
+
+            a {
+                color: $white;
+                text-decoration: underline;
+            }
         }
     }
 

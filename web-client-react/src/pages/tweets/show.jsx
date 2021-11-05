@@ -73,6 +73,9 @@ const TweetPage = ({ history, match }) => {
 		const getTweet = async (id) => {
 			const tweetId = await axios
 				.get(`${process.env.REACT_APP_BASE_URL}tweets/${id}`, {
+					headers: {
+						Authorization: `Bearer ${localStorage.getItem("bearer")}`
+					},
 					params: {
 						argument: 1
 					}

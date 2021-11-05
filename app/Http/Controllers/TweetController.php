@@ -9,8 +9,10 @@ use App\Models\Argument;
 use App\Models\ArgumentExampleTweet;
 use App\Models\Page;
 use App\Models\Tweet;
+use App\Models\UserTwitter;
 use Atymic\Twitter\Facade\Twitter;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -81,6 +83,7 @@ class TweetController extends Controller
         $args = $request->input('args', []);
 
         $tweet = Tweet::where('id', $id)->first();
+
         if (!$tweet) {
             return response([
                 'message' => 'Invalid tweet'
@@ -163,15 +166,32 @@ class TweetController extends Controller
      */
     public function show($id)
     {
+        $user = auth('api')->user();
+        $twitterLinked = false;
+
+        if ($user) {
+            $twitter = UserTwitter::where('user_id', $user->id)->first();
+            $twitterLinked = empty($twitter) ? false : true;
+        }
+
         $tweet = null;
         $archived = false;
 
         // Get the tweet from twitter's api
         try {
-            $tweet = Twitter::getTweet($id, [
-                'response_format' => 'array',
-                'tweet_mode' => 'extended'
-            ]);
+            if ($twitterLinked) {
+                $twitter = Twitter::usingCredentials($twitter->token, $twitter->secret);
+                $tweet = $twitter->getTweet($id, [
+                    'response_format' => 'array',
+                    'tweet_mode' => 'extended'
+                ]);
+            } else {
+                $tweet = Twitter::getTweet($id, [
+                    'response_format' => 'array',
+                    'tweet_mode' => 'extended'
+                ]);
+            }
+
             $tweetDb = Tweet::where('tweet_id', $tweet['id_str'])->first();
 
             if ($tweetDb) {
@@ -342,27 +362,64 @@ class TweetController extends Controller
 
     public function showTwitterList(Request $request)
     {
+        $user = auth('api')->user();
+        $twitterLinked = false;
+
         $page = $request->input('page', 1);
 
-        $tweets = Twitter::getListStatuses([
-            'list_id' => 1095482595847127040,
-            'page' => $page,
-            'tweet_mode' => 'extended'
-        ]);
+        if ($user) {
+            $twitter = UserTwitter::where('user_id', $user->id)->first();
+            $twitterLinked = empty($twitter) ? false : true;
+        }
+
+        if ($twitterLinked) {
+            $twitter = Twitter::usingCredentials($twitter->token, $twitter->secret);
+            $tweets = $twitter->getListStatuses([
+                'list_id' => 1095482595847127040,
+                'page' => $page,
+                'tweet_mode' => 'extended'
+            ]);
+        } else {
+            $tweets = Twitter::getListStatuses([
+                'list_id' => 1095482595847127040,
+                'page' => $page,
+                'tweet_mode' => 'extended'
+            ]);
+        }
+
         return new TweetLiveCollection($tweets);
     }
 
     public function showTwitterFeed(Request $request)
     {
+        $user = auth('api')->user();
+        $twitterLinked = false;
+
         $page = $request->input('page', 1);
         $pageId = $request->input('pageId');
 
-        $tweets = Twitter::getUserTimeline([
-            'user_id' => $pageId,
-            'exclude_replies' => true,
-            'page' => $page,
-            'tweet_mode' => 'extended'
-        ]);
+        if ($user) {
+            $twitter = UserTwitter::where('user_id', $user->id)->first();
+            $twitterLinked = empty($twitter) ? false : true;
+        }
+
+        if ($twitterLinked) {
+            $twitter = Twitter::usingCredentials($twitter->token, $twitter->secret);
+            $tweets = $twitter->getUserTimeline([
+                'user_id' => $pageId,
+                'exclude_replies' => true,
+                'page' => $page,
+                'tweet_mode' => 'extended'
+            ]);
+        } else {
+            $tweets = Twitter::getUserTimeline([
+                'user_id' => $pageId,
+                'exclude_replies' => true,
+                'page' => $page,
+                'tweet_mode' => 'extended'
+            ]);
+        }
+
         return new TweetLiveCollection($tweets);
     }
 

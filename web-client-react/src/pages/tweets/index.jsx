@@ -38,6 +38,9 @@ const Tweets = ({ history }) => {
 		page === 1 ? setLoading(true) : setLoadingMore(true)
 		await axios
 			.get(`${process.env.REACT_APP_BASE_URL}tweets/showTwitterList`, {
+				headers: {
+					Authorization: `Bearer ${localStorage.getItem("bearer")}`
+				},
 				params: {
 					page
 				}

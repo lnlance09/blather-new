@@ -16,9 +16,10 @@ const DefaultLayout = ({
 	useGrid
 }) => {
 	const { state } = useContext(ThemeContext)
-	const { auth, inverted } = state
+	const { auth, inverted, user } = state
 
-	const appClass = `appWrapper ${inverted ? "inverted" : ""} ${auth ? "auth" : ""}`
+	const showBanner = (!auth || (auth && !user.hasTwitter)) && !simpleHeader
+	const appClass = `appWrapper ${inverted ? "inverted" : ""} ${showBanner ? "showBanner" : ""}`
 
 	const mainPage = (
 		<>
@@ -26,6 +27,7 @@ const DefaultLayout = ({
 				activeItem={activeItem}
 				history={history}
 				inverted={inverted}
+				showBanner={showBanner}
 				simple={simpleHeader}
 			/>
 			{useGrid ? (

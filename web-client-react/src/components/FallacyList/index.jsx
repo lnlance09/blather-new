@@ -34,7 +34,7 @@ const FallacyList = ({
 		<div className="fallacyList">
 			<Grid>
 				{fallacies.map((fallacy, i) => (
-					<Grid.Row className={loading ? "loading" : null} key={`fallacy${i}`}>
+					<Grid.Row className={loading ? "loading" : ""} key={`fallacy${i}`}>
 						<Grid.Column
 							className={`${!loading && fallacy.reference.id !== 21 ? "normal" : ""}`}
 							width={16}
@@ -57,11 +57,11 @@ const FallacyList = ({
 									reference={fallacy.reference}
 									slug={fallacy.slug}
 									twitter={fallacy.twitter}
-									youtube={fallacy.youtube}
 									useCard={fallacy.reference.id !== 21}
 									user={fallacy.user}
 									useRibbon={fallacy.reference.id === 21}
 									useSegment={fallacy.reference.id === 21}
+									youtube={fallacy.youtube}
 								/>
 							)}
 						</Grid.Column>

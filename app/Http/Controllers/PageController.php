@@ -129,10 +129,11 @@ class PageController extends Controller
      */
     public function show($network, $username)
     {
-        $page = Page::where([
-            'network' => $network,
-            'username' => $username
-        ])
+        $page = Page::where('network', $network)
+            ->where(function ($q) use ($username) {
+                $q->where('username', $username)
+                    ->orWhere('social_media_id', $username);
+            })
             ->withCount([
                 'fallacies',
                 'contradictions'

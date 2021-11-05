@@ -14,6 +14,7 @@ import { onClickRedirect } from "utils/linkFunctions"
 import { DisplayMetaTags } from "utils/metaFunctions"
 import { getDropdownOptions } from "options/page"
 import { getReferenceOptions } from "options/reference"
+import _ from "underscore"
 import axios from "axios"
 import DefaultLayout from "layouts/default"
 import FallacyList from "components/FallacyList"
@@ -28,11 +29,11 @@ import reducer from "reducers/search"
 import ThemeContext from "themeContext"
 import TweetList from "components/TweetList"
 
-const Search = ({ history, match }) => {
+const Search = ({ history }) => {
 	const query = qs.parse(window.location.search)
-	const { network } = query
+	const network = _.isEmpty(query.network) ? "twitter" : query.network
 
-	const _q = typeof query.q === "undefined" ? "" : query.q
+	const _q = _.isEmpty(query.q) ? "" : query.q
 	const type = !query.type ? "tweets" : query.type
 
 	let refIds = !query["refIds[]"] ? [] : query["refIds[]"]
@@ -72,6 +73,7 @@ const Search = ({ history, match }) => {
 	const { twitterCount, youtubeCount } = pages
 
 	const [activeItem, setActiveItem] = useState(type)
+	const [newNetwork, setNewNetwork] = useState(network)
 	const [q, setQ] = useState(_q)
 
 	const [hasMoreC, setHasMoreC] = useState(false)
@@ -337,7 +339,7 @@ const Search = ({ history, match }) => {
 		const stringified = qs.stringify(
 			{
 				q: value,
-				network,
+				network: newNetwork,
 				pageIds,
 				pageIdsF,
 				pageIdsC,
@@ -366,7 +368,7 @@ const Search = ({ history, match }) => {
 			dispatch({
 				type: "TOGGLE_PAGES_LOADED"
 			})
-			await getPages(value, network)
+			await getPages(value, newNetwork)
 		}
 
 		if (activeItem === "tweets") {
@@ -650,10 +652,21 @@ const Search = ({ history, match }) => {
 
 			{activeItem === "pages" && (
 				<>
-					<Divider />
+					<Divider hidden />
 
-					<Button as="div" labelPosition="right">
-						<Button active color="twitter">
+					<Button
+						as="div"
+						className="labelBtn"
+						labelPosition="right"
+						onClick={() => {
+							setNewNetwork("twitter")
+							getPages(q, "twitter")
+						}}
+					>
+						<Button
+							className={newNetwork === "twitter" ? "active" : ""}
+							color="twitter"
+						>
 							<Icon name="twitter" />
 							Twitter
 						</Button>
@@ -665,7 +678,15 @@ const Search = ({ history, match }) => {
 							/>
 						</Label>
 					</Button>
-					<Button as="div" labelPosition="right">
+					<Button
+						as="div"
+						className="labelBtn"
+						labelPosition="right"
+						onClick={() => {
+							setNewNetwork("youtube")
+							getPages(q, "youtube")
+						}}
+					>
 						<Button color="youtube">
 							<Icon name="youtube" />
 							YouTube
@@ -679,14 +700,14 @@ const Search = ({ history, match }) => {
 						</Label>
 					</Button>
 
-					<Divider />
+					<Divider hidden />
 
 					<Visibility
 						continuous
 						offset={[50, 50]}
 						onBottomVisible={() => {
 							if (!loadingP && !loadingMoreP && hasMoreP) {
-								getPages(q, network, pageNumberP)
+								getPages(q, newNetwork, pageNumberP)
 							}
 						}}
 					>

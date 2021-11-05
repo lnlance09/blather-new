@@ -69,11 +69,13 @@ const sampleTweetC = (
 const Assign = ({ history }) => {
 	const query = qs.parse(window.location.search)
 	const _url = _.isEmpty(query.url) ? "" : query.url
+	const oauthToken = _.isEmpty(query.oauth_token) ? null : query.oauth_token
+	const oauthVerifier = _.isEmpty(query.oauth_verifier) ? null : query.oauth_verifier
 
-	const { state } = useContext(ThemeContext)
+	const { state, dispatch } = useContext(ThemeContext)
 	const { inverted } = state
 
-	const [internalState, dispatch] = useReducer(
+	const [internalState, dispatchInternal] = useReducer(
 		process.env.NODE_ENV === "development" ? logger(reducer) : reducer,
 		initialState
 	)
@@ -91,6 +93,36 @@ const Assign = ({ history }) => {
 
 	const showGroups = tweetLoaded && groups.length > 0
 
+	const createTwitterAccount = async () => {
+		await axios
+			.post(`${process.env.REACT_APP_BASE_URL}users/registerTwitterUser`, {
+				token: oauthToken,
+				verifier: oauthVerifier,
+				requestToken: localStorage.getItem("requestToken"),
+				requestTokenSecret: localStorage.getItem("requestTokenSecret")
+			})
+			.then(async (response) => {
+				const { bearer, user } = response.data
+
+				localStorage.setItem("auth", true)
+				localStorage.setItem("bearer", bearer)
+				localStorage.setItem("user", JSON.stringify(user))
+				localStorage.setItem("verify", false)
+
+				dispatch({
+					type: "SET_USER_DATA",
+					data: {
+						bearer,
+						user,
+						verify: false
+					}
+				})
+			})
+			.catch((e) => {
+				console.error("error", e)
+			})
+	}
+
 	const getGroupsByPage = async (page) => {
 		await axios
 			.get(`${process.env.REACT_APP_BASE_URL}groups/getGroupsByMember`, {
@@ -100,7 +132,7 @@ const Assign = ({ history }) => {
 			})
 			.then(async (response) => {
 				const { data } = response.data
-				dispatch({
+				dispatchInternal({
 					type: "GET_GROUPS_BY_PAGE",
 					groups: data
 				})
@@ -123,7 +155,7 @@ const Assign = ({ history }) => {
 			.then(async (response) => {
 				const { archived, tweet } = response.data
 				const type = contradiction ? "GET_TWEET_CONTRADICTION" : "GET_TWEET"
-				dispatch({
+				dispatchInternal({
 					type,
 					tweet
 				})
@@ -201,6 +233,13 @@ const Assign = ({ history }) => {
 		// eslint-disable-next-line
 	}, [_url])
 
+	useEffect(() => {
+		if (oauthToken && oauthVerifier) {
+			createTwitterAccount()
+		}
+		// eslint-disable-next-line
+	}, [])
+
 	return (
 		<DefaultLayout activeItem="assign" containerClassName="assignPage" history={history}>
 			<DisplayMetaTags page="assign" />
@@ -220,7 +259,7 @@ const Assign = ({ history }) => {
 								onKeyUp={(e) =>
 									onKeyUp(e, () => {
 										setUrl("")
-										dispatch({
+										dispatchInternal({
 											type: "RESET_TWEET"
 										})
 									})
@@ -240,7 +279,7 @@ const Assign = ({ history }) => {
 								onKeyUp={(e) =>
 									onKeyUp(e, () => {
 										setUrlC("")
-										dispatch({
+										dispatchInternal({
 											type: "RESET_TWEET"
 										})
 									})

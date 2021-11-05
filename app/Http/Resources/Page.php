@@ -24,7 +24,7 @@ class Page extends JsonResource
 
         return [
             'id' => $this->id,
-            'bio' => $this->bio,
+            'bio' => empty($this->bio) ? 'Not much is known about this page...' : $this->bio,
             'contradictionCount' => $this->contradictions_count,
             'fallacyCount' => $this->fallacies_count,
             'externalLink' => $externalLink,

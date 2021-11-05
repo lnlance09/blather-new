@@ -11,14 +11,18 @@ import {
 	Segment,
 	TextArea
 } from "semantic-ui-react"
-import { useContext, useEffect, useState } from "react"
+import { useContext, useEffect, useReducer, useState } from "react"
 import { DebounceInput } from "react-debounce-input"
 import { DisplayMetaTags } from "utils/metaFunctions"
 import { getConfig } from "options/toast"
 import { toast } from "react-toastify"
 import axios from "axios"
 import DefaultLayout from "layouts/default"
+import initialState from "states/settings"
+import logger from "use-reducer-logger"
+import Moment from "react-moment"
 import PropTypes from "prop-types"
+import reducer from "reducers/settings"
 import ThemeContext from "themeContext"
 
 const toastConfig = getConfig()
@@ -26,25 +30,33 @@ toast.configure(toastConfig)
 
 const defaultBio = "Apparently, this trader prefers to keep an air of mystery about them."
 
-const Settings = ({ history }) => {
+const Settings = ({ history, match }) => {
 	const { state } = useContext(ThemeContext)
 	const { auth, bearer, inverted, user } = state
+	const { username } = match.params
 
 	const params = new URLSearchParams(window.location.search)
 	const tab = params.get("tab")
-	const tabs = ["profile_info", "password"]
+	const tabs = ["profile_info", "password", "twitter"]
+
+	const [internalState, dispatchInternal] = useReducer(
+		process.env.NODE_ENV === "development" ? logger(reducer) : reducer,
+		initialState
+	)
+
+	const { twitter } = internalState
 
 	const [activeItem, setActiveItem] = useState(!tabs.includes(tab) ? "profile_info" : tab)
 	const [bio, setBio] = useState(user.bio === defaultBio ? "" : user.bio)
 	const [confirmPassword, setConfirmPassword] = useState("")
 	const [currentPassword, setCurrentPassword] = useState("")
 	const [newPassword, setNewPassword] = useState("")
-	const [username, setUsername] = useState(user.username)
+	const [newUsername, setNewUsername] = useState(user.username)
 	const [usernameAvailable, setUsernameAvailable] = useState(true)
 	const [usernameErrorMsg, setUsernameErrorMsg] = useState("That username is available")
 
 	useEffect(() => {
-		if (!auth) {
+		if (!auth || (auth && username !== user.username)) {
 			history.push("/")
 			return
 		}
@@ -53,6 +65,10 @@ const Settings = ({ history }) => {
 
 	useEffect(() => {
 		setActiveItem(!tabs.includes(tab) ? "profile_info" : tab)
+
+		if (tab === "twitter") {
+			getTwitterInfo()
+		}
 		// eslint-disable-next-line
 	}, [tab])
 
@@ -120,6 +136,25 @@ const Settings = ({ history }) => {
 			})
 	}
 
+	const getTwitterInfo = () => {
+		axios
+			.get(`${process.env.REACT_APP_BASE_URL}users/getTwitterInfo`, {
+				headers: {
+					Authorization: `Bearer ${bearer}`
+				}
+			})
+			.then(async (response) => {
+				const twitter = response.data
+				dispatchInternal({
+					type: "SET_TWITTER_INFO",
+					twitter
+				})
+			})
+			.catch(() => {
+				console.error("Error fetching Twitter info")
+			})
+	}
+
 	const updateUser = (params, successMsg) => {
 		axios
 			.post(`${process.env.REACT_APP_BASE_URL}users/update`, params, {
@@ -127,7 +162,7 @@ const Settings = ({ history }) => {
 					Authorization: `Bearer ${bearer}`
 				}
 			})
-			.then(async (response) => {
+			.then(async () => {
 				const user = JSON.parse(localStorage.getItem("user"))
 				const newUser = {
 					...user,
@@ -171,7 +206,7 @@ const Settings = ({ history }) => {
 
 	const onChangeUsername = (e) => {
 		const value = e.target.value
-		setUsername(value)
+		setNewUsername(value)
 		checkUsername(value)
 	}
 
@@ -190,7 +225,7 @@ const Settings = ({ history }) => {
 			<Segment basic className="settingsSegment" inverted={inverted}>
 				<Grid inverted={inverted} stackable>
 					<Grid.Column width={4}>
-						<Menu className="big" fluid inverted={inverted} secondary vertical>
+						<Menu borderless className="big" fluid inverted={inverted} vertical>
 							<Menu.Item
 								active={activeItem === "profile_info"}
 								name="profile info"
@@ -203,6 +238,13 @@ const Settings = ({ history }) => {
 								name="password"
 								onClick={() => {
 									history.push(`/${user.username}/settings?tab=password`)
+								}}
+							/>
+							<Menu.Item
+								active={activeItem === "twitter"}
+								name="twitter"
+								onClick={() => {
+									history.push(`/${user.username}/settings?tab=twitter`)
 								}}
 							/>
 						</Menu>
@@ -251,7 +293,7 @@ const Settings = ({ history }) => {
 															minLength={1}
 															onChange={onChangeUsername}
 															placeholder="Pick a username"
-															value={username}
+															value={newUsername}
 														/>
 													</div>
 												</Form.Field>
@@ -260,12 +302,12 @@ const Settings = ({ history }) => {
 														color="blue"
 														content="Change"
 														disabled={
-															!usernameAvailable || username === ""
+															!usernameAvailable || newUsername === ""
 														}
 														fluid
 														onClick={() =>
 															updateUser(
-																{ username },
+																{ username: newUsername },
 																"Username updated"
 															)
 														}
@@ -343,6 +385,32 @@ const Settings = ({ history }) => {
 										</Form>
 									</Card.Content>
 								</Card>
+							</>
+						)}
+
+						{activeItem === "twitter" && (
+							<>
+								<Header inverted={inverted}>
+									You linked your{" "}
+									<a
+										href={`https://twitter.com/${twitter.username}`}
+										target="_blank"
+										rel="noreferrer"
+									>
+										Twitter account
+									</a>{" "}
+									on <Moment date={twitter.createdAt} format="lll" />
+								</Header>
+								<Form inverted={inverted}>
+									<Form.Field>
+										<label>Token</label>
+										<Input fluid readOnly value={twitter.token} />
+									</Form.Field>
+									<Form.Field>
+										<label>Secret</label>
+										<Input fluid readOnly value={twitter.secret} />
+									</Form.Field>
+								</Form>
 							</>
 						)}
 					</Grid.Column>

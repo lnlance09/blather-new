@@ -59,13 +59,15 @@ Route::post('/reference/{id}/update', [ReferenceController::class, 'update'])->m
 Route::get('/search/counts', [SearchController::class, 'counts']);
 
 Route::get('/tweets', [TweetController::class, 'index']);
-Route::get('/tweets/showTwitterFeed', [TweetController::class, 'showTwitterFeed']);
-Route::get('/tweets/showTwitterList', [TweetController::class, 'showTwitterList']);
-Route::get('/tweets/{id}', [TweetController::class, 'show']);
+Route::get('/tweets/showTwitterFeed', [TweetController::class, 'showTwitterFeed'])->middleware('api');
+Route::get('/tweets/showTwitterList', [TweetController::class, 'showTwitterList'])->middleware('api');
+Route::get('/tweets/{id}', [TweetController::class, 'show'])->middleware('api');
 Route::post('/tweets/{id}/addArguments', [TweetController::class, 'addArguments'])->middleware(['auth:api', 'verified']);
 
 Route::get('/users', [UserController::class, 'index']);
 Route::get('/users/getTargets', [UserController::class, 'getTargets']);
+Route::get('/users/getTwitterInfo', [UserController::class, 'getTwitterInfo'])->middleware(['auth:api']);
+Route::get('/users/twitterRequestToken', [UserController::class, 'twitterRequestToken']);
 Route::get('/users/verifyForgotCode', [UserController::class, 'verifyForgotCode']);
 Route::get('/users/{username}', [UserController::class, 'show']);
 Route::post('/users/changePassword', [UserController::class, 'changePassword'])->middleware(['auth:api', 'verified']);
@@ -75,6 +77,7 @@ Route::post('/users/forgot', [UserController::class, 'forgot']);
 Route::post('/users/login', [UserController::class, 'login']);
 Route::post('/users/profilePic', [UserController::class, 'changeProfilePic'])->middleware(['auth:api', 'verified']);
 Route::post('/users/recoverPassword', [UserController::class, 'recoverPassword']);
+Route::post('/users/registerTwitterUser', [UserController::class, 'registerTwitterUser']);
 Route::post('/users/update', [UserController::class, 'update'])->middleware(['auth:api', 'verified']);
 Route::post('/users/verify', [UserController::class, 'verify'])->middleware('auth:api');
 

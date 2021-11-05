@@ -8,15 +8,18 @@ use App\Http\Resources\PageCollection;
 use App\Http\Resources\User as UserResource;
 use App\Http\Resources\UserCollection;
 use App\Mail\ForgotPassword;
-use App\Models\Page;
 use App\Mail\VerificationCode;
+use App\Models\Page;
 use App\Models\User;
+use App\Models\UserTwitter;
 use App\Rules\MatchOldPassword;
+use Atymic\Twitter\Facade\Twitter;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Password;
@@ -88,7 +91,7 @@ class UserController extends Controller
         $user->save();
         $user->refresh();
 
-        return response()->json([
+        return response([
             'success' => true
         ]);
     }
@@ -130,7 +133,7 @@ class UserController extends Controller
         $user = $request->user();
 
         if ($username == $user->username) {
-            return response()->json([
+            return response([
                 'available' => true
             ]);
         }
@@ -139,7 +142,7 @@ class UserController extends Controller
             'username' => 'bail|required|max:20|unique:users,username|alpha_dash'
         ]);
 
-        return response()->json([
+        return response([
             'available' => true
         ]);
     }
@@ -193,7 +196,7 @@ class UserController extends Controller
             ], 401);
         }
 
-        return response()->json([
+        return response([
             'bearer' => $user->api_token,
             'user' => new UserResource($user),
             'verify' => true
@@ -279,6 +282,26 @@ class UserController extends Controller
         return new PageCollection($pages);
     }
 
+    public function getTwitterInfo(Request $request)
+    {
+        $userId = $request->user()->id;
+
+        $twitter = UserTwitter::where('user_id', $userId)->first();
+
+        if (empty($twitter)) {
+            return response([
+                'message' => 'No Twitter account'
+            ], 404);
+        }
+
+        return response([
+            'createdAt' => $twitter->created_at,
+            'secret' => $twitter->secret,
+            'token' => $twitter->token,
+            'username' => $twitter->username
+        ]);
+    }
+
     /**
      * Login
      * 
@@ -314,11 +337,12 @@ class UserController extends Controller
                 'fallacies',
                 'likes',
                 'responses',
-                'retractedFallacies'
+                'retractedFallacies',
+                'twitter'
             ])
             ->first();
 
-        return response()->json([
+        return response([
             'bearer' => $user->api_token,
             'user' => new UserResource($user),
             'verify' => $user->email_verified_at === null
@@ -348,8 +372,128 @@ class UserController extends Controller
         $user->save();
         $user->refresh();
 
-        return response()->json([
+        return response([
             'success' => true
+        ]);
+    }
+
+    public function twitterRequestToken(Request $request)
+    {
+        $token = Twitter::getRequestToken('http://127.0.0.1:3000/');
+
+        if (isset($token['oauth_token_secret'])) {
+            $url = Twitter::getAuthenticateUrl($token['oauth_token']);
+            return response([
+                'secret' => $token['oauth_token_secret'],
+                'token' => $token['oauth_token'],
+                'url' => $url
+            ]);
+        }
+
+        return response([
+            'message' => 'There was an error'
+        ], 401);
+    }
+
+    public function registerTwitterUser(Request $request)
+    {
+        $token = $request->input('token');
+        $verifier = $request->input('verifier');
+        $requestToken = $request->input('requestToken');
+        $requestTokenSecret = $request->input('requestTokenSecret');
+
+        $twitter = Twitter::usingCredentials($requestToken, $requestTokenSecret);
+
+        try {
+            $token = $twitter->getAccessToken($verifier);
+        } catch (\Exception $e) {
+            return response([
+                'message' => 'Error getting token'
+            ], 401);
+        }
+
+        if (!isset($token['oauth_token_secret'])) {
+            return response([
+                'message' => 'There was an error'
+            ], 401);
+        }
+
+        $twitter = Twitter::usingCredentials($token['oauth_token'], $token['oauth_token_secret']);
+        $credentials = $twitter->getCredentials();
+
+        if (!is_object($credentials) || isset($credentials->error)) {
+            if (!isset($token['oauth_token_secret'])) {
+                return response([
+                    'message' => 'There was an error'
+                ], 401);
+            }
+        }
+
+        $bio = $credentials->description;
+        $name = $credentials->name;
+        $username = $credentials->screen_name . '1';
+        $imgFile = str_replace('_normal', '', $credentials->profile_image_url_https);
+        $twitterId = $credentials->id;
+
+        if (in_array(strtolower($username), User::PROTECTED_USERNAMES)) {
+            return response([
+                'errors' => [
+                    'username' => [
+                        'That username is invalid'
+                    ]
+                ]
+            ], 422);
+        }
+
+        $user = User::whereHas('twitter', function ($query) use ($twitterId, $username) {
+            $query->where(['twitter_id' => $twitterId, 'username' => $username]);
+        })
+            ->with(['twitter'])
+            ->first();
+
+        if ($user) {
+            $user->api_token = Str::random(60);
+            $user->save();
+            $user->refresh();
+
+            return response([
+                'bearer' => $user->api_token,
+                'user' => new UserResource($user)
+            ]);
+        }
+
+        $user = User::where('username', $username)->first();
+        if (empty($user)) {
+            $image = 'users/' . Str::random(24) . '.jpg';
+            Storage::disk('s3')->put($image, file_get_contents($imgFile));
+
+            $user = User::create([
+                'api_token' => Str::random(60),
+                'bio' => $bio,
+                'image' => $image,
+                'name' => $name,
+                'password' => '',
+                'raw_password' => '',
+                'username' => $username,
+            ]);
+            $user->refresh();
+        }
+
+        UserTwitter::create([
+            'secret' => $token['oauth_token_secret'],
+            'token' => $token['oauth_token'],
+            'twitter_id' => $twitterId,
+            'username' => $username,
+            'user_id' => $user->id
+        ]);
+
+        $user = User::with(['twitter'])
+            ->where('id', $user->id)
+            ->first();
+
+        return response([
+            'bearer' => $user->api_token,
+            'user' => new UserResource($user)
         ]);
     }
 

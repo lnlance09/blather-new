@@ -62,7 +62,10 @@ const Page = ({ history, match }) => {
 					})
 					getFallacies([page.id])
 					getContradictions([page.id])
-					getTweets(page.socialMediaId)
+
+					if (network === "twitter") {
+						getTweets(page.socialMediaId)
+					}
 				})
 				.catch(() => {
 					dispatchInternal({
@@ -140,6 +143,9 @@ const Page = ({ history, match }) => {
 		page === 1 ? setLoadingT(true) : setLoadingMoreT(true)
 		await axios
 			.get(`${process.env.REACT_APP_BASE_URL}tweets/showTwitterFeed`, {
+				headers: {
+					Authorization: `Bearer ${localStorage.getItem("bearer")}`
+				},
 				params: {
 					pageId,
 					page
@@ -205,9 +211,11 @@ const Page = ({ history, match }) => {
 										<Header as="h1" inverted={inverted}>
 											<Header.Content>
 												{page.name}
-												<Header.Subheader>
-													@{page.username}
-												</Header.Subheader>
+												{page.username !== "" && (
+													<Header.Subheader>
+														@{page.username}
+													</Header.Subheader>
+												)}
 											</Header.Content>
 											<Button
 												circular
@@ -288,13 +296,15 @@ const Page = ({ history, match }) => {
 										</span>
 									)}
 								</Menu.Item>
-								<Menu.Item
-									active={activeItem === "tweets"}
-									name="tweets"
-									onClick={handleItemClick}
-								>
-									Tweets
-								</Menu.Item>
+								{network === "twitter" && (
+									<Menu.Item
+										active={activeItem === "tweets"}
+										name="tweets"
+										onClick={handleItemClick}
+									>
+										Tweets
+									</Menu.Item>
+								)}
 							</Menu>
 
 							{activeItem === "fallacies" && (

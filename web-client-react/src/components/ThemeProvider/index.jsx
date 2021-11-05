@@ -4,7 +4,6 @@ import ThemeContext from "themeContext"
 
 let auth = localStorage.getItem("auth")
 let bearer = localStorage.getItem("bearer")
-let memberCount = localStorage.getItem("memberCount")
 let notifications = localStorage.getItem("notifications")
 let unreadCount = localStorage.getItem("unreadCount")
 let user = localStorage.getItem("user")
@@ -14,7 +13,6 @@ const initialState = {
 	auth: auth === null || auth === "false" ? false : true,
 	bearer,
 	inverted: false,
-	memberCount,
 	notifications: notifications === null ? [] : JSON.parse(notifications),
 	unreadCount,
 	user: user === null ? {} : JSON.parse(user),
@@ -56,11 +54,6 @@ const reducer = (state, action) => {
 				unreadCount: null,
 				user: {},
 				verify: false
-			}
-		case "SET_MEMBER_COUNT":
-			return {
-				...state,
-				memberCount: action.count
 			}
 		case "SET_MESSAGES":
 			return {

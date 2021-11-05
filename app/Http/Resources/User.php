@@ -22,6 +22,7 @@ class User extends JsonResource
             'commentsCount' => $this->comments_count,
             'contradictionsCount' => $this->contradictions_count,
             'fallaciesCount' => $this->fallacies_count,
+            'hasTwitter' => isset($this->twitter) ? true : false,
             'image' => env('AWS_URL', 'https://blather-new.s3.us-west-2.amazonaws.com/') . $this->image,
             'likesCount' => $this->likes_count,
             'name' => $this->name,

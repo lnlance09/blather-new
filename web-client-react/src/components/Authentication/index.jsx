@@ -57,6 +57,7 @@ const Authentication = ({ history, inverted, showLogin = true, size }) => {
 	const [loadingForgot, setLoadingForgot] = useState(false)
 	const [loadingLogin, setLoadingLogin] = useState(false)
 	const [loadingRegistration, setLoadingRegistration] = useState(false)
+	const [loadingTwitter, setLoadingTwitter] = useState(false)
 	const [loadingVerify, setLoadingVerify] = useState(false)
 	const [name, setName] = useState("")
 	const [password, setPassword] = useState("")
@@ -71,7 +72,7 @@ const Authentication = ({ history, inverted, showLogin = true, size }) => {
 			.post(`${process.env.REACT_APP_BASE_URL}users/forgot`, {
 				email: forgotEmail
 			})
-			.then(async (response) => {
+			.then(() => {
 				dispatchInternal({
 					type: "PASSWORD_RECOVERY_SENT"
 				})
@@ -81,6 +82,19 @@ const Authentication = ({ history, inverted, showLogin = true, size }) => {
 				setLoadingForgot(false)
 				toast.error(error.response.data.message)
 			})
+	}
+
+	const getRequestToken = () => {
+		setLoadingTwitter(true)
+		axios
+			.get(`${process.env.REACT_APP_BASE_URL}users/twitterRequestToken`)
+			.then((response) => {
+				const { data } = response
+				localStorage.setItem("requestTokenSecret", data.secret)
+				localStorage.setItem("requestToken", data.token)
+				window.location.href = data.url
+			})
+			.catch(() => {})
 	}
 
 	const submitLoginForm = () => {
@@ -105,11 +119,12 @@ const Authentication = ({ history, inverted, showLogin = true, size }) => {
 
 					if (!data.verify) {
 						history.push("/")
-					} else {
-						dispatchInternal({
-							type: "SET_VERIFY"
-						})
+						return
 					}
+
+					dispatchInternal({
+						type: "SET_VERIFY"
+					})
 				})
 				.catch((error) => {
 					let errorMsg = ""
@@ -318,7 +333,6 @@ const Authentication = ({ history, inverted, showLogin = true, size }) => {
 									<Input
 										inverted={inverted}
 										label={{
-											// basic: true,
 											color: "black",
 											content: "email",
 											inverted: true
@@ -334,7 +348,6 @@ const Authentication = ({ history, inverted, showLogin = true, size }) => {
 									<Input
 										inverted={inverted}
 										label={{
-											// basic: true,
 											color: "black",
 											content: "pass"
 										}}
@@ -370,7 +383,6 @@ const Authentication = ({ history, inverted, showLogin = true, size }) => {
 									<Input
 										inverted={inverted}
 										label={{
-											// basic: true,
 											color: "black",
 											content: "email"
 										}}
@@ -385,7 +397,6 @@ const Authentication = ({ history, inverted, showLogin = true, size }) => {
 									<Input
 										inverted={inverted}
 										label={{
-											// basic: true,
 											color: "black",
 											content: "pass"
 										}}
@@ -402,7 +413,6 @@ const Authentication = ({ history, inverted, showLogin = true, size }) => {
 										autoComplete="off"
 										inverted={inverted}
 										label={{
-											// basic: true,
 											color: "black",
 											content: "name"
 										}}
@@ -417,7 +427,6 @@ const Authentication = ({ history, inverted, showLogin = true, size }) => {
 									<Input
 										inverted={inverted}
 										label={{
-											// basic: true,
 											color: "black",
 											content: "@"
 										}}
@@ -453,6 +462,8 @@ const Authentication = ({ history, inverted, showLogin = true, size }) => {
 							content="Sign in with Twitter"
 							fluid
 							icon="twitter"
+							loading={loadingTwitter}
+							onClick={getRequestToken}
 							size="large"
 						/>
 					</Segment>

@@ -1,6 +1,7 @@
 import "./style.scss"
 import { Button, Container, Dropdown, Icon, Image, Label, Menu, Sidebar } from "semantic-ui-react"
 import { useContext, useEffect, useReducer, useState } from "react"
+import { Link } from "react-router-dom"
 import { ReactSVG } from "react-svg"
 import defaultImg from "images/avatar/small/veronika.jpg"
 // import Echo from "laravel-echo"
@@ -14,14 +15,12 @@ import ThemeContext from "themeContext"
 
 window.Pusher = require("pusher-js")
 
-const PageHeader = ({ activeItem, history, simple }) => {
+const PageHeader = ({ activeItem = null, history, showBanner = false, simple = false }) => {
 	const { state, dispatch } = useContext(ThemeContext)
 	const { auth, inverted, notifications, user } = state
 
 	const username = auth ? user.username : "anonymous"
 	const { contradictionsCount, fallaciesCount, targetsCount } = user
-
-	const showBanner = !auth && !simple
 
 	// eslint-disable-next-line
 	const [internalState, dispatchInternal] = useReducer(
@@ -333,7 +332,19 @@ const PageHeader = ({ activeItem, history, simple }) => {
 			{showBanner && (
 				<div className="twitterBanner">
 					<Container>
-						<p>Link your Twitter account for optimal experience.</p>
+						{auth ? (
+							<p>
+								<Link to={`/${user.username}/settings/twitter`}>
+									Link your Twitter
+								</Link>{" "}
+								account for optimal experience.
+							</p>
+						) : (
+							<p>
+								<Link to="/auth">Sign In with Twitter</Link> account for optimal
+								experience.
+							</p>
+						)}
 					</Container>
 				</div>
 			)}
@@ -375,11 +386,6 @@ PageHeader.propTypes = {
 	activeItem: PropTypes.string,
 	history: PropTypes.object,
 	simple: PropTypes.bool
-}
-
-PageHeader.defaultProps = {
-	activeItem: null,
-	simple: false
 }
 
 export default PageHeader

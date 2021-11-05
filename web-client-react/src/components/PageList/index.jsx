@@ -39,16 +39,8 @@ const PageList = ({
 		<div className="pageList">
 			<Card.Group className={inverted ? "inverted" : ""} itemsPerRow={3} stackable>
 				{pages.map((page, i) => {
-					const {
-						bio,
-						contradictionCount,
-						image,
-						fallacyCount,
-						name,
-						network,
-						username
-					} = page
-					const newBio = bio
+					const { bio, image, name, network, socialMediaId, username } = page
+					const twitterBio = bio
 						? linkifyHtml(bio, {
 								className: "linkify",
 								formatHref: {
@@ -57,8 +49,10 @@ const PageList = ({
 								}
 						  })
 						: null
+					const slug = username === "" ? socialMediaId : username
+
 					return (
-						<Card key={`page${i}`} onClick={(e) => onClickPage(e, network, username)}>
+						<Card key={`page${i}`} onClick={(e) => onClickPage(e, network, slug)}>
 							{loading ? (
 								<>{PlaceholderContent}</>
 							) : (
@@ -72,33 +66,33 @@ const PageList = ({
 											src={image}
 										/>
 										<Card.Header>{name}</Card.Header>
-										<Card.Meta>@{username}</Card.Meta>
+										{username !== "" && <Card.Meta>@{username}</Card.Meta>}
 										<Card.Description
 											dangerouslySetInnerHTML={{
-												__html: newBio
+												__html: network === "twitter" ? twitterBio : bio
 											}}
 										/>
 									</Card.Content>
-									{fallacyCount > 0 && (
+									{page.fallacyCount > 0 && (
 										<Card.Content extra>
 											Assigned{" "}
 											<NumberFormat
 												displayType={"text"}
 												thousandSeparator
-												value={fallacyCount}
+												value={page.fallacyCount}
 											/>{" "}
-											{formatPlural(fallacyCount, "fallacy")}
+											{formatPlural(page.fallacyCount, "fallacy")}
 										</Card.Content>
 									)}
-									{contradictionCount > 0 && (
+									{page.contradictionCount > 0 && (
 										<Card.Content extra>
 											Assigned{" "}
 											<NumberFormat
 												displayType={"text"}
 												thousandSeparator
-												value={contradictionCount}
+												value={page.contradictionCount}
 											/>{" "}
-											{formatPlural(contradictionCount, "contradiction")}
+											{formatPlural(page.contradictionCount, "contradiction")}
 										</Card.Content>
 									)}
 								</>

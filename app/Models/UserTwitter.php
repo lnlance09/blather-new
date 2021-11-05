@@ -10,6 +10,8 @@ class UserTwitter extends Model
 {
     use HasFactory;
 
+    protected $table = 'users_twitter';
+
     /**
      * The attributes that are mass assignable.
      *
@@ -35,9 +37,7 @@ class UserTwitter extends Model
      *
      * @var array
      */
-    protected $casts = [
-        
-    ];
+    protected $casts = [];
 
     public function user()
     {
