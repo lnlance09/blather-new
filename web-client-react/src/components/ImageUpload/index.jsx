@@ -1,5 +1,5 @@
 import "./style.scss"
-import { Button, Dimmer, Header, Icon, Image } from "semantic-ui-react"
+import { Button, Dimmer, Header, Icon, Image, Placeholder } from "semantic-ui-react"
 import { useState } from "react"
 import Dropzone from "react-dropzone"
 import ImagePic from "images/images/image-square.png"
@@ -12,6 +12,7 @@ const ImageUpload = ({
 	headerSize = "medium",
 	img = ImagePic,
 	imgSize = "small",
+	loading = false,
 	msg = "Select a picture"
 }) => {
 	const [active, setActive] = useState(false)
@@ -44,18 +45,24 @@ const ImageUpload = ({
 	return (
 		<div className="imageUpload">
 			{as === "image" && (
-				<Dimmer.Dimmable
-					as={Image}
-					dimmed={active}
-					dimmer={{ active, content, inverted: true }}
-					fluid={fluid}
-					onError={(i) => (i.target.src = ImagePic)}
-					onMouseEnter={() => setActive(true)}
-					onMouseLeave={() => setActive(false)}
-					rounded
-					size={fluid ? null : imgSize}
-					src={img}
-				/>
+				<>
+					{loading ? (
+						<Placeholder image style={{ height: "150px", width: "150px" }} />
+					) : (
+						<Dimmer.Dimmable
+							as={Image}
+							dimmed={active}
+							dimmer={{ active, content, inverted: true }}
+							fluid={fluid}
+							onError={(i) => (i.target.src = ImagePic)}
+							onMouseEnter={() => setActive(true)}
+							onMouseLeave={() => setActive(false)}
+							rounded
+							size={fluid ? null : imgSize}
+							src={img}
+						/>
+					)}
+				</>
 			)}
 
 			{as === "segment" && (
@@ -91,6 +98,7 @@ ImageUpload.propTypes = {
 	headerSize: PropTypes.string,
 	img: PropTypes.string,
 	imgSize: PropTypes.string,
+	loading: PropTypes.bool,
 	msg: PropTypes.string
 }
 

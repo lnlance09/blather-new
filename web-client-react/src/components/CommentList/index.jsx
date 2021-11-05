@@ -1,5 +1,15 @@
 import "./style.scss"
-import { Button, Comment, Form, Header, Icon, Placeholder, Segment } from "semantic-ui-react"
+import {
+	Button,
+	Comment,
+	Form,
+	Grid,
+	Header,
+	Icon,
+	Image,
+	Placeholder,
+	Segment
+} from "semantic-ui-react"
 import { useContext, useEffect, useReducer, useRef, useState } from "react"
 import { getConfig } from "options/toast"
 import { toast } from "react-toastify"
@@ -39,7 +49,7 @@ const CommentList = ({
 	size = "large"
 }) => {
 	const { state } = useContext(ThemeContext)
-	const { auth, inverted } = state
+	const { auth, inverted, user } = state
 
 	const blockRef = useRef(null)
 	const textAreaRef = useRef(null)
@@ -135,7 +145,7 @@ const CommentList = ({
 						data-for={key}
 						data-iscapture="true"
 						data-tip={`${user.username}`}
-						onClick={() => history.push(`/users/${user.username}`)}
+						onClick={() => history.push(`/${user.username}`)}
 						onError={(i) => (i.target.src = ImagePic)}
 						size="tiny"
 						src={user.image ? user.image : defaultImg}
@@ -212,7 +222,7 @@ const CommentList = ({
 					id={key}
 					multiline={false}
 					place="left"
-					type="light"
+					type="dark"
 				/>
 			</>
 		)
@@ -221,78 +231,96 @@ const CommentList = ({
 	return (
 		<div className="commentsSection">
 			{showForm && (
-				<div ref={blockRef}>
-					<Form inverted={inverted} onSubmit={onSubmitForm}>
-						<textarea
-							placeholder={
-								comments.count === 0
-									? "Be the first to comment..."
-									: "Add a comment..."
-							}
-							ref={textAreaRef}
-							rows={4}
-						/>
-						<Button
-							className="replyBtn"
-							color="blue"
-							content="Comment"
-							fluid
-							type="submit"
-						/>
-					</Form>
-				</div>
+				<Segment secondary>
+					<div ref={blockRef}>
+						<Grid>
+							<Grid.Row>
+								<Grid.Column width={1}>
+									<Image circular src={auth ? user.image : defaultImg} />
+								</Grid.Column>
+								<Grid.Column width={15}>
+									<Form inverted={inverted} onSubmit={onSubmitForm}>
+										<textarea
+											placeholder={
+												comments.count === 0
+													? "Be the first to comment..."
+													: "Add a comment..."
+											}
+											ref={textAreaRef}
+											rows={4}
+										/>
+										<Button
+											className="replyBtn"
+											color="blue"
+											content="Comment"
+											fluid
+											type="submit"
+										/>
+									</Form>
+								</Grid.Column>
+							</Grid.Row>
+						</Grid>
+					</div>
+				</Segment>
 			)}
 
 			{iComments.length > 0 ? (
-				<Comment.Group className="commentsGroup" size={size}>
-					{iComments.map((comment, i) => {
-						if (typeof comment.id === "undefined") {
+				<Segment basic>
+					<Comment.Group className="commentsGroup" size={size}>
+						{iComments.map((comment, i) => {
+							if (typeof comment.id === "undefined") {
+								return (
+									<Comment key={`individualComment${i}`}>
+										<Comment.Content>{PlaceholderSegment}</Comment.Content>
+									</Comment>
+								)
+							}
+
+							const { responses } = comment
 							return (
-								<Comment key={`individualComment${i}`}>
-									<Comment.Content>{PlaceholderSegment}</Comment.Content>
+								<Comment
+									className={`${redirectToComment ? "redirect" : ""}`}
+									key={`individualComment${i}`}
+									id={comment.id}
+								>
+									{SingleComment(
+										comment,
+										comment.id,
+										false,
+										`individualComment${i}`
+									)}
+
+									{responses && responses.length > 0 && showReplies && (
+										<Comment.Group>
+											{responses.map((response, x) => {
+												if (response.id !== null) {
+													return (
+														<Comment
+															className={`${
+																redirectToComment ? "redirect" : ""
+															}`}
+															id={`${comment.id}${response.id}`}
+															key={`replyComment${x}`}
+														>
+															{SingleComment(
+																response,
+																comment.id,
+																true,
+																`replyComment${i}`
+															)}
+														</Comment>
+													)
+												}
+
+												return null
+											})}
+										</Comment.Group>
+									)}
 								</Comment>
 							)
-						}
-
-						const { responses } = comment
-						return (
-							<Comment
-								className={`${redirectToComment ? "redirect" : ""}`}
-								key={`individualComment${i}`}
-								id={comment.id}
-							>
-								{SingleComment(comment, comment.id, false, `individualComment${i}`)}
-
-								{responses && responses.length > 0 && showReplies && (
-									<Comment.Group>
-										{responses.map((response, x) => {
-											if (response.id !== null) {
-												return (
-													<Comment
-														className={`${
-															redirectToComment ? "redirect" : ""
-														}`}
-														id={`${comment.id}${response.id}`}
-														key={`replyComment${x}`}
-													>
-														{SingleComment(
-															response,
-															comment.id,
-															true,
-															`replyComment${i}`
-														)}
-													</Comment>
-												)
-											}
-
-											return null
-										})}
-									</Comment.Group>
-								)}
-							</Comment>
-						)
-					})}
-				</Comment.Group>
+						})}
+					</Comment.Group>
+				</Segment>
 			) : (
 				<>
 					{showEmptyMsg && (

@@ -3,6 +3,10 @@
 .commentsSection {
 	width: 100%;
 
+	.ui.grid .row .one.wide.column {
+		padding-right: 0;
+	}
+
   	.ui.comments {
 		max-width: none !important;
 		width: 100% !important;
@@ -19,7 +23,8 @@
 				font-weight: bold;
 			}
 
-			.avatar {
+			.avatar img {
+				border-radius: 50% !important;
                 cursor: pointer;
 			}
 

@@ -49,7 +49,7 @@ const TweetPage = ({ history, match }) => {
 
 	const { argOptions, contradictions, error, fallacies, loaded, tweet } = internalState
 
-	const showArgs = loaded ? tweet.arguments.length > 0 : false
+	const showArgs = loaded && !error ? tweet.arguments.length > 0 : false
 
 	const [activeItem, setActiveItem] = useState("fallacies")
 	const [hasMore, setHasMore] = useState(false)

@@ -32,7 +32,7 @@ const reducer = (state, action) => {
 				...state,
 				pages: {
 					...state.pages,
-					count: action.total,
+					count: action.updateCounts ? action.total : state.pages.count,
 					data: pages,
 					loaded: true
 				}

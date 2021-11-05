@@ -286,6 +286,12 @@ body {
 					cursor: pointer;
 				}
 			}
+
+			.purveyorsCard, .fallaciesCard {
+				.segment.basic .header {
+					font-weight: normal;
+				}
+			}
 		}
 
 		&.argumentsPage {

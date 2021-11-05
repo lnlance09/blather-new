@@ -161,12 +161,25 @@ const FallacyExample = ({
 	const ContradictingVideo = () => (
 		<>
 			{cVideo && (
-				<ReactPlayer
-					controls
-					loop
-					url={`https://www.youtube.com/watch?v=${cVideo.videoId}&t=${cVideo.startTime}`}
-					width="100%"
-				/>
+				<>
+					<ReactPlayer
+						controls
+						loop
+						url={`https://www.youtube.com/watch?v=${cVideo.videoId}&t=${cVideo.startTime}`}
+						width="100%"
+					/>
+					<span
+						className="blue"
+						onClick={(e) => {
+							e.stopPropagation()
+							window
+								.open(`https://www.youtube.com/watch?v=${cVideo.videoId}`, "_blank")
+								.focus()
+						}}
+					>
+						https://www.youtube.com/watch?v={cVideo.videoId}
+					</span>
+				</>
 			)}
 		</>
 	)

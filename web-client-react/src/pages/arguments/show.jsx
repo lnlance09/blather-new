@@ -44,9 +44,12 @@ const Argument = ({ history, match }) => {
 		process.env.NODE_ENV === "development" ? logger(reducer) : reducer,
 		initialState
 	)
-	const { argument, fallacies, loaded, modalTweets, purveyors, tweets } = internalState
+	const { argument, error, fallacies, loaded, modalTweets, purveyors, tweets } = internalState
 	const { contradictions, description, explanation, id, imageOptions, images, tweetCount } =
 		argument
+
+	const hasFallacies = loaded && !error ? fallacies.length > 0 : false
+	const hasPurveyors = loaded && !error ? purveyors.length > 0 : false
 
 	const [activeItem, setActiveItem] = useState("photos")
 	const [imgKey, setImgKey] = useState(null)
@@ -202,8 +205,14 @@ const Argument = ({ history, match }) => {
 				<Card.Header>Biggest Purveyors</Card.Header>
 			</Card.Content>
 			<Card.Content>
-				{tweetCount === 0 && <></>}
-				{tweetCount > 0 && (
+				{!hasPurveyors && (
+					<Segment basic>
+						<Header size="small" textAlign="center">
+							nothing
+						</Header>
+					</Segment>
+				)}
+				{hasPurveyors && (
 					<Feed>
 						{purveyors.map((p, i) => (
 							<Feed.Event key={`purveyor${i}`}>
@@ -273,13 +282,19 @@ const Argument = ({ history, match }) => {
 	)
 
 	const RelatedFallaciesCard = () => (
-		<Card fluid>
+		<Card className="purveyorsCard" fluid>
 			<Card.Content>
 				<Card.Header>Related Fallacies</Card.Header>
 			</Card.Content>
 			<Card.Content>
-				{fallacies.length === 0 && <></>}
-				{fallacies.length > 0 && (
+				{!hasFallacies && (
+					<Segment basic>
+						<Header size="small" textAlign="center">
+							nothing
+						</Header>
+					</Segment>
+				)}
+				{hasFallacies && (
 					<Feed>
 						{fallacies.map((f, i) => (
 							<Feed.Event key={`related${i}`}>

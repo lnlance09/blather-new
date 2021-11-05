@@ -377,13 +377,6 @@ const Fallacy = ({ history, match }) => {
 
 							<Divider hidden />
 
-							<Segment secondary>
-								<Header as="h3">{reference.name}</Header>
-								<p>{reference.description}</p>
-							</Segment>
-
-							<Divider hidden />
-
 							<Card className="retractionCard" fluid>
 								<Card.Content>
 									<Image
@@ -432,7 +425,9 @@ const Fallacy = ({ history, match }) => {
 												you were wrong.`
 												) : (
 													<>
-														<Link to={`/${user.username}`}>
+														<Link
+															to={`/pages/${page.network}/${page.username}`}
+														>
 															{page.name}
 														</Link>
 														, you can retract this by{" "}
@@ -461,7 +456,14 @@ const Fallacy = ({ history, match }) => {
 								</Card.Content>
 							</Card>
 
-							<Header content="Comments" />
+							<Divider hidden />
+
+							<Segment secondary>
+								<Header as="h3">{reference.name}</Header>
+								<p>{reference.description}</p>
+							</Segment>
+
+							<Divider hidden />
 
 							<Visibility
 								continuous
@@ -475,6 +477,7 @@ const Fallacy = ({ history, match }) => {
 								<CommentList
 									comments={comments.data}
 									fallacyId={id}
+									history={history}
 									showEmptyMsg={false}
 								/>
 							</Visibility>

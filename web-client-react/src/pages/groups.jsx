@@ -68,6 +68,7 @@ const Groups = ({ history }) => {
 										{group.members.data.map((m, i) => (
 											<div className="tile">
 												<Image
+													bordered
 													data-for={`groupsMember${i}`}
 													data-iscapture="true"
 													data-tip={m.page.name}

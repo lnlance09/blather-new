@@ -104,6 +104,7 @@ class UserController extends Controller
 
         $userId = $request->user()->id;
         $file = $request->file('file');
+
         $img = Image::make($file);
         $img->resize(320, 320);
         $img->save($file);
@@ -112,15 +113,17 @@ class UserController extends Controller
         Storage::disk('s3')->put($img, file_get_contents($file));
 
         $user = User::find($userId);
-        $user->img = $img;
+        $user->image = $img;
         $user->save();
 
         $user = User::where('id', $userId)
             ->withCount([
                 'comments',
+                'contradictions',
                 'fallacies',
                 'likes',
-                'responses'
+                'responses',
+                'retractedFallacies'
             ])
             ->first();
 

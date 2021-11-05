@@ -135,7 +135,7 @@ const Search = ({ history }) => {
 		}
 
 		if (activeItem === "pages" && !pages.loaded) {
-			getPages(q, network)
+			getPages(q, network, 0, true)
 		}
 
 		if (activeItem === "tweets" && !tweets.loaded) {
@@ -251,7 +251,7 @@ const Search = ({ history }) => {
 			})
 	}
 
-	const getPages = async (q, network, page = 1) => {
+	const getPages = async (q, network, page = 1, updateCounts = false) => {
 		page === 1 ? setLoadingP(true) : setLoadingMoreP(true)
 		await axios
 			.get(`${process.env.REACT_APP_BASE_URL}pages`, {
@@ -270,13 +270,14 @@ const Search = ({ history }) => {
 					type: "SEARCH_PAGES",
 					pages: data,
 					page,
-					total: meta.total
+					total: meta.total,
+					updateCounts
 				})
 				setPageNumberP(page + 1)
 				setHasMoreP(meta.current_page < meta.last_page)
 				page === 1 ? setLoadingP(false) : setLoadingMoreP(false)
 
-				if (page === 1) {
+				if (updateCounts) {
 					getPagesByNetwork("twitter", q)
 					getPagesByNetwork("youtube", q)
 				}
@@ -368,7 +369,7 @@ const Search = ({ history }) => {
 			dispatch({
 				type: "TOGGLE_PAGES_LOADED"
 			})
-			await getPages(value, newNetwork)
+			await getPages(value, newNetwork, 1, true)
 		}
 
 		if (activeItem === "tweets") {

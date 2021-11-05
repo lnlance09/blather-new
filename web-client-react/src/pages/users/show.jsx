@@ -39,8 +39,11 @@ const Member = ({ history, match }) => {
 	)
 	const { contradictions, error, fallacies, loaded, member, targets } = internalState
 
+	const isMyProfile = auth ? user.id === member.id : false
+
 	const [activeItem, setActiveItem] = useState(tabs.includes(tab) ? tab : "fallacies")
 	const [imageLoaded, setImageLoaded] = useState(false)
+	const [profilePicLoading, setProfilePicLoading] = useState(false)
 
 	const [hasMore, setHasMore] = useState(false)
 	const [hasMoreC, setHasMoreC] = useState(false)
@@ -87,6 +90,7 @@ const Member = ({ history, match }) => {
 	const changeProfilePic = async (file) => {
 		const formData = new FormData()
 		formData.set("file", file)
+		setProfilePicLoading(true)
 
 		await axios
 			.post(`${process.env.REACT_APP_BASE_URL}users/profilePic`, formData, {
@@ -103,6 +107,7 @@ const Member = ({ history, match }) => {
 					type: "GET_USER",
 					user: data
 				})
+				setProfilePicLoading(false)
 			})
 			.catch((error) => {
 				let errorMsg = ""
@@ -118,6 +123,7 @@ const Member = ({ history, match }) => {
 				}
 
 				toast.error(errorMsg)
+				setProfilePicLoading(false)
 			})
 	}
 
@@ -224,15 +230,15 @@ const Member = ({ history, match }) => {
 		onClickRedirect(e, history, `/pages/${network}/${slug}`)
 	}
 
-	const isMyProfile = auth ? user.id === member.id : false
-
 	const ProfilePic = () => {
 		if (isMyProfile) {
 			return (
 				<ImageUpload
 					callback={(file) => changeProfilePic(file)}
-					img={user.image === null ? PlaceholderPic : user.image}
+					fluid
+					img={member.image === null ? PlaceholderPic : member.image}
 					inverted={inverted}
+					loading={profilePicLoading}
 				/>
 			)
 		}

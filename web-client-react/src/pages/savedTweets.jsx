@@ -24,7 +24,9 @@ const SavedTweets = ({ history }) => {
 
 	let savedTweets = localStorage.getItem("savedTweets")
 	savedTweets = _.isEmpty(savedTweets) ? [] : JSON.parse(savedTweets)
-	const isEmpty = savedTweets.length === 0
+	const tweetCount = savedTweets.length
+	const isEmpty = tweetCount === 0
+	console.log("is empty", isEmpty)
 
 	const [internalState, dispatch] = useReducer(
 		process.env.NODE_ENV === "development" ? logger(reducer) : reducer,
@@ -77,7 +79,7 @@ const SavedTweets = ({ history }) => {
 				{!isEmpty && (
 					<Button
 						compact
-						content="Clear all"
+						content={`Clear all (${tweetCount})`}
 						color="red"
 						onClick={clearTweet}
 						style={{ float: "right" }}
