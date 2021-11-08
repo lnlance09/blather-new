@@ -35,13 +35,11 @@ class FallacyTwitter extends Model
      *
      * @var array
      */
-    protected $casts = [
-        
-    ];
+    protected $casts = [];
 
     public function fallacy()
     {
-        return $this->belongsTo(Fallacy::class, 'id', 'fallacy_id');
+        return $this->hasOne(Fallacy::class, 'id', 'fallacy_id');
     }
 
     public function tweet()

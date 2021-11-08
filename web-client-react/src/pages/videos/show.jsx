@@ -1,3 +1,4 @@
+import { Header } from "semantic-ui-react"
 import { useContext, useEffect } from "react"
 import { DisplayMetaTags } from "utils/metaFunctions"
 import DefaultLayout from "layouts/default"
@@ -13,6 +14,8 @@ const Video = ({ history }) => {
 	return (
 		<DefaultLayout activeItem="video" containerClassName="videoPage" history={history}>
 			<DisplayMetaTags page="video" />
+
+			<Header as="h1" content="" inverted={inverted} />
 		</DefaultLayout>
 	)
 }

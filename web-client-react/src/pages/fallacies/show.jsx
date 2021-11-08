@@ -1,8 +1,12 @@
 import {
 	Button,
 	Card,
+	Container,
 	Divider,
+	Dropdown,
+	Feed,
 	Form,
+	Grid,
 	Header,
 	Icon,
 	Image,
@@ -13,24 +17,28 @@ import {
 	Visibility
 } from "semantic-ui-react"
 import { useContext, useEffect, useReducer, useRef, useState } from "react"
-import { RedditShareButton, TwitterShareButton } from "react-share"
+import { TwitterShareButton } from "react-share"
 import { CopyToClipboard } from "react-copy-to-clipboard"
 import { Link } from "react-router-dom"
 import { ReactSVG } from "react-svg"
+import { dataUrlToFile } from "utils/fileFunctions"
 import { onClickRedirect } from "utils/linkFunctions"
 import { DisplayMetaTags } from "utils/metaFunctions"
+import { formatPlural } from "utils/textFunctions"
+import { getReferenceOptions } from "options/reference"
 import { getConfig } from "options/toast"
 import { toast } from "react-toastify"
 import _ from "underscore"
 import axios from "axios"
 import CommentList from "components/CommentList"
-import defaultImg from "images/images/image-square.png"
+import defaultImg from "images/avatar/small/steve.jpg"
 import DefaultLayout from "layouts/default"
 import FallacyExample from "components/FallacyExample"
+import fileDownload from "js-file-download"
 import html2canvas from "html2canvas"
 import initialState from "states/fallacy"
 import logger from "use-reducer-logger"
-import Logo from "images/logos/agent.svg"
+import Logo from "images/logos/npc.svg"
 import Marked from "marked"
 import Moment from "react-moment"
 import PropTypes from "prop-types"
@@ -48,7 +56,7 @@ const PlaceholderSegment = (
 
 const Fallacy = ({ history, match }) => {
 	const { state } = useContext(ThemeContext)
-	const { auth, inverted } = state
+	const { auth } = state
 	const authUser = state.user
 
 	const { slug } = match.params
@@ -60,8 +68,8 @@ const Fallacy = ({ history, match }) => {
 		process.env.NODE_ENV === "development" ? logger(reducer) : reducer,
 		initialState
 	)
-	const { comments, error, fallacy, loaded } = internalState
-	const { createdAt, id, page, reference, retracted, title, user } = fallacy
+	const { args, comments, error, fallacies, fallacy, loaded, refOptions } = internalState
+	const { createdAt, group, id, page, reference, retracted, title, user } = fallacy
 	const { contradictionTweet, contradictionYouTube, twitter } = fallacy
 
 	const canScreenshot =
@@ -71,6 +79,7 @@ const Fallacy = ({ history, match }) => {
 
 	const [downloading, setDownloading] = useState(false)
 	const [editingExp, setEditingExp] = useState(false)
+	const [refId, setRefId] = useState(1)
 	const [verticalMode, setVerticalMode] = useState(true)
 	const [visible, setVisible] = useState(false)
 
@@ -91,6 +100,8 @@ const Fallacy = ({ history, match }) => {
 					})
 					setVisible(true)
 					getComments(fallacy.id)
+					getArguments(fallacy.id, fallacy.page.id)
+					setRefId(fallacy.reference.id)
 				})
 				.catch(() => {
 					dispatch({
@@ -104,33 +115,88 @@ const Fallacy = ({ history, match }) => {
 		// eslint-disable-next-line
 	}, [slug])
 
-	const captureScreenshot = () => {
-		const el = "fallacyMaterial"
-		const filename = `${reference.name}-by-${page.name}-${createdAt}`
-		setDownloading(true)
+	useEffect(() => {
+		const getRefOptions = async () => {
+			const options = await getReferenceOptions(null, true)
+			dispatch({
+				type: "SET_REFERENCE_OPTIONS",
+				options
+			})
+		}
 
-		html2canvas(document.getElementById(el), {
+		getRefOptions()
+	}, [])
+
+	const saveScreenshot = async (id, file) => {
+		const formData = new FormData()
+		formData.set("file", file)
+
+		await axios
+			.post(`${process.env.REACT_APP_BASE_URL}fallacies/saveScreenshot?id=${id}`, formData, {
+				headers: {
+					"Content-Type": "multipart/form-data",
+					enctype: "multipart/form-data"
+				}
+			})
+			.then((response) => {
+				const { data } = response.data
+				dispatch({
+					type: "SAVE_SCREENSHOT",
+					data
+				})
+			})
+			.catch(() => {
+				toast.error("There was an error")
+			})
+	}
+
+	const captureScreenshot = () => {
+		const el = document.getElementById("fallacyMaterial")
+		const filename = `${reference.name}-by-${page.name}`
+		setDownloading(true)
+		el.classList.add("downloading")
+
+		html2canvas(el, {
 			allowTaint: true,
-			background: "#000",
 			scale: 2,
 			scrollX: 0,
 			scrollY: -window.scrollY,
 			useCORS: true
-		}).then((canvas) => {
+		}).then(async (canvas) => {
 			const ctx = canvas.getContext("2d")
 			ctx.globalAlpha = 1
-			ctx.fillStyle = "#000"
 
 			const img = canvas.toDataURL("image/png")
-			saveScreenshot(id, img)
+			const file = await dataUrlToFile(img, "file.png")
+			saveScreenshot(id, file)
+			fileDownload(file, `${filename}.png`)
 
-			let link = document.createElement("a")
-			link.download = `${filename}.png`
-			link.href = img
-			link.click()
-
+			el.classList.remove("downloading")
 			setDownloading(false)
 		})
+	}
+
+	const getArguments = async (id, pageId) => {
+		await axios
+			.get(`${process.env.REACT_APP_BASE_URL}arguments/getArgumentsByFallacy`, {
+				params: {
+					id,
+					pageId
+				}
+			})
+			.then(async (response) => {
+				const { data } = response.data
+				dispatch({
+					type: "GET_ARGUMENTS",
+					args: data
+				})
+
+				const argIds = await data.map((arg) => arg.id)
+				getRelatedFallacies(argIds, id)
+			})
+			.catch(() => {
+				toast.error("There was an error")
+			})
 	}
 
 	const getComments = async (fallacyId, page = 1) => {
@@ -140,6 +206,9 @@ const Fallacy = ({ history, match }) => {
 				params: {
 					page,
 					fallacyId
+				},
+				headers: {
+					Authorization: `Bearer ${localStorage.getItem("bearer")}`
 				}
 			})
 			.then(async (response) => {
@@ -158,13 +227,12 @@ const Fallacy = ({ history, match }) => {
 			})
 	}
 
-	// eslint-disable-next-line
-	const getRelatedFallacies = async (fallacyId, page = 1) => {
+	const getRelatedFallacies = async (args, id) => {
 		await axios
 			.get(`${process.env.REACT_APP_BASE_URL}fallacies/related`, {
 				params: {
-					fallacyId,
-					page
+					args,
+					id
 				}
 			})
 			.then((response) => {
@@ -180,320 +248,455 @@ const Fallacy = ({ history, match }) => {
 			})
 	}
 
+	const onChangeRef = (e, { value }) => {
+		setRefId(value)
+	}
+
 	const onClickFallacy = (e, slug) => {
 		onClickRedirect(e, history, `/fallacies/${slug}`)
 	}
 
-	const retractLogic = (e, { value }) => {}
-
-	const saveScreenshot = async (id, img) => {
-		await axios
-			.post(`${process.env.REACT_APP_BASE_URL}fallacies/saveScreenshot`, {
-				id,
-				slug
-			})
-			.then((response) => {
-				const { data } = response.data
-				dispatch({
-					type: "SAVE_SCREENSHOT",
-					data
-				})
-			})
-			.catch(() => {
-				toast.error("There was an error")
-			})
-	}
+	const retractLogic = () => {}
 
 	const updateFallacy = async (id) => {
 		const explanation = _.isEmpty(explanationRef.current) ? "" : explanationRef.current.value
+		if (explanation === "") {
+			return
+		}
 
 		await axios
-			.post(`${process.env.REACT_APP_BASE_URL}fallacies/update`, {
-				id,
-				explanation
-			})
+			.post(
+				`${process.env.REACT_APP_BASE_URL}fallacies/update`,
+				{
+					id,
+					explanation,
+					refId
+				},
+				{
+					headers: {
+						Authorization: `Bearer ${localStorage.getItem("bearer")}`
+					}
+				}
+			)
 			.then((response) => {
-				const { data } = response.data
+				const data = response.data
 				dispatch({
 					type: "UPDATE_FALLACY",
 					data
 				})
+				setEditingExp(false)
+				toast.success("Updated!")
 			})
 			.catch(() => {
 				toast.error("Error updating fallacy")
 			})
 	}
 
+	const explanationSegment = (
+		<>
+			{loaded && !error ? (
+				<Segment className="explanationSegment">
+					<Header>
+						<Image
+							circular
+							onError={(i) => (i.target.src = defaultImg)}
+							src={user.image}
+						/>
+						<Header.Content>
+							{user.name}
+							<Header.Subheader>
+								<Moment date={fallacy.createdAt} fromNow />
+								{canEdit && (
+									<>
+										{" "}
+										•{" "}
+										<span
+											className={`editExp ${editingExp ? "red" : "blue"}`}
+											onClick={() => setEditingExp(!editingExp)}
+										>
+											{editingExp ? "Cancel" : "Edit"}
+										</span>
+									</>
+								)}
+							</Header.Subheader>
+						</Header.Content>
+					</Header>
+					{editingExp ? (
+						<Form>
+							<Form.Field>
+								<Dropdown
+									clearable
+									fluid
+									onChange={onChangeRef}
+									options={refOptions}
+									placeholder="Fallacy"
+									selection
+									value={refId}
+								/>
+							</Form.Field>
+							<Form.Field>
+								<textarea
+									defaultValue={fallacy.explanation}
+									placeholder="Explain why this is fallacious"
+									ref={explanationRef}
+								/>
+							</Form.Field>
+							<Form.Field>
+								<Button
+									color="blue"
+									content="Save"
+									fluid
+									onClick={() => updateFallacy(id)}
+								/>
+							</Form.Field>
+						</Form>
+					) : (
+						<div
+							dangerouslySetInnerHTML={{
+								__html: Marked(fallacy.explanation)
+							}}
+						/>
+					)}
+				</Segment>
+			) : null}
+		</>
+	)
+
+	const retractionCard = (
+		<>
+			{loaded && !error ? (
+				<Card className="retractionCard" fluid>
+					<Card.Content>
+						<Image
+							bordered
+							circular
+							floated="right"
+							onClick={() => history.push(`/${user.username}`)}
+							onError={(i) => (i.target.src = defaultImg)}
+							size="mini"
+							src={page.image}
+						/>
+						<Card.Header>
+							{retracted ? "Retracted" : "Still waiting for a retraction..."}
+						</Card.Header>
+						<Card.Meta>
+							{retracted ? (
+								`Nice work, ${user.name}`
+							) : (
+								<>
+									Waiting for{" "}
+									<Moment ago date={createdAt} fromNow interval={60000} />
+									...
+								</>
+							)}
+						</Card.Meta>
+						<Card.Description>
+							{retracted ? (
+								<>
+									<Link to={`/pages/${page.username}`}>{page.name}</Link> has
+									admitted that this is poor reasoning.
+								</>
+							) : (
+								<p>
+									{canRetract ? (
+										`${page.name}, this is an opportunity to show your
+												followers that you have enough courage to admit that
+												you were wrong.`
+									) : (
+										<>
+											<Link to={`/pages/${page.network}/${page.username}`}>
+												{page.name}
+											</Link>
+											, you can retract this by{" "}
+											<Link to="/auth">signing in</Link>.
+										</>
+									)}
+								</p>
+							)}
+						</Card.Description>
+					</Card.Content>
+					<Card.Content extra>
+						{retracted ? (
+							<Button active color="green" fluid size="large">
+								<Icon name="checkmark" />
+								Retracted
+							</Button>
+						) : (
+							<Button
+								content="Retract"
+								disabled={!canRetract}
+								fluid
+								negative
+								onClick={retractLogic}
+							/>
+						)}
+					</Card.Content>
+				</Card>
+			) : null}
+		</>
+	)
+
+	const shareList = (
+		<>
+			{loaded && !error ? (
+				<List className="shareList" horizontal size="mini">
+					<List.Item>
+						<TwitterShareButton className="twitterShareBtn" title={title} url={url}>
+							<Icon
+								circular
+								className="twitterIcon"
+								inverted
+								name="twitter"
+								style={{
+									fontSize: "18px"
+								}}
+							/>
+						</TwitterShareButton>
+					</List.Item>
+					<List.Item position="right">
+						<CopyToClipboard onCopy={() => toast.success("Copied")} text={url}>
+							<Button circular color="yellow" icon="paperclip" />
+						</CopyToClipboard>
+					</List.Item>
+					{canScreenshot && (
+						<List.Item position="right">
+							<Button
+								circular
+								className="screenshotButton"
+								color="olive"
+								icon="camera"
+								loading={downloading}
+								onClick={captureScreenshot}
+								style={{ verticalAlign: "none" }}
+							/>
+						</List.Item>
+					)}
+					<List.Item position="right">
+						<Button
+							circular
+							color="blue"
+							icon="shuffle"
+							onClick={() => setVerticalMode(!verticalMode)}
+							style={{ verticalAlign: "none" }}
+						/>
+					</List.Item>
+				</List>
+			) : null}
+		</>
+	)
+
+	const argumentsCard = (
+		<>
+			{loaded && !error ? (
+				<Card className="purveyorsCard" fluid>
+					<Card.Content>
+						<Card.Header>Arguments</Card.Header>
+					</Card.Content>
+					<Card.Content>
+						{args.length === 0 ? (
+							<Segment basic textAlign="center">
+								<ReactSVG className="simpleLogo" src={Logo} />
+							</Segment>
+						) : (
+							<Feed>
+								{args.map((a, i) => (
+									<Feed.Event key={`arg${i}`}>
+										<Feed.Content>
+											<Feed.Summary>
+												<Link to={`/arguments/${a.slug}`}>
+													{a.description}
+												</Link>
+												{a.tweetCount > 1 && (
+													<Feed.Meta>
+														<Feed.Like>
+															<Icon color="green" name="recycle" />{" "}
+															has recycled this argument{" "}
+															<span className="red">
+																{a.tweetCount}{" "}
+															</span>
+															{formatPlural(a.tweetCount, "time")}
+														</Feed.Like>
+													</Feed.Meta>
+												)}
+											</Feed.Summary>
+										</Feed.Content>
+									</Feed.Event>
+								))}
+							</Feed>
+						)}
+					</Card.Content>
+				</Card>
+			) : null}
+		</>
+	)
+
+	const relatedFallaciesCard = (
+		<>
+			{loaded && !error ? (
+				<Card className="purveyorsCard" fluid>
+					<Card.Content>
+						<Card.Header>Related Fallacies</Card.Header>
+					</Card.Content>
+					<Card.Content>
+						{fallacies.length === 0 ? (
+							<Segment basic textAlign="center">
+								<ReactSVG className="simpleLogo" src={Logo} />
+							</Segment>
+						) : (
+							<Feed>
+								{fallacies.map((f, i) => {
+									if (_.isEmpty(f.page)) {
+										return null
+									}
+
+									return (
+										<Feed.Event key={`related${i}`}>
+											<Feed.Label>
+												<Image
+													onError={(i) => (i.target.src = defaultImg)}
+													src={f.page.image}
+												/>
+											</Feed.Label>
+											<Feed.Content>
+												<Feed.Summary>
+													<Link to={`/fallacies/${f.slug}`}>
+														{f.title} #{f.id}
+													</Link>
+												</Feed.Summary>
+												<Feed.Extra text>
+													<Moment date={f.createdAt} fromNow />
+												</Feed.Extra>
+											</Feed.Content>
+										</Feed.Event>
+									)
+								})}
+							</Feed>
+						)}
+					</Card.Content>
+				</Card>
+			) : null}
+		</>
+	)
+
 	return (
-		<DefaultLayout activeItem="fallacies" containerClassName="fallacyPage" history={history}>
+		<DefaultLayout
+			activeItem="fallacies"
+			containerClassName="fallacyPage"
+			history={history}
+			useContainer={false}
+		>
 			<DisplayMetaTags page="fallacy" state={internalState} />
 			{loaded ? (
 				<>
 					{error && (
-						<div className="centeredLoader">
-							<Header as="h1" image textAlign="center">
-								<ReactSVG className="errorSvg" src={Logo} />
-								<Header.Content>This fallacy does not exist</Header.Content>
-							</Header>
-						</div>
+						<Container>
+							<div className="centeredLoader">
+								<Header as="h1" image textAlign="center">
+									<ReactSVG className="errorSvg" src={Logo} />
+									<Header.Content>This fallacy does not exist</Header.Content>
+								</Header>
+							</div>
+						</Container>
 					)}
 
 					{!error && (
 						<>
-							<Header as="h1" className="fallacyHeader">
-								{title} #{id}
-								<Header.Subheader>
-									Assigned to{" "}
-									<Link to={`/pages/${page.network}/${page.username}`}>
-										{page.name}
-									</Link>
-								</Header.Subheader>
-							</Header>
-							<Transition animation="scale" duration={900} visible={visible}>
-								<div id="fallacyMaterial">
-									<FallacyExample
-										colored={fallacy.reference.id === 21}
-										contradictionTwitter={fallacy.contradictionTwitter}
-										contradictionYouTube={fallacy.contradictionYouTube}
-										createdAt={fallacy.createdAt}
-										crossOriginAnonymous={true}
-										defaultUserImg={fallacy.page.image}
-										explanation={fallacy.explanation}
-										history={history}
-										id={fallacy.id}
-										onClickFallacy={onClickFallacy}
-										onClickTweet={(e, history, id) =>
-											onClickRedirect(e, history, `/tweets/${id}`)
-										}
-										reference={fallacy.reference}
-										showExplanation={false}
-										slug={fallacy.slug}
-										stacked
-										twitter={fallacy.twitter}
-										youtube={fallacy.youtube}
-										user={fallacy.user}
-										verticalMode={verticalMode}
-									/>
-								</div>
-							</Transition>
-
-							<List className="shareList" horizontal size="mini">
-								<List.Item>
-									<TwitterShareButton title={title} url={url}>
-										<Button circular color="twitter" icon="twitter" />
-									</TwitterShareButton>
-								</List.Item>
-								<List.Item>
-									<RedditShareButton url={url}>
-										<Button circular color="orange" icon="reddit alien" />
-									</RedditShareButton>
-								</List.Item>
-								<List.Item position="right">
-									<CopyToClipboard
-										onCopy={() => toast.success("Copied")}
-										text={url}
-									>
-										<Button circular color="blue" icon="paperclip" />
-									</CopyToClipboard>
-								</List.Item>
-								{canScreenshot && (
-									<List.Item position="right">
-										<Button
-											circular
-											className="screenshotButton"
-											color="olive"
-											icon="camera"
-											loading={downloading}
-											onClick={captureScreenshot}
-											style={{ verticalAlign: "none" }}
-										/>
-									</List.Item>
-								)}
-								<List.Item position="right">
-									<Button
-										circular
-										color="yellow"
-										icon="shuffle"
-										onClick={() => setVerticalMode(!verticalMode)}
-										style={{ verticalAlign: "none" }}
-									/>
-								</List.Item>
-							</List>
-
-							<Segment basic className="explanationSegment">
-								<Header>
-									<Image
-										circular
-										onError={(i) => (i.target.src = defaultImg)}
-										src={user.image}
-									/>
-									<Header.Content>
-										{user.name}
-										<Header.Subheader>
-											<Moment date={fallacy.createdAt} fromNow />
-											{canEdit && (
-												<>
-													{" "}
-													•{" "}
-													<span
-														className={`editExp ${
-															editingExp ? "red" : "blue"
-														}`}
-														onClick={() => setEditingExp(!editingExp)}
-													>
-														{editingExp ? "Cancel" : "Edit"}
-													</span>
-												</>
-											)}
-										</Header.Subheader>
-									</Header.Content>
+							<Container className="exampleWrapper">
+								<Header as="h1" className="fallacyHeader">
+									{title} #{id}
+									<Header.Subheader>
+										Assigned to{" "}
+										<Link to={`/pages/${page.network}/${page.username}`}>
+											{page.name}
+										</Link>
+									</Header.Subheader>
 								</Header>
-								{editingExp ? (
-									<Form>
-										<Form.Field>
-											<textarea
-												defaultValue={fallacy.explanation}
-												placeholder="Explain why this is fallacious"
-												ref={explanationRef}
-											/>
-										</Form.Field>
-										<Form.Field>
-											<Button
-												color="blue"
-												content="Save"
-												fluid
-												onClick={() => updateFallacy(id)}
-											/>
-										</Form.Field>
-									</Form>
-								) : (
-									<div
-										dangerouslySetInnerHTML={{
-											__html: Marked(fallacy.explanation)
-										}}
-									/>
-								)}
-							</Segment>
-
-							<Divider hidden />
-
-							<Card className="retractionCard" fluid>
-								<Card.Content>
-									<Image
-										bordered
-										circular
-										floated="right"
-										onClick={() => history.push(`/${user.username}`)}
-										onError={(i) => (i.target.src = defaultImg)}
-										size="mini"
-										src={page.image}
-									/>
-									<Card.Header>
-										{retracted
-											? "Retracted"
-											: "Still waiting for a retraction..."}
-									</Card.Header>
-									<Card.Meta>
-										{retracted ? (
-											`Nice work, ${user.name}`
-										) : (
-											<>
-												Waiting for{" "}
-												<Moment
-													ago
-													date={createdAt}
-													fromNow
-													interval={60000}
-												/>
-												...
-											</>
-										)}
-									</Card.Meta>
-									<Card.Description>
-										{retracted ? (
-											<>
-												<Link to={`/pages/${page.username}`}>
-													{page.name}
-												</Link>{" "}
-												has admitted that this is poor reasoning.
-											</>
-										) : (
-											<p>
-												{canRetract ? (
-													`${page.name}, this is an opportunity to show your
-												followers that you have enough courage to admit that
-												you were wrong.`
-												) : (
-													<>
-														<Link
-															to={`/pages/${page.network}/${page.username}`}
-														>
-															{page.name}
-														</Link>
-														, you can retract this by{" "}
-														<Link to="/signin">signing in</Link>.
-													</>
-												)}
-											</p>
-										)}
-									</Card.Description>
-								</Card.Content>
-								<Card.Content extra>
-									{retracted ? (
-										<Button active color="green" fluid size="large">
-											<Icon name="checkmark" />
-											Retracted
-										</Button>
-									) : (
-										<Button
-											content="Retract"
-											disabled={!canRetract}
-											fluid
-											negative
-											onClick={retractLogic}
+							</Container>
+							<div className="animationWrapper">
+								<Container id="fallacyMaterial">
+									<Transition animation="scale" duration={900} visible={visible}>
+										<FallacyExample
+											colored={fallacy.reference.id === 21}
+											contradictionTwitter={fallacy.contradictionTwitter}
+											contradictionYouTube={fallacy.contradictionYouTube}
+											createdAt={fallacy.createdAt}
+											crossOriginAnonymous={true}
+											defaultUserImg={fallacy.page.image}
+											explanation={fallacy.explanation}
+											group={group}
+											history={history}
+											id={fallacy.id}
+											onClickFallacy={onClickFallacy}
+											onClickTweet={(e, history, id) =>
+												onClickRedirect(e, history, `/tweets/${id}`)
+											}
+											reference={fallacy.reference}
+											showExplanation={false}
+											slug={fallacy.slug}
+											stacked
+											twitter={fallacy.twitter}
+											youtube={fallacy.youtube}
+											user={fallacy.user}
+											verticalMode={verticalMode}
 										/>
-									)}
-								</Card.Content>
-							</Card>
+									</Transition>
+								</Container>
+							</div>
 
-							<Divider hidden />
+							<div className="bottomHalf">
+								<Container>
+									<Grid stackable>
+										<Grid.Column width={11}>
+											{explanationSegment}
+											{retractionCard}
 
-							<Segment secondary>
-								<Header as="h3">{reference.name}</Header>
-								<p>{reference.description}</p>
-							</Segment>
+											<Segment>
+												<Header as="h3">{reference.name}</Header>
+												<p>{reference.description}</p>
+											</Segment>
 
-							<Divider hidden />
+											<Visibility
+												continuous
+												offset={[50, 50]}
+												onBottomVisible={() => {
+													if (!loadingC && !loadingMoreC && hasMoreC) {
+														getComments(fallacy.id, pageNumberC)
+													}
+												}}
+											>
+												<CommentList
+													comments={comments.data}
+													fallacyId={id}
+													history={history}
+													showEmptyMsg={false}
+												/>
+											</Visibility>
 
-							<Visibility
-								continuous
-								offset={[50, 50]}
-								onBottomVisible={() => {
-									if (!loadingC && !loadingMoreC && hasMoreC) {
-										getComments(fallacy.id, pageNumberC)
-									}
-								}}
-							>
-								<CommentList
-									comments={comments.data}
-									fallacyId={id}
-									history={history}
-									showEmptyMsg={false}
-								/>
-							</Visibility>
-
-							<Divider hidden section />
+											<Divider hidden section />
+										</Grid.Column>
+										<Grid.Column width={5}>
+											{argumentsCard}
+											{relatedFallaciesCard}
+											{shareList}
+										</Grid.Column>
+									</Grid>
+								</Container>
+							</div>
 						</>
 					)}
 				</>
 			) : (
 				<div className="placeholderWrapper">
-					<Segment basic style={{ height: "50px" }}></Segment>
-					<Segment stacked>
-						{PlaceholderSegment}
-						<Divider section />
-						{PlaceholderSegment}
-					</Segment>
+					<Container className="exampleWrapper"></Container>
+					<div className="animationWrapper">
+						<Container>
+							<Segment stacked>
+								{PlaceholderSegment}
+								<Divider section />
+								{PlaceholderSegment}
+							</Segment>
+						</Container>
+					</div>
 				</div>
 			)}
 		</DefaultLayout>

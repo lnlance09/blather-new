@@ -21,7 +21,9 @@ const Grifters = ({ history }) => {
 
 			<Grid>
 				<Grid.Column width={16}>
-					<Header as="h1">What is a Grifter?</Header>
+					<Header as="h1" inverted={inverted}>
+						What is a Grifter?
+					</Header>
 
 					<p>
 						A grifter is someone that has made the conscious decision to earn their
@@ -45,7 +47,7 @@ const Grifters = ({ history }) => {
 					<div className="gallery-wrapper">
 						<div className="tiles">
 							{maga.map((m, i) => (
-								<div className="tile">
+								<div className="tile" key={`tileKey${i}`}>
 									<Image
 										data-for={`groupsMember${i}`}
 										data-iscapture="true"

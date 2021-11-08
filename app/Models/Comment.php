@@ -40,6 +40,11 @@ class Comment extends Model
         return $this->belongsTo(Fallacy::class, 'id', 'fallacy_id');
     }
 
+    public function likedByMe()
+    {
+        return $this->hasMany(CommentLike::class, 'comment_id', 'id')->where('response_id', null);
+    }
+
     public function likes()
     {
         return $this->hasMany(CommentLike::class, 'comment_id', 'id')->where('response_id', null);

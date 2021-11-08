@@ -17,13 +17,14 @@ const About = ({ history }) => {
 
 			<Header as="h1" content="About" inverted={inverted} />
 
-			<p>
+			<p className="description">
 				Blather is an educational tool that allows users to analyze and pinpoint the
 				accuracy of claims made on social media. This site is meant to help people spot out
 				erroneous logic so that similar arguments will not be made in the future. However,
 				there are a number of factors that make this a difficult task.
 			</p>
-			<List bulleted inverted size="large">
+
+			<List bulleted inverted={inverted} size="large">
 				<List.Item>Cognitive dissonance</List.Item>
 				<List.Item>Confirmation bias</List.Item>
 				<List.Item>Conspiratorial thinking</List.Item>
@@ -39,7 +40,8 @@ const About = ({ history }) => {
 				<List.Item>Tradition</List.Item>
 				<List.Item>Tribalism</List.Item>
 			</List>
-			<p>
+
+			<p className="description">
 				Unfortunately, all of those are baked into the human psyche and they help contribute
 				to a toxic landscape that hinders perfectly sane people from engaging in honest,
 				fact-based discussions. In essence, Blather is about restoring what it means to have

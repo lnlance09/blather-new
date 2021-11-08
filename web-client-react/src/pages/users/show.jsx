@@ -12,7 +12,7 @@ import ImageUpload from "components/ImageUpload"
 import initialState from "states/user"
 import linkifyHtml from "linkify-html"
 import logger from "use-reducer-logger"
-import Logo from "images/logos/agent.svg"
+import Logo from "images/logos/npc.svg"
 import NumberFormat from "react-number-format"
 import PageList from "components/PageList"
 import PlaceholderPic from "images/avatar/large/steve.jpg"
@@ -403,6 +403,7 @@ const Member = ({ history, match }) => {
 									<FallacyList
 										defaultUserImg={member.image}
 										fallacies={contradictions.data}
+										emptyMsg="No contradictions yet..."
 										history={history}
 										inverted={inverted}
 										loading={!contradictions.loaded}
@@ -423,6 +424,7 @@ const Member = ({ history, match }) => {
 									}}
 								>
 									<PageList
+										emptyMsg="No targets yet..."
 										history={history}
 										inverted={inverted}
 										loading={!targets.loaded}

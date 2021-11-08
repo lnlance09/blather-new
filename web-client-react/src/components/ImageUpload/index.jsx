@@ -47,7 +47,7 @@ const ImageUpload = ({
 			{as === "image" && (
 				<>
 					{loading ? (
-						<Placeholder image style={{ height: "150px", width: "150px" }} />
+						<Placeholder image style={{ height: "200px", width: "200px" }} />
 					) : (
 						<Dimmer.Dimmable
 							as={Image}

@@ -1,6 +1,7 @@
 import "./style.scss"
 import { useEffect } from "react"
 import { Card, Divider, Grid, Icon, Image, Label, Segment } from "semantic-ui-react"
+import { hyphenateText } from "utils/textFunctions"
 import renderer, { tweetOptions } from "options/tweet"
 import Marked from "marked"
 import Moment from "react-moment"
@@ -17,6 +18,7 @@ const FallacyExample = ({
 	crossOriginAnonymous = false,
 	defaultUserImg = PlaceholderPic,
 	explanation,
+	group,
 	history,
 	id,
 	onClickFallacy = () => null,
@@ -74,7 +76,7 @@ const FallacyExample = ({
 				<Tweet
 					config={{
 						...tweetOptions,
-						// crossOriginAnonymous,
+						crossOriginAnonymous,
 						defaultUserImg,
 						highlightedText,
 						onClickCallback: (e, history, id) => {
@@ -105,7 +107,7 @@ const FallacyExample = ({
 				<Tweet
 					config={{
 						...tweetOptions,
-						// crossOriginAnonymous,
+						crossOriginAnonymous,
 						defaultUserImg,
 						highlightedText: highlightedTextC,
 						onClickCallback: (e, history, id) => {
@@ -188,23 +190,19 @@ const FallacyExample = ({
 		<div className={`fallacyExample ${colored ? "colored" : ""}`}>
 			{useSegment && (
 				<Segment
+					className={group ? "withGroup" : ""}
+					raised
 					stacked={stacked}
 					onClick={(e) => {
 						e.stopPropagation()
 						onClickFallacy(e, slug)
 					}}
 				>
-					<Label attached="top" basic size="large">
-						<span
-							className="blue"
-							onClick={(e) => {
-								e.stopPropagation()
-								history.push("/groups")
-							}}
-						>
-							PragerU
-						</span>
-					</Label>
+					{group && (
+						<Label attached="top" className={hyphenateText(group.name)} size="large">
+							{group.name}
+						</Label>
+					)}
 					{useRibbon && (
 						<Label as="a" color="blue" ribbon size="large">
 							<Icon name="clock" />
@@ -307,6 +305,7 @@ FallacyExample.propTypes = {
 	crossOriginAnonymous: PropTypes.bool,
 	defaultUserImg: PropTypes.string,
 	explanation: PropTypes.string,
+	group: PropTypes.shape({}),
 	history: PropTypes.shape({}),
 	id: PropTypes.number,
 	onClickFallacy: PropTypes.func,

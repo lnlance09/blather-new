@@ -79,7 +79,9 @@ const Reference = ({ history }) => {
 		<DefaultLayout activeItem="reference" containerClassName="referencePage" history={history}>
 			<DisplayMetaTags page="reference" />
 
-			<Header as="h1">Reference</Header>
+			<Header as="h1" inverted={inverted}>
+				Reference
+			</Header>
 
 			{reference.map((item, i) => {
 				return (

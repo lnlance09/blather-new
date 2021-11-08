@@ -34,6 +34,7 @@ const FallacyForm = ({
 	history,
 	inverted,
 	pageId = null,
+	refId = 1,
 	showPageSelection = false,
 	tweetId = null
 }) => {
@@ -49,7 +50,7 @@ const FallacyForm = ({
 	const [groupValue, setGroupValue] = useState(1)
 	const [loading, setLoading] = useState(false)
 	const [pageValue, setPageValue] = useState(pageId ? pageId : 6)
-	const [refValue, setRefValue] = useState(1)
+	const [refValue, setRefValue] = useState(refId)
 
 	const activeRef =
 		refOptions.length > 0 ? refOptions.filter((ref) => ref.value === refValue)[0] : null
@@ -103,6 +104,7 @@ const FallacyForm = ({
 				{
 					cTweet: cTweetId,
 					explanation,
+					groupId,
 					refId: refValue,
 					tweet: tweetId
 				},
@@ -118,14 +120,19 @@ const FallacyForm = ({
 			})
 			.catch((error) => {
 				let errorMsg = ""
+				const { status } = error.response
 				const { errors } = error.response.data
 
-				if (!_.isEmpty(errors.explanation)) {
-					errorMsg = errors.explanation[0]
-				}
+				if (status === 401) {
+					errorMsg = error.response.data.message
+				} else {
+					if (!_.isEmpty(errors.explanation)) {
+						errorMsg = errors.explanation[0]
+					}
 
-				if (!_.isEmpty(errors.tweet)) {
-					errorMsg = errors.tweet[0]
+					if (!_.isEmpty(errors.tweet)) {
+						errorMsg = errors.tweet[0]
+					}
 				}
 
 				setLoading(false)
@@ -169,6 +176,10 @@ const FallacyForm = ({
 		getGroupOptions()
 		getRefOptions()
 	}, [])
+
+	useEffect(() => {
+		setRefValue(refId)
+	}, [refId])
 
 	return (
 		<div className={`fallacyFormComponent ${inverted ? "inverted" : ""}`}>
@@ -298,6 +309,7 @@ FallacyForm.propTypes = {
 	groupId: PropTypes.oneOfType([PropTypes.bool, PropTypes.number]),
 	inverted: PropTypes.bool,
 	pageId: PropTypes.oneOfType([PropTypes.bool, PropTypes.number]),
+	refId: PropTypes.number,
 	showPageSelection: PropTypes.bool,
 	tweetId: PropTypes.oneOfType([PropTypes.bool, PropTypes.number])
 }

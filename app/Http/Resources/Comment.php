@@ -22,6 +22,7 @@ class Comment extends JsonResource
             'id' => $this->id,
             'fallacyId' => $this->fallacy_id,
             'likeCount' => $this->likes_count,
+            'likedByMe' => $this->liked_by_me_count === 1,
             'likes' => new LikeCollection($this->likes),
             'msg' => $this->msg,
             'responseCount' => $this->responses_count,

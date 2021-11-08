@@ -120,7 +120,7 @@ class ReferenceController extends Controller
             ], 403);
         }
 
-        $ref = Reference::where('id', $id)->first();
+        $ref = Reference::find($id);
 
         if (empty($ref)) {
             return response([

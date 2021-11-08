@@ -19,6 +19,13 @@ const reducer = (state, action) => {
 				cTweetError: false,
 				cTweetLoaded: true
 			}
+		case "RESET_CONTRADICTING_TWEET":
+			return {
+				...state,
+				cTweet: {},
+				cTweetError: false,
+				cTweetLoaded: false
+			}
 		case "RESET_TWEET":
 			return {
 				...state,

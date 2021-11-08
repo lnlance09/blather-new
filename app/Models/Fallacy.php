@@ -54,21 +54,24 @@ class Fallacy extends Model
      */
     protected $casts = [];
 
-    public function page()
+    public function contradictionTwitter()
     {
+        return $this->hasOne(ContradictionTwitter::class, 'fallacy_id', 'id');
+    }
 
-        return $this->hasOne(Page::class, 'id', 'page_id');
+    public function contradictionYouTube()
+    {
+        return $this->hasOne(ContradictionYouTube::class, 'fallacy_id', 'id');
     }
 
     public function group()
     {
-
         return $this->hasOne(Group::class, 'id', 'group_id');
     }
 
-    public function user()
+    public function page()
     {
-        return $this->hasOne(User::class, 'id', 'user_id');
+        return $this->hasOne(Page::class, 'id', 'page_id');
     }
 
     public function reference()
@@ -81,18 +84,13 @@ class Fallacy extends Model
         return $this->hasOne(FallacyTwitter::class, 'fallacy_id', 'id');
     }
 
+    public function user()
+    {
+        return $this->hasOne(User::class, 'id', 'user_id');
+    }
+
     public function youtube()
     {
         return $this->hasOne(FallacyYouTube::class, 'fallacy_id', 'id');
-    }
-
-    public function contradictionTwitter()
-    {
-        return $this->hasOne(ContradictionTwitter::class, 'fallacy_id', 'id');
-    }
-
-    public function contradictionYouTube()
-    {
-        return $this->hasOne(ContradictionYouTube::class, 'fallacy_id', 'id');
     }
 }

@@ -98,6 +98,37 @@ class ArgumentController extends Controller
         //
     }
 
+    public function getArgumentsByFallacy(Request $request)
+    {
+        $id = $request->input('id', null);
+        $pageId = $request->input('pageId', null);
+
+        $args = Argument::whereHas('tweets', function ($query) use ($id) {
+            $query->whereHas('tweet', function ($query) use ($id) {
+                $query->whereHas('fallacies', function ($query) use ($id) {
+                    $query->whereHas('fallacy', function ($query) use ($id) {
+                        $query->where('id', $id);
+                    });
+                })->orWhere(function ($query) use ($id) {
+                    $query->whereHas('contradictions', function ($query) use ($id) {
+                        $query->where('fallacy_id', $id);
+                    });
+                });
+            });
+        });
+
+        if ($pageId) {
+            $args = $args->withCount(['tweets' => function ($query) use ($pageId) {
+                $tweetIds = Tweet::where('page_id', $pageId)->pluck('id')->toArray();
+                $query->whereIn('tweet_id', $tweetIds);
+            }]);
+        }
+
+        $args = $args->get();
+
+        return new ArgumentCollection($args);
+    }
+
     public function getFallaciesByArg(Request $request)
     {
         $id = $request->input('id', null);
@@ -192,7 +223,7 @@ class ArgumentController extends Controller
             ], 403);
         }
 
-        $arg = Argument::where('id', $id)->first();
+        $arg = Argument::find($id);
 
         if (empty($arg)) {
             return response([

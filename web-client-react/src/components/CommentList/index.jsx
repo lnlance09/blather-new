@@ -1,4 +1,6 @@
 import "./style.scss"
+import linkifyHtml from "linkify-html"
+import "linkify-plugin-mention"
 import {
 	Button,
 	Comment,
@@ -15,11 +17,10 @@ import { getConfig } from "options/toast"
 import { toast } from "react-toastify"
 import _ from "underscore"
 import axios from "axios"
-import ImagePic from "images/images/image-square.png"
+import defaultImg from "images/avatar/small/steve.jpg"
 import initialState from "./state"
 import logger from "use-reducer-logger"
 import Moment from "react-moment"
-import defaultImg from "images/avatar/small/steve.jpg"
 import PropTypes from "prop-types"
 import ReactTooltip from "react-tooltip"
 import reducer from "./reducer"
@@ -38,7 +39,7 @@ const PlaceholderSegment = (
 )
 
 const CommentList = ({
-	allowReplies,
+	allowReplies = true,
 	comments,
 	fallacyId,
 	history,
@@ -70,39 +71,33 @@ const CommentList = ({
 	}, [comments])
 
 	const onSubmitForm = () => {
-		postComment(fallacyId, responseTo, () => {
+		postComment(fallacyId, () => {
 			setResponseTo(null)
 			textAreaRef.current.value = ""
+			toast.success("Comment added!")
 		})
 	}
 
-	const likeComment = (commentId, responseId = null) => {
-		axios
-			.post(`${process.env.REACT_APP_BASE_URL}comments/like`, {
-				commentId,
-				responseId
-			})
-			.then(() => {
-				dispatch({
-					type: "LIKE_COMMENT",
-					commentId,
-					responseId
-				})
-			})
-			.catch(() => {
-				toast.error("Error liking comment")
-			})
-	}
-
-	const postComment = (id, responseTo, callback) => {
+	const postComment = (id, callback) => {
 		const msg = _.isEmpty(textAreaRef.current) ? "" : textAreaRef.current.value
+		if (msg === "") {
+			return
+		}
 
 		axios
-			.post(`${process.env.REACT_APP_BASE_URL}comments/create`, {
-				fallacyId: id,
-				msg,
-				responseTo
-			})
+			.post(
+				`${process.env.REACT_APP_BASE_URL}comments/create`,
+				{
+					fallacyId: id,
+					msg,
+					responseTo
+				},
+				{
+					headers: {
+						Authorization: `Bearer ${localStorage.getItem("bearer")}`
+					}
+				}
+			)
 			.then((response) => {
 				const comment = response.data.data
 				dispatch({
@@ -117,12 +112,46 @@ const CommentList = ({
 			})
 	}
 
+	const likeComment = (commentId, responseId = null) => {
+		axios
+			.post(
+				`${process.env.REACT_APP_BASE_URL}comments/like`,
+				{
+					commentId,
+					responseId
+				},
+				{
+					headers: {
+						Authorization: `Bearer ${localStorage.getItem("bearer")}`
+					}
+				}
+			)
+			.then(() => {
+				dispatch({
+					type: "LIKE_COMMENT",
+					commentId,
+					responseId
+				})
+			})
+			.catch(() => {
+				toast.error("Error liking comment")
+			})
+	}
+
 	const unlikeComment = (commentId, responseId = null) => {
 		axios
-			.post(`${process.env.REACT_APP_BASE_URL}comments/unluke`, {
-				commentId,
-				responseId
-			})
+			.post(
+				`${process.env.REACT_APP_BASE_URL}comments/unlike`,
+				{
+					commentId,
+					responseId
+				},
+				{
+					headers: {
+						Authorization: `Bearer ${localStorage.getItem("bearer")}`
+					}
+				}
+			)
 			.then(() => {
 				dispatch({
 					type: "UNLIKE_COMMENT",
@@ -146,7 +175,7 @@ const CommentList = ({
 						data-iscapture="true"
 						data-tip={`${user.username}`}
 						onClick={() => history.push(`/${user.username}`)}
-						onError={(i) => (i.target.src = ImagePic)}
+						onError={(i) => (i.target.src = defaultImg)}
 						size="tiny"
 						src={user.image ? user.image : defaultImg}
 					/>
@@ -157,37 +186,35 @@ const CommentList = ({
 						<Comment.Metadata>
 							<Moment date={comment.createdAt} fromNow />
 						</Comment.Metadata>
-						<Comment.Text>{comment.msg}</Comment.Text>
+						<Comment.Text
+							dangerouslySetInnerHTML={{
+								__html: linkifyHtml(comment.msg, {
+									className: "linkify",
+									formatHref: {
+										mention: (val) => `${process.env.REACT_APP_URL}${val}`
+										// hashtag: (val) => val
+									}
+								})
+							}}
+						/>
 						<Comment.Actions>
 							<Comment.Action>
 								<span
 									onClick={() => {
 										if (!auth) {
-											history.push("/signin?type=join")
+											history.push("/auth")
 											return
 										}
 
-										const payload = {
-											commentId: comment.id
-										}
-
-										if (isReply) {
-											payload.commentId = commentId
-											payload.responseId = comment.id
-										}
-
-										if (parseInt(comment.likedByMe, 10) === 1) {
-											unlikeComment(payload)
+										const responseId = isReply ? comment.id : null
+										if (likedByMe) {
+											unlikeComment(commentId, responseId)
 										} else {
-											likeComment(payload)
+											likeComment(commentId, responseId)
 										}
 									}}
 								>
-									<Icon
-										color={parseInt(likedByMe, 10) === 1 ? "yellow" : null}
-										inverted={inverted}
-										name="thumbs up"
-									/>{" "}
+									<Icon color="blue" inverted={inverted} name="thumbs up" />{" "}
 									{likedByMe ? (
 										<span className="likeThis">Liked</span>
 									) : (
@@ -201,15 +228,12 @@ const CommentList = ({
 									<span
 										onClick={() => {
 											setResponseTo(commentId)
-											window.scrollTo({
-												behavior: "smooth",
-												top: blockRef.current.offsetTop
-											})
 											textAreaRef.current.value = `@${user.username} `
 											textAreaRef.current.focus()
 										}}
 									>
-										<Icon inverted={inverted} name="reply" /> Reply
+										<Icon color="green" inverted={inverted} name="reply" />{" "}
+										Reply
 									</span>
 								</Comment.Action>
 							)}
@@ -228,10 +252,34 @@ const CommentList = ({
 		)
 	}
 
+	const showResponses = (commentId, responses) => (
+		<>
+			{responses && responses.length > 0 && (
+				<Comment.Group size="large">
+					{responses.map((r, x) => {
+						if (r.id !== null) {
+							return (
+								<Comment
+									className={`${redirectToComment ? "redirect" : ""}`}
+									id={`${commentId}${r.id}`}
+									key={`replyComment${x}`}
+								>
+									{SingleComment(r, commentId, true, `replyComment${x}`)}
+								</Comment>
+							)
+						}
+
+						return null
+					})}
+				</Comment.Group>
+			)}
+		</>
+	)
+
 	return (
 		<div className="commentsSection">
-			{showForm && (
-				<Segment secondary>
+			<Segment>
+				{showForm && (
 					<div ref={blockRef}>
 						<Grid>
 							<Grid.Row>
@@ -261,14 +309,12 @@ const CommentList = ({
 							</Grid.Row>
 						</Grid>
 					</div>
-				</Segment>
-			)}
+				)}
 
-			{iComments.length > 0 ? (
-				<Segment basic>
+				{iComments.length > 0 ? (
 					<Comment.Group className="commentsGroup" size={size}>
 						{iComments.map((comment, i) => {
-							if (typeof comment.id === "undefined") {
+							if (_.isEmpty(comment)) {
 								return (
 									<Comment key={`individualComment${i}`}>
 										<Comment.Content>{PlaceholderSegment}</Comment.Content>
@@ -276,7 +322,6 @@ const CommentList = ({
 								)
 							}
 
-							const { responses } = comment
 							return (
 								<Comment
 									className={`${redirectToComment ? "redirect" : ""}`}
@@ -290,49 +335,24 @@ const CommentList = ({
 										`individualComment${i}`
 									)}
 
-									{responses && responses.length > 0 && showReplies && (
-										<Comment.Group>
-											{responses.map((response, x) => {
-												if (response.id !== null) {
-													return (
-														<Comment
-															className={`${
-																redirectToComment ? "redirect" : ""
-															}`}
-															id={`${comment.id}${response.id}`}
-															key={`replyComment${x}`}
-														>
-															{SingleComment(
-																response,
-																comment.id,
-																true,
-																`replyComment${i}`
-															)}
-														</Comment>
-													)
-												}
-
-												return null
-											})}
-										</Comment.Group>
-									)}
+									{showResponses(comment.id, comment.responses.data)}
 								</Comment>
 							)
 						})}
 					</Comment.Group>
-				</Segment>
-			) : (
-				<>
-					{showEmptyMsg && (
-						<Segment inverted={inverted} placeholder>
-							<Header icon inverted={inverted} textAlign="center">
-								<Icon color="blue" inverted={inverted} name="comment" />
-								No comments
-							</Header>
-						</Segment>
-					)}
-				</>
-			)}
+				) : (
+					<>
+						{showEmptyMsg && (
+							<Segment inverted={inverted} placeholder>
+								<Header icon inverted={inverted} textAlign="center">
+									<Icon color="blue" inverted={inverted} name="comment" />
+									No comments
+								</Header>
+							</Segment>
+						)}
+					</>
+				)}
+			</Segment>
 		</div>
 	)
 }

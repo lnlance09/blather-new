@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\Fallacy as FallacyResource;
+use App\Http\Resources\Reference as ReferenceResource;
 use App\Http\Resources\FallacyCollection;
 use App\Models\ContradictionTwitter;
 use App\Models\ContradictionYouTube;
@@ -113,7 +114,7 @@ class FallacyController extends Controller
         $img = 'uploads/' . Str::random(24) . '.jpg';
         Storage::disk('s3')->put($img, file_get_contents($file));
 
-        return response()->json([
+        return response([
             'image' => env('AWS_URL', 'https://blather-new.s3.us-west-2.amazonaws.com/') . $img
         ]);
     }
@@ -132,7 +133,8 @@ class FallacyController extends Controller
         $request->validate([
             'tweet' => 'bail|required|exists:tweets,id',
             'explanation' => 'bail|required',
-            'refId' => 'bail|required|exists:reference,id'
+            'refId' => 'bail|required|exists:reference,id',
+            'groupId' => 'sometimes|nullable|exists:groups,id'
         ]);
 
         $refId = $request->input('refId');
@@ -171,7 +173,7 @@ class FallacyController extends Controller
 
         if ($isContradiction && $cTweetId) {
             $cTweet = Tweet::with(['page'])
-                ->where('id', $tweetId)
+                ->where('id', $cTweetId)
                 ->first();
             $cPage = $cTweet->page;
             $cPageId = $cPage->id;
@@ -185,7 +187,7 @@ class FallacyController extends Controller
                 if (!$pageIsMember) {
                     return response([
                         'message' => $page->name . ' is not a member of that group'
-                    ], 404);
+                    ], 401);
                 }
 
                 $cPageIsMember = GroupMember::where([
@@ -196,18 +198,18 @@ class FallacyController extends Controller
                 if (!$cPageIsMember) {
                     return response([
                         'message' => $cPage->name . ' is not a member of that group'
-                    ], 404);
+                    ], 401);
                 }
             } else {
                 if ($cPageId !== $pageId) {
                     return response([
                         'message' => 'Contradictions must be from the same page'
-                    ], 404);
+                    ], 401);
                 }
             }
         }
 
-        $ref = Reference::where('id', $refId)->first();
+        $ref = Reference::find($refId);
         $title = $ref->name . ' by ' . $page->name;
 
         $fallacy = Fallacy::create([
@@ -285,6 +287,48 @@ class FallacyController extends Controller
     {
     }
 
+    public function getRelated(Request $request)
+    {
+        $args = $request->input('args', []);
+        $id = $request->input('id', null);
+
+        $fallacies = Fallacy::whereHas('twitter', function ($query) use ($args) {
+            $query->whereHas('tweet', function ($query) use ($args) {
+                $query->whereHas('arguments', function ($query) use ($args) {
+                    $query->whereHas('argument', function ($query) use ($args) {
+                        $query->whereIn('id', $args);
+                    });
+                });
+            });
+        })
+            ->where('id', '!=', $id)
+            ->get();
+
+        return new FallacyCollection($fallacies);
+    }
+
+    public function saveScreenshot(Request $request)
+    {
+        $request->validate([
+            'id' => 'bail|required|exists:fallacies,id',
+            'file' => 'required|image',
+        ]);
+
+        $id = $request->input('id');
+        $file = $request->file('file');
+
+        $img = 'screenshots/' . Str::random(24) . '.png';
+        Storage::disk('s3')->put($img, file_get_contents($file));
+
+        $fallacy = Fallacy::find($id);
+        $fallacy->s3_link = $img;
+        $fallacy->save();
+
+        return response([
+            'success' => true
+        ]);
+    }
+
     /**
      * Display the specified resource.
      *
@@ -328,17 +372,45 @@ class FallacyController extends Controller
     {
         $request->validate([
             'id' => 'bail|required|exists:fallacies,id',
-            'refId' => 'exists:reference,id',
-            'explanation' => 'bail|required'
+            'refId' => 'sometimes|nullable|exists:reference,id',
+            'explanation' => 'sometimes|nullable|required'
         ]);
 
-        $id = $request->input('id', null);
-        $refId = $request->input('refId');
-        $explanation = $request->input('explanation');
+        $id = $request->input('id');
+        $refId = $request->input('refId', null);
+        $explanation = $request->input('explanation', null);
 
-        $fallacy = Fallacy::where('id', $id)->first();
-        $fallacy->explanation = $explanation;
-        $fallacy->ref_id = $refId;
+        $fallacy = Fallacy::where('id', $id)
+            ->with(['page'])
+            ->first();
+
+        if (!empty($explanation)) {
+            $fallacy->explanation = $explanation;
+        }
+
+        if ($refId) {
+            $ref = Reference::find($refId);
+            $fallacy->ref_id = $refId;
+            $fallacy->title = $ref->name . ' by ' . $fallacy->page->name;
+        }
+
+        $changes = $fallacy->getDirty();
         $fallacy->save();
+
+        $data = [];
+
+        if (array_key_exists('explanation', $changes)) {
+            $data['explanation'] = $changes['explanation'];
+        }
+
+        if (array_key_exists('title', $changes)) {
+            $data['title'] = $changes['title'];
+        }
+
+        if (array_key_exists('ref_id', $changes)) {
+            $data['reference'] = new ReferenceResource($ref);
+        }
+
+        return response($data);
     }
 }

@@ -35,13 +35,16 @@ class CommentResponse extends Model
      *
      * @var array
      */
-    protected $casts = [
-        
-    ];
+    protected $casts = [];
 
     public function comment()
     {
         return $this->belongsTo(Comment::class, 'id', 'response_to');
+    }
+
+    public function likedByMe()
+    {
+        return $this->hasMany(CommentLike::class, 'response_id', 'id');
     }
 
     public function likes()

@@ -17,8 +17,8 @@ const Contact = ({ history }) => {
 
 	const [msg, setMsg] = useState("")
 
-	const onChangeMsg = (e, { value }) => {
-		setMsg(value)
+	const onChangeMsg = (e) => {
+		setMsg(e.target.value)
 	}
 
 	const sendMsg = () => {
@@ -55,18 +55,27 @@ const Contact = ({ history }) => {
 
 			<Header as="h1" content="Contact Us" inverted={inverted} />
 
-			<Header
-				as="p"
-				content="Let us know what's on your mind or if you have any suggestions"
-				inverted={inverted}
-				style={{ fontWeight: "normal" }}
-			/>
-			<Form inverted={inverted} size="large">
+			<p className="description">
+				Let us know what's on your mind or if you have any suggestions
+			</p>
+
+			<Form inverted={inverted}>
 				<Form.Field>
-					<textarea onChange={onChangeMsg} placeholder="What's up?" value={msg} />
+					<textarea
+						onChange={onChangeMsg}
+						placeholder="What's up?"
+						rows={10}
+						value={msg}
+					/>
 				</Form.Field>
 				<Form.Field>
-					<Button color="blue" content="Send" fluid onClick={sendMsg} size="large" />
+					<Button
+						color="blue"
+						content="Send"
+						disabled={msg === ""}
+						fluid
+						onClick={sendMsg}
+					/>
 				</Form.Field>
 			</Form>
 		</DefaultLayout>

@@ -6,8 +6,6 @@ use App\Models\FallacyTwitter;
 use App\Models\Page;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 
 class Tweet extends Model
 {
@@ -68,6 +66,11 @@ class Tweet extends Model
     public function arguments()
     {
         return $this->hasMany(ArgumentExampleTweet::class);
+    }
+
+    public function contradictions()
+    {
+        return $this->hasMany(ContradictionTwitter::class);
     }
 
     public function fallacies()

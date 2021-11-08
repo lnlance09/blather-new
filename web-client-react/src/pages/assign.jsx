@@ -84,6 +84,7 @@ const Assign = ({ history }) => {
 	const [highlightedText, setHighlightedText] = useState("")
 	const [highlightedTextC, setHighlightedTextC] = useState("")
 	const [pageId, setPageId] = useState(null)
+	const [refId, setRefId] = useState(1)
 	const [tweetLoading, setTweetLoading] = useState(false)
 	const [tweetLoadingC, setTweetLoadingC] = useState(false)
 	const [url, setUrl] = useState(_url)
@@ -160,10 +161,15 @@ const Assign = ({ history }) => {
 					tweet
 				})
 				contradiction ? setTweetLoadingC(false) : setTweetLoading(false)
+
 				if (!contradiction) {
 					const pageId = tweet.user.id
 					getGroupsByPage(pageId)
 					setPageId(pageId)
+				}
+
+				if (contradiction) {
+					setRefId(21)
 				}
 
 				if (archived) {
@@ -280,7 +286,7 @@ const Assign = ({ history }) => {
 									onKeyUp(e, () => {
 										setUrlC("")
 										dispatchInternal({
-											type: "RESET_TWEET"
+											type: "RESET_CONTRADICTING_TWEET"
 										})
 									})
 								}
@@ -408,10 +414,12 @@ const Assign = ({ history }) => {
 					<Divider hidden />
 
 					<FallacyForm
+						cTweetId={cTweetLoaded ? cTweet.id : null}
 						groupId={groupId}
 						history={history}
 						inverted={inverted}
 						pageId={pageId}
+						refId={refId}
 						tweetId={tweetLoaded ? tweet.id : null}
 					/>
 				</Container>

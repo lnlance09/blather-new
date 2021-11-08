@@ -96,7 +96,7 @@ const Tweet = ({
 	const linkifiedTweetText = linkifyHtml(tweetText, {
 		className: "linkify",
 		formatHref: {
-			mention: (val) => `/pages/twitter${val}`,
+			mention: (val) => `${process.env.REACT_APP_URL}pages/twitter/${val}`,
 			hashtag: (val) => val
 		}
 	})
@@ -108,7 +108,7 @@ const Tweet = ({
 	const linkifiedQTweetText = linkifyHtml(qTweetText, {
 		className: "linkify",
 		formatHref: {
-			mention: (val) => `/pages/twitter${val}`,
+			mention: (val) => `${process.env.REACT_APP_URL}pages/twitter/${val}`,
 			hashtag: (val) => val
 		}
 	})
@@ -383,9 +383,12 @@ Tweet.propTypes = {
 		showStats: PropTypes.bool
 	}),
 	createdAt: PropTypes.string,
-	extendedEntities: PropTypes.shape({
-		media: PropTypes.array
-	}),
+	extendedEntities: PropTypes.oneOfType([
+		PropTypes.shape({
+			media: PropTypes.array
+		}),
+		PropTypes.string
+	]),
 	fullText: PropTypes.string,
 	id: PropTypes.string,
 	quoted: PropTypes.shape({
@@ -393,7 +396,12 @@ Tweet.propTypes = {
 			favorites: PropTypes.number,
 			retweets: PropTypes.number
 		}),
-		extendedEntities: PropTypes.string,
+		extendedEntities: PropTypes.oneOfType([
+			PropTypes.shape({
+				media: PropTypes.array
+			}),
+			PropTypes.string
+		]),
 		fullText: PropTypes.string,
 		tweetId: PropTypes.string,
 		user: PropTypes.shape({
@@ -407,7 +415,12 @@ Tweet.propTypes = {
 			favorites: PropTypes.number,
 			retweets: PropTypes.number
 		}),
-		extendedEntities: PropTypes.string,
+		extendedEntities: PropTypes.oneOfType([
+			PropTypes.shape({
+				media: PropTypes.array
+			}),
+			PropTypes.string
+		]),
 		fullText: PropTypes.string,
 		tweetId: PropTypes.string,
 		user: PropTypes.shape({

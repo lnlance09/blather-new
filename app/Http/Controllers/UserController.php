@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\PageCollection;
 use App\Http\Resources\User as UserResource;
 use App\Http\Resources\UserCollection;
+use App\Mail\ContactMessage;
 use App\Mail\ForgotPassword;
 use App\Mail\VerificationCode;
 use App\Models\Page;
@@ -147,6 +148,21 @@ class UserController extends Controller
 
         return response([
             'available' => true
+        ]);
+    }
+
+    public function contact(Request $request)
+    {
+        $request->validate([
+            'msg' => 'bail|required',
+        ]);
+
+        $msg = $request->input('msg');
+
+        Mail::to('lnlance09@gmail.com')->send(new ContactMessage($msg));
+
+        return response([
+            'success' => true
         ]);
     }
 
@@ -473,6 +489,7 @@ class UserController extends Controller
             $user = User::create([
                 'api_token' => Str::random(60),
                 'bio' => $bio,
+                'email_verified_at' => now(),
                 'image' => $image,
                 'name' => $name,
                 'password' => '',
@@ -559,7 +576,7 @@ class UserController extends Controller
 
         $user->fill($input)->save();
 
-        return response()->json([
+        return response([
             'success' => true
         ]);
     }
@@ -588,7 +605,7 @@ class UserController extends Controller
         $user->email_verified_at = now();
         $user->save();
 
-        return response()->json([
+        return response([
             'verify' => false
         ]);
     }

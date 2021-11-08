@@ -1,3 +1,5 @@
+import _ from "underscore"
+
 const reducer = (state, action) => {
 	switch (action.type) {
 		case "SET_COMMENTS":
@@ -6,34 +8,29 @@ const reducer = (state, action) => {
 				comments: action.comments
 			}
 		case "LIKE_COMMENT":
-			const comment = state.comments.results.find(
-				(comment) => comment.id === action.commentId
-			)
+			const comment = state.comments.find((comment) => comment.id === action.commentId)
 
-			if (typeof responseId !== "undefined") {
-				const response = comment.responses.find(
+			if (_.has(action, "responseId") && !_.isNull(action.responseId)) {
+				const response = comment.responses.data.find(
 					(response) => response.id === action.responseId
 				)
 				response.likeCount++
-				response.likedByMe = "1"
+				response.likedByMe = true
 			} else {
 				comment.likeCount++
-				comment.likedByMe = "1"
+				comment.likedByMe = true
 			}
 
 			return {
 				...state,
-				comments: {
-					...state.comments,
-					results: state.comments.results
-				}
+				comments: state.comments
 			}
 		case "POST_COMMENT":
 			let results = state.comments ? [action.comment, ...state.comments] : action.comment
 
-			if (typeof action.responseTo !== "undefined" && action.responseTo !== null) {
+			if (_.has(action, "responseTo") && !_.isNull(action.responseTo)) {
 				const _comment = state.comments.find((comment) => comment.id === action.responseTo)
-				_comment.responses.push(action.comment)
+				_comment.responses.data.push(action.comment)
 				results = state.comments
 			}
 
@@ -42,27 +39,22 @@ const reducer = (state, action) => {
 				comments: results
 			}
 		case "UNLIKE_COMMENT":
-			const _comment = state.comments.results.find(
-				(comment) => comment.id === action.commentId
-			)
+			const _comment = state.comments.find((comment) => comment.id === action.commentId)
 
-			if (typeof _responseId !== "undefined") {
-				const _response = _comment.responses.find(
+			if (_.has(action, "responseId") && !_.isNull(action.responseId)) {
+				const _response = _comment.responses.data.find(
 					(response) => response.id === action.responseId
 				)
 				_response.likeCount--
-				_response.likedByMe = 0
+				_response.likedByMe = false
 			} else {
 				_comment.likeCount--
-				_comment.likedByMe = 0
+				_comment.likedByMe = false
 			}
 
 			return {
 				...state,
-				comments: {
-					...state.comments,
-					results: state.comments.results
-				}
+				comments: state.comments
 			}
 		default:
 			throw new Error()

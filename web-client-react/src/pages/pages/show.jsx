@@ -13,7 +13,7 @@ import FallacyList from "components/FallacyList"
 import initialState from "states/page"
 import linkifyHtml from "linkify-html"
 import logger from "use-reducer-logger"
-import Logo from "images/logos/agent.svg"
+import Logo from "images/logos/npc.svg"
 import NumberFormat from "react-number-format"
 import PlaceholderPic from "images/images/image-square.png"
 import PropTypes from "prop-types"
@@ -248,7 +248,7 @@ const Page = ({ history, match }) => {
 														className: "linkify",
 														formatHref: {
 															mention: (val) =>
-																`/pages/twitter${val}`,
+																`${process.env.REACT_APP_URL}pages/twitter/${val}`,
 															hashtag: (val) => val
 														}
 													})

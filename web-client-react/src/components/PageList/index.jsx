@@ -44,7 +44,8 @@ const PageList = ({
 						? linkifyHtml(bio, {
 								className: "linkify",
 								formatHref: {
-									mention: (val) => `/pages/twitter${val}`,
+									mention: (val) =>
+										`${process.env.REACT_APP_URL}pages/twitter/${val}`,
 									hashtag: (val) => val
 								}
 						  })

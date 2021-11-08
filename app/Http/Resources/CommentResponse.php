@@ -19,9 +19,11 @@ class CommentResponse extends JsonResource
     {
         return [
             'id' => $this->id,
+            'likeCount' => $this->likes_count,
+            'likedByMe' => $this->liked_by_me_count === 1,
             'likes' => new LikeCollection($this->likes),
             'msg' => $this->msg,
-            'responseTo' => new CommentResource($this->response_to),
+            // 'responseTo' => new CommentResource($this->response_to),
             'user' => new UserResource($this->user),
             'createdAt' => $this->created_at,
             'updatedAt' => $this->updated_at,

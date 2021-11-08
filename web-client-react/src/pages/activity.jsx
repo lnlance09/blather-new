@@ -42,6 +42,7 @@ const Activity = ({ history }) => {
 			.get(`${process.env.REACT_APP_BASE_URL}fallacies`, {
 				params: {
 					with: ["reference", "user", "twitter.tweet", "youtube.video"],
+					includeContradictions: true,
 					page
 				}
 			})

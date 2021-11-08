@@ -1,4 +1,5 @@
 const initialState = {
+	args: [{}, {}, {}],
 	error: false,
 	comments: {
 		data: [{}, {}, {}],
@@ -53,7 +54,8 @@ const initialState = {
 		createdAt: "",
 		updatedAt: ""
 	},
-	loaded: false
+	loaded: false,
+	refOptions: []
 }
 
 export default initialState

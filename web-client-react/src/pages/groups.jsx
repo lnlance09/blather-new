@@ -60,16 +60,16 @@ const Groups = ({ history }) => {
 					{!error && (
 						<>
 							{groups.map((group, i) => (
-								<Segment basic>
+								<Segment basic key={`segmentKey${i}`}>
 									<Header content={group.name} />
 									<p>{group.description}</p>
 
 									<div className="tiles">
-										{group.members.data.map((m, i) => (
-											<div className="tile">
+										{group.members.data.map((m, x) => (
+											<div className="tile" key={`tileKey${x}`}>
 												<Image
 													bordered
-													data-for={`groupsMember${i}`}
+													data-for={`groupsMember${x}`}
 													data-iscapture="true"
 													data-tip={m.page.name}
 													onClick={() =>

@@ -24,6 +24,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/arguments', [ArgumentController::class, 'index']);
+Route::get('/arguments/getArgumentsByFallacy', [ArgumentController::class, 'getArgumentsByFallacy']);
 Route::get('/arguments/getFallaciesByArg', [ArgumentController::class, 'getFallaciesByArg']);
 Route::get('/arguments/getPagesByArg', [ArgumentController::class, 'getPagesByArg']);
 Route::get('/arguments/showOptions', [ArgumentController::class, 'showOptions']);
@@ -31,16 +32,20 @@ Route::get('/arguments/{slug}', [ArgumentController::class, 'show']);
 Route::post('/arguments/addImage', [ArgumentController::class, 'addImage'])->middleware(['auth:api', 'verified']);
 Route::post('/arguments/{id}/update', [ArgumentController::class, 'update'])->middleware(['auth:api', 'verified']);
 
-Route::get('/comments', [CommentController::class, 'index']);
-Route::post('/comments/create', [CommentController::class, 'create']);
-Route::post('/comments/like', [CommentController::class, 'like']);
-Route::post('/comments/unlike', [CommentController::class, 'unlike']);
+Route::get('/comments', [CommentController::class, 'index'])->middleware('api');
+Route::post('/comments/create', [CommentController::class, 'create'])->middleware('api');
+Route::post('/comments/like', [CommentController::class, 'like'])->middleware(['auth:api', 'verified']);
+Route::post('/comments/unlike', [CommentController::class, 'unlike'])->middleware(['auth:api', 'verified']);
 
-Route::get('/fallacies/migrate', [FallacyController::class, 'migrate']);
+Route::post('/contact', [UserController::class, 'contact']);
+
 Route::get('/fallacies', [FallacyController::class, 'index']);
+// Route::get('/fallacies/migrate', [FallacyController::class, 'migrate']);
+Route::get('/fallacies/related', [FallacyController::class, 'getRelated']);
 Route::get('/fallacies/{slug}', [FallacyController::class, 'show']);
 Route::post('/fallacies/addImage', [FallacyController::class, 'addImage']);
 Route::post('/fallacies/create', [FallacyController::class, 'create'])->middleware('api');
+Route::post('/fallacies/saveScreenshot', [FallacyController::class, 'saveScreenshot']);
 Route::post('/fallacies/update', [FallacyController::class, 'update'])->middleware(['auth:api', 'verified']);
 
 Route::get('/groups', [GroupController::class, 'index']);

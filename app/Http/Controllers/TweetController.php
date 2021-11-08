@@ -82,7 +82,7 @@ class TweetController extends Controller
 
         $args = $request->input('args', []);
 
-        $tweet = Tweet::where('id', $id)->first();
+        $tweet = Tweet::find($id);
 
         if (!$tweet) {
             return response([

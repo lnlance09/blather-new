@@ -20,7 +20,7 @@ class ReferenceOption extends JsonResource
             $text .= ' (' . number_format($this->fallacies_count) . ')';
         }
 
-        $description = $request->input('pageIds') ? null : $this->description;
+        $description = $request->input('pageIds') || $request->input('basic') == true ? null : $this->description;
 
         return [
             'description' => $description,

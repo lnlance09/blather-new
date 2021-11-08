@@ -29,7 +29,7 @@ class Fallacy extends JsonResource
             'page' => new PageResource($this->page),
             'reference' => new ReferenceResource($this->reference),
             'retracted' => $this->retracted,
-            's3Link' => $this->s3_link,
+            's3Link' => env('AWS_URL', 'https://blather-new.s3.us-west-2.amazonaws.com/') . $this->s3_link,
             'slug' => $this->slug,
             'status' => $this->status,
             'title' => $this->title,

@@ -147,8 +147,8 @@ const Arguments = ({ history }) => {
 														as="h3"
 														content="What this contradicts"
 													/>
-													{contradictions.data.map((c) => (
-														<Card fluid>
+													{contradictions.data.map((c, x) => (
+														<Card fluid key={`contradiction${x}`}>
 															<Card.Content>
 																<Card.Header>
 																	{c.description}

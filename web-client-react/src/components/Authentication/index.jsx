@@ -334,8 +334,7 @@ const Authentication = ({ history, inverted, showLogin = true, size }) => {
 										inverted={inverted}
 										label={{
 											color: "black",
-											content: "email",
-											inverted: true
+											content: "email"
 										}}
 										onChange={(e, { value }) => {
 											setEmail(value)
@@ -403,9 +402,9 @@ const Authentication = ({ history, inverted, showLogin = true, size }) => {
 										onChange={(e, { value }) => {
 											setRegPassword(value)
 										}}
-										value={regPassword}
 										placeholder="Password"
 										type="password"
+										value={regPassword}
 									/>
 								</Form.Field>
 								<Form.Field>
