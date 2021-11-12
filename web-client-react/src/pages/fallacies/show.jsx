@@ -11,6 +11,7 @@ import {
 	Icon,
 	Image,
 	List,
+	Modal,
 	Placeholder,
 	Segment,
 	Transition,
@@ -44,6 +45,7 @@ import Moment from "react-moment"
 import PropTypes from "prop-types"
 import reducer from "reducers/fallacy"
 import ThemeContext from "themeContext"
+import TweetList from "components/TweetList"
 
 const toastConfig = getConfig()
 toast.configure(toastConfig)
@@ -56,7 +58,7 @@ const PlaceholderSegment = (
 
 const Fallacy = ({ history, match }) => {
 	const { state } = useContext(ThemeContext)
-	const { auth } = state
+	const { auth, inverted } = state
 	const authUser = state.user
 
 	const { slug } = match.params
@@ -68,7 +70,8 @@ const Fallacy = ({ history, match }) => {
 		process.env.NODE_ENV === "development" ? logger(reducer) : reducer,
 		initialState
 	)
-	const { args, comments, error, fallacies, fallacy, loaded, refOptions } = internalState
+	const { args, comments, error, fallacies, fallacy, loaded, modalTweets, refOptions } =
+		internalState
 	const { createdAt, group, id, page, reference, retracted, title, user } = fallacy
 	const { contradictionTweet, contradictionYouTube, twitter } = fallacy
 
@@ -79,6 +82,7 @@ const Fallacy = ({ history, match }) => {
 
 	const [downloading, setDownloading] = useState(false)
 	const [editingExp, setEditingExp] = useState(false)
+	const [modalOpen, setModalOpen] = useState(false)
 	const [refId, setRefId] = useState(1)
 	const [verticalMode, setVerticalMode] = useState(true)
 	const [visible, setVisible] = useState(false)
@@ -87,6 +91,11 @@ const Fallacy = ({ history, match }) => {
 	const [loadingC, setLoadingC] = useState(true)
 	const [loadingMoreC, setLoadingMoreC] = useState(false)
 	const [pageNumberC, setPageNumberC] = useState(1)
+
+	const [hasMoreT, setHasMoreT] = useState(false)
+	const [loadingT, setLoadingT] = useState(true)
+	const [loadingMoreT, setLoadingMoreT] = useState(false)
+	const [pageNumberT, setPageNumberT] = useState(1)
 
 	useEffect(() => {
 		const getFallacy = async (slug) => {
@@ -193,6 +202,7 @@ const Fallacy = ({ history, match }) => {
 
 				const argIds = await data.map((arg) => arg.id)
 				getRelatedFallacies(argIds, id)
+				getTweets(argIds)
 			})
 			.catch(() => {
 				toast.error("There was an error")
@@ -245,6 +255,32 @@ const Fallacy = ({ history, match }) => {
 			})
 			.catch(() => {
 				toast.error("There was an error")
+			})
+	}
+
+	const getTweets = async (argIds, page = 1) => {
+		page === 1 ? setLoadingT(true) : setLoadingMoreT(true)
+		await axios
+			.get(`${process.env.REACT_APP_BASE_URL}tweets`, {
+				params: {
+					argIds,
+					page
+				}
+			})
+			.then((response) => {
+				const { data, meta } = response.data
+				dispatch({
+					type: "GET_MODAL_TWEETS",
+					tweets: data,
+					page,
+					total: meta.total
+				})
+				setPageNumberT(page + 1)
+				setHasMoreT(true)
+				page === 1 ? setLoadingT(false) : setLoadingMoreT(false)
+			})
+			.catch(() => {
+				console.error("There was an error")
 			})
 	}
 
@@ -507,7 +543,7 @@ const Fallacy = ({ history, match }) => {
 													{a.description}
 												</Link>
 												{a.tweetCount > 1 && (
-													<Feed.Meta>
+													<Feed.Meta onClick={() => setModalOpen(true)}>
 														<Feed.Like>
 															<Icon color="green" name="recycle" />{" "}
 															has recycled this argument{" "}
@@ -682,6 +718,41 @@ const Fallacy = ({ history, match }) => {
 									</Grid>
 								</Container>
 							</div>
+
+							<Modal
+								basic
+								centered={false}
+								closeIcon
+								dimmer="blurring"
+								onClose={() => setModalOpen(false)}
+								onOpen={() => setModalOpen(true)}
+								open={modalOpen}
+								size="large"
+							>
+								<Modal.Header>{page.name} has recycled this argument</Modal.Header>
+								<Modal.Content>
+									<Segment>
+										<Visibility
+											continuous
+											offset={[50, 50]}
+											onBottomVisible={() => {
+												if (!loadingT && !loadingMoreT && hasMoreT) {
+													getTweets([id], pageNumberT)
+												}
+											}}
+										>
+											<TweetList
+												history={history}
+												inverted={inverted}
+												loading={false}
+												loadingMore={false}
+												showSaveOption={false}
+												tweets={modalTweets}
+											/>
+										</Visibility>
+									</Segment>
+								</Modal.Content>
+							</Modal>
 						</>
 					)}
 				</>

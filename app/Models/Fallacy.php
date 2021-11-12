@@ -54,6 +54,11 @@ class Fallacy extends Model
      */
     protected $casts = [];
 
+    public function comments()
+    {
+        return $this->hasOne(Comment::class, 'fallacy_id', 'id');
+    }
+
     public function contradictionTwitter()
     {
         return $this->hasOne(ContradictionTwitter::class, 'fallacy_id', 'id');

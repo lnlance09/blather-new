@@ -334,7 +334,7 @@ const PageHeader = ({ activeItem = null, history, showBanner = false, simple = f
 					<Container>
 						{auth ? (
 							<p>
-								<Link to={`/${user.username}/settings/twitter`}>
+								<Link to={`/${user.username}/settings?tab=twitter`}>
 									Link your Twitter
 								</Link>{" "}
 								account for optimal experience.

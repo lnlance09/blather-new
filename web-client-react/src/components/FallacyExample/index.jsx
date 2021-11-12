@@ -1,6 +1,6 @@
 import "./style.scss"
 import { useEffect } from "react"
-import { Card, Divider, Grid, Icon, Image, Label, Segment } from "semantic-ui-react"
+import { Card, Divider, Grid, Header, Icon, Image, Label, Segment } from "semantic-ui-react"
 import { hyphenateText } from "utils/textFunctions"
 import renderer, { tweetOptions } from "options/tweet"
 import Marked from "marked"
@@ -12,6 +12,7 @@ import Tweet from "components/Tweet"
 
 const FallacyExample = ({
 	colored = false,
+	commentCount = 0,
 	contradictionTwitter,
 	contradictionYouTube,
 	createdAt,
@@ -24,6 +25,7 @@ const FallacyExample = ({
 	onClickFallacy = () => null,
 	onClickTweet = () => null,
 	reference,
+	showCommentCount = false,
 	showExplanation = true,
 	slug,
 	stacked = false,
@@ -170,6 +172,7 @@ const FallacyExample = ({
 						url={`https://www.youtube.com/watch?v=${cVideo.videoId}&t=${cVideo.startTime}`}
 						width="100%"
 					/>
+					<Divider />
 					<span
 						className="blue"
 						onClick={(e) => {
@@ -189,76 +192,89 @@ const FallacyExample = ({
 	return (
 		<div className={`fallacyExample ${colored ? "colored" : ""}`}>
 			{useSegment && (
-				<Segment
-					className={group ? "withGroup" : ""}
-					raised
-					stacked={stacked}
-					onClick={(e) => {
-						e.stopPropagation()
-						onClickFallacy(e, slug)
-					}}
-				>
-					{group && (
-						<Label attached="top" className={hyphenateText(group.name)} size="large">
-							{group.name}
-						</Label>
-					)}
-					{useRibbon && (
-						<Label as="a" color="blue" ribbon size="large">
-							<Icon name="clock" />
-							{showDateDiff && (
-								<>
-									<Moment ago from={dateOne}>
-										{dateTwo}
-									</Moment>{" "}
-									apart
-								</>
-							)}
-						</Label>
-					)}
-					{showExplanation && (
-						<Segment basic>
-							<div
-								className="explanation"
-								dangerouslySetInnerHTML={{
-									__html: Marked(explanation)
-								}}
-							/>
-						</Segment>
-					)}
-					{verticalMode ? (
-						<>
-							{_Tweet()}
-							{Video()}
-							{showDateDiff && (
-								<Divider className="fallacyDateDiff" hidden horizontal>
-									<Icon name="clock outline" style={{ marginRight: "5px" }} />{" "}
-									<Moment ago from={dateOne}>
-										{dateTwo}
-									</Moment>{" "}
-									<div style={{ marginLeft: 3 }}>apart</div>
-								</Divider>
-							)}
-							{ContradictingTweet()}
-							{ContradictingVideo()}
-						</>
-					) : (
-						<Grid>
-							<Grid.Column width={8}>
+				<>
+					<Segment
+						attached={showCommentCount}
+						className={group ? "withGroup" : ""}
+						// raised
+						stacked={stacked}
+						onClick={(e) => {
+							e.stopPropagation()
+							onClickFallacy(e, slug)
+						}}
+					>
+						{group && (
+							<Label
+								attached="top"
+								className={hyphenateText(group.name)}
+								size="large"
+							>
+								{group.name}
+							</Label>
+						)}
+						{useRibbon && (
+							<Label as="a" color="black" ribbon size="large">
+								<Icon name="clock" />
+								{showDateDiff && (
+									<>
+										<Moment ago from={dateOne}>
+											{dateTwo}
+										</Moment>{" "}
+										apart
+									</>
+								)}
+							</Label>
+						)}
+						{showExplanation && (
+							<Segment basic>
+								<div
+									className="explanation"
+									dangerouslySetInnerHTML={{
+										__html: Marked(explanation)
+									}}
+								/>
+							</Segment>
+						)}
+						{verticalMode ? (
+							<>
 								{_Tweet()}
 								{Video()}
-							</Grid.Column>
-							<Grid.Column width={8}>
+								{showDateDiff && (
+									<Divider className="fallacyDateDiff" hidden horizontal>
+										<Icon name="clock outline" style={{ marginRight: "5px" }} />{" "}
+										<Moment ago from={dateOne}>
+											{dateTwo}
+										</Moment>{" "}
+										<div style={{ marginLeft: 3 }}>apart</div>
+									</Divider>
+								)}
 								{ContradictingTweet()}
 								{ContradictingVideo()}
-							</Grid.Column>
-						</Grid>
+							</>
+						) : (
+							<Grid>
+								<Grid.Column width={8}>
+									{_Tweet()}
+									{Video()}
+								</Grid.Column>
+								<Grid.Column width={8}>
+									{ContradictingTweet()}
+									{ContradictingVideo()}
+								</Grid.Column>
+							</Grid>
+						)}
+					</Segment>
+					{showCommentCount && (
+						<Header attached="bottom" block size="small">
+							<Icon color="blue" name="comment" /> {commentCount}
+						</Header>
 					)}
-				</Segment>
+				</>
 			)}
 
 			{useCard && (
 				<Card
+					className="fallacyCard"
 					fluid
 					onClick={(e) => {
 						e.stopPropagation()
@@ -299,6 +315,7 @@ const FallacyExample = ({
 }
 
 FallacyExample.propTypes = {
+	commentCount: PropTypes.number,
 	contradictionTwitter: PropTypes.shape({}),
 	contradictionYouTube: PropTypes.shape({}),
 	createdAt: PropTypes.string,
@@ -310,6 +327,7 @@ FallacyExample.propTypes = {
 	id: PropTypes.number,
 	onClickFallacy: PropTypes.func,
 	reference: PropTypes.shape({}),
+	showCommentCount: PropTypes.bool,
 	showExplanation: PropTypes.bool,
 	slug: PropTypes.string,
 	stacked: PropTypes.bool,

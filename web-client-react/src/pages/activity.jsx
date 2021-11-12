@@ -43,6 +43,7 @@ const Activity = ({ history }) => {
 				params: {
 					with: ["reference", "user", "twitter.tweet", "youtube.video"],
 					includeContradictions: true,
+					commentCount: true,
 					page
 				}
 			})

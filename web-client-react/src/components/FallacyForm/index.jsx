@@ -158,7 +158,7 @@ const FallacyForm = ({
 
 	useEffect(() => {
 		const getRefOptions = async () => {
-			const options = await getReferenceOptions()
+			const options = await getReferenceOptions(null, false)
 			dispatch({
 				type: "SET_REFERENCE_OPTIONS",
 				options

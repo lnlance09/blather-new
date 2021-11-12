@@ -58,18 +58,29 @@
         }
     }
 
+    .header.attached.bottom {
+        padding-left: 32px;
+    }
+
     .explanation {
         p {
             font-size: 16px;
             line-height: 1.8;
+            margin-bottom: 0 !important;
         }
 
         img {
             border: solid 1px $twitterExtraLightGrey;
             border-radius: 4px;
+            margin-left: 0 !important;
+            margin: 12px 10px 12px 0;
             padding: 8px;
             width: 300px;
         }
+    }
+
+    .fallacyCard {
+        background: $offWhite !important;
     }
 
     .tweetWrapper {

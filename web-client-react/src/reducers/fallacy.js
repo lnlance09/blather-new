@@ -31,6 +31,13 @@ const reducer = (state, action) => {
 				...state,
 				fallacies
 			}
+		case "GET_MODAL_TWEETS":
+			const tweets =
+				action.page > 1 ? [...state.modalTweets, ...action.tweets] : action.tweets
+			return {
+				...state,
+				modalTweets: tweets
+			}
 		case "SAVE_SCREENSHOT":
 			return {
 				...state,

@@ -1,5 +1,5 @@
 import "./style.scss"
-import { Grid, Header, Placeholder, Segment } from "semantic-ui-react"
+import { Grid, Header, Icon, Placeholder, Segment } from "semantic-ui-react"
 import { onClickRedirect } from "utils/linkFunctions"
 import FallacyExample from "components/FallacyExample"
 import PropTypes from "prop-types"
@@ -42,27 +42,31 @@ const FallacyList = ({
 							{loading ? (
 								<Segment>{PlaceholderSegment}</Segment>
 							) : (
-								<FallacyExample
-									contradictionTwitter={fallacy.contradictionTwitter}
-									contradictionYouTube={fallacy.contradictionYouTube}
-									createdAt={fallacy.createdAt}
-									defaultUserImg={defaultUserImg}
-									explanation={fallacy.explanation}
-									history={history}
-									id={fallacy.id}
-									onClickFallacy={onClickFallacy}
-									onClickTweet={(e, history, id) =>
-										onClickRedirect(e, history, `/tweets/${id}`)
-									}
-									reference={fallacy.reference}
-									slug={fallacy.slug}
-									twitter={fallacy.twitter}
-									useCard={fallacy.reference.id !== 21}
-									user={fallacy.user}
-									useRibbon={fallacy.reference.id === 21}
-									useSegment={fallacy.reference.id === 21}
-									youtube={fallacy.youtube}
-								/>
+								<>
+									<FallacyExample
+										commentCount={fallacy.commentCount}
+										contradictionTwitter={fallacy.contradictionTwitter}
+										contradictionYouTube={fallacy.contradictionYouTube}
+										createdAt={fallacy.createdAt}
+										defaultUserImg={defaultUserImg}
+										explanation={fallacy.explanation}
+										history={history}
+										id={fallacy.id}
+										onClickFallacy={onClickFallacy}
+										onClickTweet={(e, history, id) =>
+											onClickRedirect(e, history, `/tweets/${id}`)
+										}
+										reference={fallacy.reference}
+										showCommentCount
+										slug={fallacy.slug}
+										twitter={fallacy.twitter}
+										useCard={fallacy.reference.id !== 21}
+										user={fallacy.user}
+										useRibbon={fallacy.reference.id === 21}
+										useSegment={fallacy.reference.id === 21}
+										youtube={fallacy.youtube}
+									/>
+								</>
 							)}
 						</Grid.Column>
 					</Grid.Row>

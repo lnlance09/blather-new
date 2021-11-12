@@ -55,6 +55,7 @@ class FallacyController extends Controller
         $status = $request->input('status', null);
         $includeContradictions = $request->input('includeContradictions', false);
         $tweetId = $request->input('tweetId', null);
+        $commentCount = $request->input('commentCount', false);
         $with = $request->input('with', self::DEFAULT_WITH);
 
         $sort = $request->input('sort', 'id');
@@ -71,7 +72,13 @@ class FallacyController extends Controller
             $where['retracted'] = $retracted;
         }
 
-        $fallacies = Fallacy::with($with)->where($where);
+        $fallacies = Fallacy::with($with);
+
+        if ($commentCount) {
+            $fallacies = $fallacies->withCount(['comments']);
+        }
+
+        $fallacies = $fallacies->where($where);
 
         if (!$includeContradictions) {
             $fallacies = $fallacies->whereNotIn('ref_id', [21]);

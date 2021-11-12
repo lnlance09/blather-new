@@ -13,7 +13,7 @@ export const grifters = {
 			username: "charliekirk11"
 		},
 		{
-			src: "public/prageru.jpeg",
+			src: "public/dennis-prager.jpeg",
 			name: "PragerU",
 			network: "twitter",
 			username: "prageru"
@@ -31,7 +31,7 @@ export const grifters = {
 			username: "thecjpearson"
 		},
 		{
-			src: "p",
+			src: "public/larry-elder.jpeg",
 			name: "Larry Elder",
 			network: "twitter",
 			username: "larryelder"
@@ -49,86 +49,150 @@ export const grifters = {
 			username: "prisonplanet"
 		},
 		{
-			src: "pages/twitter/Candace-Owens-878247600096509952-1633012551.jpg",
+			src: "public/dave-rubin.jpeg",
 			name: "Dave Rubin",
 			network: "twitter",
 			username: "rubinreport"
 		},
 		{
-			src: "pages/twitter/Candace-Owens-878247600096509952-1633012551.jpg",
+			src: "public/tim-pool.jpeg",
 			name: "Tim Pool",
 			network: "twitter",
 			username: "timcast"
 		},
 		{
-			src: "pages/twitter/Candace-Owens-878247600096509952-1633012551.jpg",
+			src: "public/anna-paulina.jpeg",
 			name: "Anna Paulina Luna",
 			network: "twitter",
 			username: "realannapaulina"
 		},
 		{
-			src: "pages/twitter/Candace-Owens-878247600096509952-1633012551.jpg",
+			src: "public/tomi-lahren.jpeg",
 			name: "Tomi Lahren",
 			network: "twitter",
 			username: "tomilahren"
 		},
 		{
-			src: "pages/twitter/Candace-Owens-878247600096509952-1633012551.jpg",
+			src: "public/ryan-fournier.jpeg",
 			name: "Ryan Fournier",
 			network: "twitter",
 			username: "ryanafournier"
 		},
 		{
-			src: "pages/twitter/Candace-Owens-878247600096509952-1633012551.jpg",
+			src: "public/liz-wheeler.jpeg",
 			name: "Liz Wheeler",
 			network: "twitter",
 			username: "lizwheeler"
 		},
 		{
-			src: "pages/twitter/Candace-Owens-878247600096509952-1633012551.jpg",
+			src: "public/dinesh-dsouza.png",
 			name: "Dinesh D'Souza",
 			network: "twitter",
 			username: "dineshdsouza"
 		},
 		{
-			src: "pages/twitter/Candace-Owens-878247600096509952-1633012551.jpg",
+			src: "public/jordan-peterson.jpeg",
+			name: "Jordan Peterson",
+			network: "twitter",
+			username: "jordanbpeterson"
+		},
+		{
+			src: "public/lauren-chen.jpeg",
 			name: "Lauren Chen",
 			network: "twitter",
 			username: "thelaurenchen"
 		},
 		{
-			src: "pages/twitter/Candace-Owens-878247600096509952-1633012551.jpg",
+			src: "public/dan-bongino.jpg",
 			name: "Dan Bongino",
 			network: "twitter",
 			username: "dbongino"
 		},
 		{
-			src: "pages/twitter/Candace-Owens-878247600096509952-1633012551.jpg",
+			src: "public/ben-shapiro.jpeg",
 			name: "Ben Shapiro",
 			network: "twitter",
 			username: "benshapiro"
 		},
 		{
-			src: "pages/twitter/Candace-Owens-878247600096509952-1633012551.jpg",
-			name: "Laura Ingraham",
-			network: "twitter",
-			username: "ingrahamangle"
-		},
-		{
-			src: "pages/twitter/Candace-Owens-878247600096509952-1633012551.jpg",
+			src: "public/tucker-carlson.jpeg",
 			name: "Tucker Carlson",
 			network: "twitter",
 			username: "tuckercarlson"
 		},
 		{
-			src: "pages/twitter/Candace-Owens-878247600096509952-1633012551.jpg",
+			src: "public/kurt-schlichter.jpeg",
 			name: "Kurt Schlichter",
 			network: "twitter",
 			username: "kurtschlichter"
 		},
 		{
-			src: "pages/twitter/Candace-Owens-878247600096509952-1633012551.jpg",
+			src: "public/matt-walsh.jpeg",
 			name: "Matt Walsh",
+			network: "twitter",
+			username: "mattwalshblog"
+		}
+	],
+	mlm: [
+		{
+			src: "public/sam-ovens.jpeg",
+			name: "Sam Ovens",
+			network: "twitter",
+			username: "mattwalshblog"
+		}
+	],
+	antiVaxx: [
+		{
+			src: "public/jenny-mccarthy.jpeg",
+			name: "Jenny McCarthy",
+			network: "twitter",
+			username: "mattwalshblog"
+		},
+		{
+			src: "public/kristin-cavallari.jpeg",
+			name: "Kristin Cavallari",
+			network: "twitter",
+			username: "mattwalshblog"
+		}
+	],
+	evangelicals: [
+		{
+			src: "public/jerry-falwell.jpeg",
+			name: "Jerry Falwell Jr.",
+			network: "twitter",
+			username: "mattwalshblog"
+		},
+		{
+			src: "public/ted-haggard.jpeg",
+			name: "Ted Haggard",
+			network: "twitter",
+			username: "mattwalshblog"
+		},
+		{
+			src: "public/joel-osteen.png",
+			name: "Joel Osteen",
+			network: "twitter",
+			username: "mattwalshblog"
+		},
+		{
+			src: "public/greg-locke.jpg",
+			name: "Greg Locke",
+			network: "twitter",
+			username: "mattwalshblog"
+		}
+	],
+	crypto: [
+		{
+			src: "public/matt-walsh.jpeg",
+			name: "Amway",
+			network: "twitter",
+			username: "mattwalshblog"
+		}
+	],
+	blueCheckMark: [
+		{
+			src: "public/matt-walsh.jpeg",
+			name: "Amway",
 			network: "twitter",
 			username: "mattwalshblog"
 		}

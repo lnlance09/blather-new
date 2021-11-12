@@ -311,7 +311,6 @@ class TweetController extends Controller
 
                     Storage::disk('s3')->put($img, file_get_contents($imgUrl));
 
-
                     $rPage = Page::updateOrCreate(
                         [
                             'network' => 'twitter',

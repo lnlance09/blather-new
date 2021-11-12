@@ -55,6 +55,7 @@ const initialState = {
 		updatedAt: ""
 	},
 	loaded: false,
+	modalTweets: [],
 	refOptions: []
 }
 

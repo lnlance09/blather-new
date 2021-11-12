@@ -4,7 +4,7 @@ export const getReferenceOptions = async (pageIds = null, basic = false) => {
 	return await axios
 		.get(`${process.env.REACT_APP_BASE_URL}reference/showOptions`, {
 			params: {
-				basic,
+				basic: basic !== false ? 1 : 0,
 				pageIds,
 				showCounts: pageIds !== null ? 1 : 0
 			}

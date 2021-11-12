@@ -13,7 +13,7 @@ const Grifters = ({ history }) => {
 	const { state } = useContext(ThemeContext)
 	const { inverted } = state
 
-	const { maga } = grifters
+	const { antiVaxx, blueCheckMark, crypto, evangelicals, maga, mlm } = grifters
 
 	return (
 		<DefaultLayout activeItem="grifters" containerClassName="griftersPage" history={history}>
@@ -38,10 +38,10 @@ const Grifters = ({ history }) => {
 					<p>
 						Political grifting, particularly on the right, has long been the last refuge
 						of talentless celebrity wannabes. It’s why so many people in Trump world are
-						failed comedians/musicians/actors etc. And it’s easy. Super easy. It’s
-						literally reciting scripted talking points and telling your audience what
-						they already believe, but doing it as a one dimensional personality brand.
-						Extra points in one is a member of a marginalized group.
+						failed comedians, musicians, actors, models etc. And it’s easy. Super easy.
+						It’s literally reciting scripted talking points and telling your audience
+						what they already believe, but doing it as a one-dimensional personality
+						brand. Bonus points in one is a member of a marginalized group.
 					</p>
 
 					<div className="gallery-wrapper">
@@ -73,10 +73,107 @@ const Grifters = ({ history }) => {
 					</div>
 
 					<Header as="h1">MLM Grifters</Header>
-					<p></p>
+					<p>
+						Here's some financial advice... Don't take financial advice from anyone
+						using the words "hustle" or "grind." Or if they're constantly posting vapid
+						motivational crap mixed in with their preposterous financial posts. The odds
+						of said person wanting to con you into a pyramid scheme are astronomical.
+					</p>
+					<div className="gallery-wrapper">
+						<div className="tiles">
+							{mlm.map((m, i) => (
+								<div className="tile" key={`tileKey${i}`}>
+									<Image
+										data-for={`groupsMember${i}`}
+										data-iscapture="true"
+										data-tip={m.name}
+										onClick={() =>
+											history.push(`/pages/${m.network}/${m.username}`)
+										}
+										onError={(e) => (e.target.src = PlaceholderPic)}
+										rounded
+										src={`${s3Url}${m.src}`}
+									/>
+									<ReactTooltip
+										className="tooltipClass"
+										effect="solid"
+										id={`groupsMember${i}`}
+										multiline={false}
+										place="left"
+										type="dark"
+									/>
+								</div>
+							))}
+						</div>
+					</div>
 
 					<Header as="h1">Anti-Vaxx Grifters</Header>
+					<p>
+						These are people who exploit the general population's scientific ignorance,
+						particuarly in regards to vaccines, for their own personal gain. Prior to
+						2020, this group consisted almost entirely of west coast hippie burnouts and
+						wealthy suburban soccer mom Gwenyth Paltrow types. However, the temptation
+						to own the libz proved to be too strong and this group is now dominated by
+						rural Republicans who think that being hospitalized for a preventable
+						disease is a cool way to score some political points.
+					</p>
+					<div className="gallery-wrapper">
+						<div className="tiles">
+							{antiVaxx.map((m, i) => (
+								<div className="tile" key={`tileKey${i}`}>
+									<Image
+										data-for={`groupsMember${i}`}
+										data-iscapture="true"
+										data-tip={m.name}
+										onClick={() =>
+											history.push(`/pages/${m.network}/${m.username}`)
+										}
+										onError={(e) => (e.target.src = PlaceholderPic)}
+										rounded
+										src={`${s3Url}${m.src}`}
+									/>
+									<ReactTooltip
+										className="tooltipClass"
+										effect="solid"
+										id={`groupsMember${i}`}
+										multiline={false}
+										place="left"
+										type="dark"
+									/>
+								</div>
+							))}
+						</div>
+					</div>
+
+					<Header as="h1">Evangelical Grifters</Header>
 					<p></p>
+					<div className="gallery-wrapper">
+						<div className="tiles">
+							{evangelicals.map((m, i) => (
+								<div className="tile" key={`tileKey${i}`}>
+									<Image
+										data-for={`groupsMember${i}`}
+										data-iscapture="true"
+										data-tip={m.name}
+										onClick={() =>
+											history.push(`/pages/${m.network}/${m.username}`)
+										}
+										onError={(e) => (e.target.src = PlaceholderPic)}
+										rounded
+										src={`${s3Url}${m.src}`}
+									/>
+									<ReactTooltip
+										className="tooltipClass"
+										effect="solid"
+										id={`groupsMember${i}`}
+										multiline={false}
+										place="left"
+										type="dark"
+									/>
+								</div>
+							))}
+						</div>
+					</div>
 
 					<Header as="h1">Cryptocurrency Grifters</Header>
 					<p>
@@ -85,17 +182,70 @@ const Grifters = ({ history }) => {
 						play a guessing game. Make a bunch of predictions about stuff. Most will be
 						wrong. But some, if you make enough of them, will ultimately come true
 						because of pure luck. Take credit for the ones that came true and completely
-						ignore the ones that didn't. Rinse and repeat. d
+						ignore the ones that didn't. Rinse and repeat. Crypto grifters are financial
+						fortune tellers who seize on young and naive peoples' desire to get rich
+						quick.
 					</p>
-
-					<Header as="h1">Evangelical Grifters</Header>
-					<p></p>
+					<div className="gallery-wrapper">
+						<div className="tiles">
+							{crypto.map((m, i) => (
+								<div className="tile" key={`tileKey${i}`}>
+									<Image
+										data-for={`groupsMember${i}`}
+										data-iscapture="true"
+										data-tip={m.name}
+										onClick={() =>
+											history.push(`/pages/${m.network}/${m.username}`)
+										}
+										onError={(e) => (e.target.src = PlaceholderPic)}
+										rounded
+										src={`${s3Url}${m.src}`}
+									/>
+									<ReactTooltip
+										className="tooltipClass"
+										effect="solid"
+										id={`groupsMember${i}`}
+										multiline={false}
+										place="left"
+										type="dark"
+									/>
+								</div>
+							))}
+						</div>
+					</div>
 
 					<Header as="h1">Entrepreneurial Grifters</Header>
 					<p>
 						These are opportunistic grifters of the Ivanka Trump flavor. Usually Ivy
 						League educated Forbes 30 under 30 types. I
 					</p>
+					<div className="gallery-wrapper">
+						<div className="tiles">
+							{blueCheckMark.map((m, i) => (
+								<div className="tile" key={`tileKey${i}`}>
+									<Image
+										data-for={`groupsMember${i}`}
+										data-iscapture="true"
+										data-tip={m.name}
+										onClick={() =>
+											history.push(`/pages/${m.network}/${m.username}`)
+										}
+										onError={(e) => (e.target.src = PlaceholderPic)}
+										rounded
+										src={`${s3Url}${m.src}`}
+									/>
+									<ReactTooltip
+										className="tooltipClass"
+										effect="solid"
+										id={`groupsMember${i}`}
+										multiline={false}
+										place="left"
+										type="dark"
+									/>
+								</div>
+							))}
+						</div>
+					</div>
 
 					<Divider hidden />
 				</Grid.Column>

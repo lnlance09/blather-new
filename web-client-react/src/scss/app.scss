@@ -144,11 +144,12 @@ body {
 		position: relative;
 	
 		.tile {
+			border-radius: 5px;
 			cursor: pointer;
 			margin: 6px;
 			overflow: hidden;
-			width: 100px;
-			height: 100px;
+			width: 125px;
+			height: 125px;
 		
 			img {
 				width: 100%;
