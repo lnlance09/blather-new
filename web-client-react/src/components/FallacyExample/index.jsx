@@ -22,6 +22,8 @@ const FallacyExample = ({
 	group,
 	history,
 	id,
+	newHighlightedText = "",
+	newHighlightedTextC = "",
 	onClickFallacy = () => null,
 	onClickTweet = () => null,
 	reference,
@@ -53,12 +55,14 @@ const FallacyExample = ({
 	if (typeof twitter !== "undefined" && twitter !== null) {
 		tweet = twitter.tweet
 		highlightedText = twitter.highlightedText === null ? "" : twitter.highlightedText
+		highlightedText = newHighlightedText !== "" ? newHighlightedText : highlightedText
 		dateOne = tweet.createdAt
 	}
 	if (typeof contradictionTwitter !== "undefined" && contradictionTwitter !== null) {
 		cTweet = contradictionTwitter.tweet
 		highlightedTextC = contradictionTwitter.highlightedText
 		highlightedTextC = highlightedTextC === null ? "" : highlightedTextC
+		highlightedTextC = newHighlightedTextC !== "" ? newHighlightedTextC : highlightedTextC
 		dateTwo = cTweet.createdAt
 	}
 	if (typeof youtube !== "undefined" && youtube !== null) {
@@ -98,6 +102,7 @@ const FallacyExample = ({
 					quoted={tweet.quoted}
 					retweeted={tweet.retweeted}
 					user={tweet.user}
+					urls={tweet.urls}
 				/>
 			)}
 		</div>
@@ -130,6 +135,7 @@ const FallacyExample = ({
 					quoted={cTweet.quoted}
 					retweeted={cTweet.retweeted}
 					user={cTweet.user}
+					urls={cTweet.urls}
 				/>
 			)}
 		</div>
@@ -203,7 +209,7 @@ const FallacyExample = ({
 							onClickFallacy(e, slug)
 						}}
 					>
-						{group && (
+						{group && reference.id === 21 && (
 							<Label
 								attached="top"
 								className={hyphenateText(group.name)}
@@ -252,7 +258,7 @@ const FallacyExample = ({
 								{ContradictingVideo()}
 							</>
 						) : (
-							<Grid>
+							<Grid stackable>
 								<Grid.Column width={8}>
 									{_Tweet()}
 									{Video()}
@@ -265,8 +271,9 @@ const FallacyExample = ({
 						)}
 					</Segment>
 					{showCommentCount && (
-						<Header attached="bottom" block size="small">
-							<Icon color="blue" name="comment" /> {commentCount}
+						<Header attached="bottom" block size="tiny">
+							<Icon className="commentIcon" color="blue" name="comment" />{" "}
+							{commentCount}
 						</Header>
 					)}
 				</>
@@ -308,6 +315,11 @@ const FallacyExample = ({
 							{Video()}
 						</Card.Description>
 					</Card.Content>
+					{showCommentCount && (
+						<Card.Content extra style={{ color: "black", paddingLeft: "25px" }}>
+							<Icon color="blue" name="comment" /> {commentCount}
+						</Card.Content>
+					)}
 				</Card>
 			)}
 		</div>
@@ -325,6 +337,7 @@ FallacyExample.propTypes = {
 	group: PropTypes.shape({}),
 	history: PropTypes.shape({}),
 	id: PropTypes.number,
+	newHighlightedText: PropTypes.string,
 	onClickFallacy: PropTypes.func,
 	reference: PropTypes.shape({}),
 	showCommentCount: PropTypes.bool,

@@ -6,6 +6,7 @@ use App\Models\FallacyTwitter;
 use App\Models\Page;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
 
 class Tweet extends Model
 {
@@ -63,6 +64,35 @@ class Tweet extends Model
         'retweeted_created_at' => 'datetime'
     ];
 
+    public static function getMetaTags($url)
+    {
+        $meta = get_meta_tags($url);
+        $description = '';
+        $image = '';
+        $title = '';
+
+        foreach ($meta as $key => $val) {
+            Log::info('meta key ' . $key . ' = ' . $val);
+            if (str_contains($key, 'title')) {
+                $title = $val;
+            }
+
+            if (str_contains($key, 'description')) {
+                $description = $val;
+            }
+
+            if (str_contains($key, 'image') || str_contains($key, 'thumbnail')) {
+                $image = $val;
+            }
+        }
+
+        return [
+            'description' => $description,
+            'image' => $image,
+            'title' => $title
+        ];
+    }
+
     public function arguments()
     {
         return $this->hasMany(ArgumentExampleTweet::class);
@@ -81,5 +111,10 @@ class Tweet extends Model
     public function page()
     {
         return $this->hasOne(Page::class, 'id', 'page_id');
+    }
+
+    public function urls()
+    {
+        return $this->hasMany(TweetUrl::class);
     }
 }

@@ -283,10 +283,10 @@ const CommentList = ({
 					<div ref={blockRef}>
 						<Grid>
 							<Grid.Row>
-								<Grid.Column width={1}>
+								<Grid.Column computer={1} mobile={3}>
 									<Image circular src={auth ? user.image : defaultImg} />
 								</Grid.Column>
-								<Grid.Column width={15}>
+								<Grid.Column computer={15} mobile={13}>
 									<Form inverted={inverted} onSubmit={onSubmitForm}>
 										<textarea
 											placeholder={

@@ -386,9 +386,11 @@ class FallacyController extends Controller
         $id = $request->input('id');
         $refId = $request->input('refId', null);
         $explanation = $request->input('explanation', null);
+        $highlightedText = $request->input('highlightedText', null);
+        $highlightedText2 = $request->input('highlightedText2', null);
 
         $fallacy = Fallacy::where('id', $id)
-            ->with(['page'])
+            ->with(['page', 'twitter.tweet', 'contradictionTwitter.tweet'])
             ->first();
 
         if (!empty($explanation)) {
@@ -416,6 +418,30 @@ class FallacyController extends Controller
 
         if (array_key_exists('ref_id', $changes)) {
             $data['reference'] = new ReferenceResource($ref);
+        }
+
+        if ($highlightedText && isset($fallacy->twitter)) {
+            FallacyTwitter::updateOrCreate(
+                [
+                    'fallacy_id' => $id,
+                    'tweet_id' => $fallacy->twitter->tweet->id,
+                ],
+                [
+                    'highlighted_text' => $highlightedText
+                ],
+            );
+        }
+
+        if ($highlightedText2 && isset($fallacy->contradictionTwitter)) {
+            ContradictionTwitter::updateOrCreate(
+                [
+                    'fallacy_id' => $id,
+                    'tweet_id' => $fallacy->contradictionTwitter->tweet->id,
+                ],
+                [
+                    'highlighted_text' => $highlightedText2
+                ],
+            );
         }
 
         return response($data);

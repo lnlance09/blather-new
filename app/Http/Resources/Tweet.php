@@ -100,6 +100,14 @@ class Tweet extends JsonResource
             $argumentOptions = array_column($this->arguments->toArray(), 'argument_id');
         }
 
+        $urls = [];
+        if (count($this->urls) > 0) {
+            $urls['description'] = $this->urls[0]['description'];
+            $urls['image'] = $this->urls[0]['image'];
+            $urls['title'] = $this->urls[0]['title'];
+            $urls['url'] = $this->urls[0]['url'];
+        }
+
         return [
             'id' => $this->id,
             'arguments' => $arguments,
@@ -116,6 +124,7 @@ class Tweet extends JsonResource
             'quoted' => $quoted,
             'retweeted' => $retweeted,
             'tweetId' => $this->tweet_id,
+            'urls' => $urls,
             'user' => [
                 'id' => $this->page->id,
                 'image' => env('AWS_URL', 'https://blather-new.s3.us-west-2.amazonaws.com/') . $this->page->image,

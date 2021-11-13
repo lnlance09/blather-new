@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Events\FallacyCreated;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Notifications\Notifiable;
@@ -17,7 +18,7 @@ class Fallacy extends Model
      * @var array
      */
     protected $dispatchesEvents = [
-        // 'created' => FallacyCreated::class
+        'created' => FallacyCreated::class
     ];
 
     /**

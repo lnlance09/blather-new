@@ -4,7 +4,7 @@ import { useContext, useEffect, useReducer, useState } from "react"
 import { Link } from "react-router-dom"
 import { ReactSVG } from "react-svg"
 import defaultImg from "images/avatar/small/veronika.jpg"
-// import Echo from "laravel-echo"
+import Echo from "laravel-echo"
 import initialState from "./state"
 import logger from "use-reducer-logger"
 import Logo from "images/logos/brain.svg"
@@ -14,6 +14,12 @@ import reducer from "./reducer"
 import ThemeContext from "themeContext"
 
 window.Pusher = require("pusher-js")
+const echoConfig = {
+	broadcaster: "pusher",
+	cluster: process.env.REACT_APP_PUSHER_APP_CLUSTER,
+	key: process.env.REACT_APP_PUSHER_APP_KEY,
+	forceTLS: true
+}
 
 const PageHeader = ({ activeItem = null, history, showBanner = false, simple = false }) => {
 	const { state, dispatch } = useContext(ThemeContext)
@@ -30,40 +36,31 @@ const PageHeader = ({ activeItem = null, history, showBanner = false, simple = f
 	const [sidebarVisible, setSidebarVisible] = useState(false)
 
 	useEffect(() => {
-		/*
 		if (typeof window.Echo === "undefined") {
 			if (auth) {
 				window.Echo = new Echo({
+					...echoConfig,
 					auth: {
 						headers: {
-							Authorization: `Bearer ${bearer}`
+							Authorization: `Bearer ${localStorage.getItem("bearer")}`
 						}
 					},
-					authEndpoint: "http://localhost/broadcasting/auth",
-					broadcaster: "pusher",
-					cluster: process.env.REACT_APP_PUSHER_APP_CLUSTER,
-					key: process.env.REACT_APP_PUSHER_APP_KEY,
-					forceTLS: true
+					authEndpoint: "http://localhost/broadcasting/auth"
 				})
 
 				window.Echo.private(`users.${user.id}`).listen("ApplicationSent", (e) => {
 					incrementNotification()
 				})
 			} else {
-				window.Echo = new Echo({
-					broadcaster: "pusher",
-					cluster: process.env.REACT_APP_PUSHER_APP_CLUSTER,
-					key: process.env.REACT_APP_PUSHER_APP_KEY,
-					forceTLS: true
-				})
+				window.Echo = new Echo(echoConfig)
 			}
 
-			window.Echo.channel("publicPredictions").listen("PredictionCreated", (e) => {
-				const { prediction } = e
-				addNotification(prediction)
+			window.Echo.channel("fallacies").listen("FallacyCreated", (e) => {
+				const { fallacy } = e
+				console.log("fallacy echo", fallacy)
+				addNotification(fallacy)
 			})
 		}
-		*/
 		// eslint-disable-next-line
 	}, [])
 
@@ -337,12 +334,11 @@ const PageHeader = ({ activeItem = null, history, showBanner = false, simple = f
 								<Link to={`/${user.username}/settings?tab=twitter`}>
 									Link your Twitter
 								</Link>{" "}
-								account for optimal experience.
+								for optimal experience.
 							</p>
 						) : (
 							<p>
-								<Link to="/auth">Sign In with Twitter</Link> account for optimal
-								experience.
+								<Link to="/auth">Sign In with Twitter</Link> for optimal experience.
 							</p>
 						)}
 					</Container>
@@ -363,13 +359,25 @@ const PageHeader = ({ activeItem = null, history, showBanner = false, simple = f
 				<Menu.Item as="a" onClick={() => history.push("/activity")}>
 					Activity
 				</Menu.Item>
+				<Menu.Item as="a" onClick={() => history.push("/")}>
+					Assign
+				</Menu.Item>
+				<Menu.Item as="a" onClick={() => history.push("/tweets")}>
+					Tweets
+				</Menu.Item>
+				<Menu.Item as="a" onClick={() => history.push("/grifters")}>
+					Grifters
+				</Menu.Item>
+				<Menu.Item as="a" onClick={() => history.push("/arguments")}>
+					Arguments
+				</Menu.Item>
+				<Menu.Item as="a" onClick={() => history.push("/reference")}>
+					Reference
+				</Menu.Item>
 				{auth ? (
 					<>
 						<Menu.Item as="a" onClick={() => history.push(`/${user.username}`)}>
-							🌞 Profile
-						</Menu.Item>
-						<Menu.Item as="a" onClick={() => history.push("/settings")}>
-							⚙️ Settings
+							Profile
 						</Menu.Item>
 					</>
 				) : (

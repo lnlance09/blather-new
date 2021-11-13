@@ -300,7 +300,7 @@ const Assign = ({ history }) => {
 
 					<Divider hidden />
 
-					<Grid className={`${tweetLoaded ? "" : "loading"}`}>
+					<Grid className={`${tweetLoaded ? "" : "loading"}`} stackable>
 						<Grid.Column width={8}>
 							<div className="sampleWrapper">
 								{tweetLoaded ? (
@@ -322,6 +322,7 @@ const Assign = ({ history }) => {
 										quoted={tweet.quoted}
 										retweeted={tweet.retweeted}
 										user={tweet.user}
+										urls={tweet.urls}
 									/>
 								) : (
 									<>
@@ -359,6 +360,7 @@ const Assign = ({ history }) => {
 										quoted={cTweet.quoted}
 										retweeted={cTweet.retweeted}
 										user={cTweet.user}
+										urls={cTweet.urls}
 									/>
 								) : (
 									<>
@@ -411,7 +413,7 @@ const Assign = ({ history }) => {
 						</>
 					)}
 
-					<Divider hidden />
+					<Divider section />
 
 					<FallacyForm
 						cTweetId={cTweetLoaded ? cTweet.id : null}

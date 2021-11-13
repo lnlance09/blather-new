@@ -2,35 +2,35 @@
 
 namespace App\Events;
 
-use App\Http\Resources\Application as ApplicationResource;
+use App\Http\Resources\Fallacy as FallacyResource;
+use App\Models\Fallacy;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
-use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class ApplicationSent implements ShouldBroadcast
+class FallacyCreated implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     /**
      * The application that was submitted.
      *
-     * @var ApplicationResource
+     * @var Fallacy
      */
-    public $application;
+    public $fallacy;
 
     /**
      * Create a new event instance.
      *
-     * @param  ApplicationResource  $application
+     * @param  \App\Models\Fallacy $Fallacy
      * @return void
      */
-    public function __construct(ApplicationResource $application)
+    public function __construct(Fallacy $fallacy)
     {
-        $this->application = $application;
+        $this->fallacy = new FallacyResource($fallacy);
     }
 
     /**
@@ -40,6 +40,6 @@ class ApplicationSent implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('users.' . $this->application->user->id);
+        return new Channel('fallacies');
     }
 }

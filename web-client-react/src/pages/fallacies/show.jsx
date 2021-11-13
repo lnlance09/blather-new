@@ -10,6 +10,7 @@ import {
 	Header,
 	Icon,
 	Image,
+	Input,
 	List,
 	Modal,
 	Placeholder,
@@ -37,6 +38,7 @@ import DefaultLayout from "layouts/default"
 import FallacyExample from "components/FallacyExample"
 import fileDownload from "js-file-download"
 import html2canvas from "html2canvas"
+import ImageUpload from "components/ImageUpload"
 import initialState from "states/fallacy"
 import logger from "use-reducer-logger"
 import Logo from "images/logos/npc.svg"
@@ -73,10 +75,10 @@ const Fallacy = ({ history, match }) => {
 	const { args, comments, error, fallacies, fallacy, loaded, modalTweets, refOptions } =
 		internalState
 	const { createdAt, group, id, page, reference, retracted, title, user } = fallacy
-	const { contradictionTweet, contradictionYouTube, twitter } = fallacy
+	const { contradictionTwitter, contradictionYouTube, twitter, youtube } = fallacy
 
 	const canScreenshot =
-		(twitter && contradictionYouTube === null) || (twitter && contradictionTweet)
+		(twitter && contradictionYouTube === null) || (twitter && contradictionTwitter)
 	const canRetract = false
 	const canEdit = auth ? authUser.id === user.id : false
 
@@ -97,6 +99,9 @@ const Fallacy = ({ history, match }) => {
 	const [loadingMoreT, setLoadingMoreT] = useState(false)
 	const [pageNumberT, setPageNumberT] = useState(1)
 
+	const [highlightedText, setHighlightedText] = useState("")
+	const [highlightedText2, setHighlightedText2] = useState("")
+
 	useEffect(() => {
 		const getFallacy = async (slug) => {
 			await axios
@@ -111,6 +116,20 @@ const Fallacy = ({ history, match }) => {
 					getComments(fallacy.id)
 					getArguments(fallacy.id, fallacy.page.id)
 					setRefId(fallacy.reference.id)
+
+					const { contradictionTwitter, twitter } = fallacy
+					if (_.has(twitter, "highlightedText")) {
+						const highlightedText =
+							twitter.highlightedText === null ? "" : twitter.highlightedText
+						setHighlightedText(highlightedText)
+					}
+					if (_.has(contradictionTwitter, "highlightedText")) {
+						const highlightedText2 =
+							contradictionTwitter.highlightedText === null
+								? ""
+								: contradictionTwitter.highlightedText
+						setHighlightedText2(highlightedText2)
+					}
 				})
 				.catch(() => {
 					dispatch({
@@ -284,6 +303,14 @@ const Fallacy = ({ history, match }) => {
 			})
 	}
 
+	const changeHighlightedText = (e, { value }) => {
+		setHighlightedText(value)
+	}
+
+	const changeHighlightedText2 = (e, { value }) => {
+		setHighlightedText2(value)
+	}
+
 	const onChangeRef = (e, { value }) => {
 		setRefId(value)
 	}
@@ -305,6 +332,8 @@ const Fallacy = ({ history, match }) => {
 				`${process.env.REACT_APP_BASE_URL}fallacies/update`,
 				{
 					id,
+					highlightedText,
+					highlightedText2,
 					explanation,
 					refId
 				},
@@ -377,13 +406,55 @@ const Fallacy = ({ history, match }) => {
 									ref={explanationRef}
 								/>
 							</Form.Field>
+							{twitter && (
+								<Form.Field>
+									<label>Highlighted Text 1</label>
+									<Input
+										fluid
+										onChange={changeHighlightedText}
+										placeholder="Highlighted text"
+										value={highlightedText}
+									/>
+								</Form.Field>
+							)}
+							{contradictionTwitter && (
+								<Form.Field>
+									<label>Highlighted Text 2</label>
+									<Input
+										fluid
+										onChange={changeHighlightedText2}
+										placeholder="Highlighted text 2"
+										value={highlightedText2}
+									/>
+								</Form.Field>
+							)}
 							<Form.Field>
-								<Button
-									color="blue"
-									content="Save"
-									fluid
-									onClick={() => updateFallacy(id)}
-								/>
+								<Grid>
+									<Grid.Row>
+										<Grid.Column computer={14} mobile={12}>
+											<Button
+												color="black"
+												content="Save"
+												fluid
+												onClick={() => updateFallacy(id)}
+											/>
+										</Grid.Column>
+										<Grid.Column
+											computer={2}
+											mobile={4}
+											style={{ paddingLeft: 0 }}
+										>
+											<ImageUpload
+												as="button"
+												btnSize="mediun"
+												// callback={(file) => addImage(file)}
+												headerSize="tiny"
+												inverted={inverted}
+												msg="add image"
+											/>
+										</Grid.Column>
+									</Grid.Row>
+								</Grid>
 							</Form.Field>
 						</Form>
 					) : (
@@ -652,27 +723,29 @@ const Fallacy = ({ history, match }) => {
 								<Container id="fallacyMaterial">
 									<Transition animation="scale" duration={900} visible={visible}>
 										<FallacyExample
-											colored={fallacy.reference.id === 21}
-											contradictionTwitter={fallacy.contradictionTwitter}
-											contradictionYouTube={fallacy.contradictionYouTube}
-											createdAt={fallacy.createdAt}
+											colored={reference.id === 21}
+											contradictionTwitter={contradictionTwitter}
+											contradictionYouTube={contradictionYouTube}
+											createdAt={createdAt}
 											crossOriginAnonymous={true}
-											defaultUserImg={fallacy.page.image}
+											defaultUserImg={page.image}
 											explanation={fallacy.explanation}
 											group={group}
+											newHighlightedText={highlightedText}
+											newHighlightedTextC={highlightedText2}
 											history={history}
 											id={fallacy.id}
 											onClickFallacy={onClickFallacy}
 											onClickTweet={(e, history, id) =>
 												onClickRedirect(e, history, `/tweets/${id}`)
 											}
-											reference={fallacy.reference}
+											reference={reference}
 											showExplanation={false}
 											slug={fallacy.slug}
 											stacked
-											twitter={fallacy.twitter}
-											youtube={fallacy.youtube}
-											user={fallacy.user}
+											twitter={twitter}
+											youtube={youtube}
+											user={user}
 											verticalMode={verticalMode}
 										/>
 									</Transition>

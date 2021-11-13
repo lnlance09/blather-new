@@ -42,9 +42,11 @@
             margin-bottom: 0;
             margin-top: 0;
 
-            .eight.wide.column {
-                padding-top: 0;
-                padding-bottom: 0;
+            @media only screen and (max-width: 300px) {
+                .eight.wide.column {
+                    padding-top: 0;
+                    padding-bottom: 0;
+                }
             }
         } 
 
@@ -60,6 +62,11 @@
 
     .header.attached.bottom {
         padding-left: 32px;
+
+        .commentIcon {
+            font-size: 14px;
+            margin-right: 4px !important;
+        }
     }
 
     .explanation {

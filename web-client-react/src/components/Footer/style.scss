@@ -1,29 +1,30 @@
 @import "../../scss/_colors.scss";
 
 .ui.bottom.attached.segment.footerSegment {
-    background: $invertedBackgroundColor !important;
+	background: $invertedBackgroundColor !important;
     border: none;
+	border-radius: 0;
     box-shadow: none !important;
     padding: 2em 0em !important;
     text-align: center;
 
     .container {
-      padding-left: 30px;
-      padding-right: 30px;
+    	padding-left: 30px;
+    	padding-right: 30px;
     }
 
     .ui.inverted.list .item a:not(.ui) {
-      color: $offWhite !important;
-      font-weight: bold;
+    	color: $offWhite !important;
+      	font-weight: bold;
 
-      &:hover {
+      	&:hover {
             color: $lightBlack;
-      }
+      	}
     }
 
     p {
-      color: $white !important;
-      font-size: 12px;
-      margin-bottom: 7px;
+    	color: $white !important;
+    	font-size: 12px;
+    	margin-bottom: 7px;
     }
 }

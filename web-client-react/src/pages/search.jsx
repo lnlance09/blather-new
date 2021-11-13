@@ -488,7 +488,7 @@ const Search = ({ history }) => {
 				/>
 			</div>
 
-			<Menu secondary pointing size="large" widths={4}>
+			<Menu secondary pointing size="large" stackable widths={4}>
 				<Menu.Item active={activeItem === "tweets"} name="tweets" onClick={handleItemClick}>
 					Tweets
 					{tweets.count > 0 && (

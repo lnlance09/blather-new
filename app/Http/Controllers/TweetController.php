@@ -9,6 +9,7 @@ use App\Models\Argument;
 use App\Models\ArgumentExampleTweet;
 use App\Models\Page;
 use App\Models\Tweet;
+use App\Models\TweetUrl;
 use App\Models\UserTwitter;
 use Atymic\Twitter\Facade\Twitter;
 use Illuminate\Http\Request;
@@ -107,6 +108,7 @@ class TweetController extends Controller
                 'argument_id' => $argId,
                 'tweet_id' => $id
             ])->count();
+
             if ($count == 1) {
                 continue;
             }
@@ -192,7 +194,9 @@ class TweetController extends Controller
                 ]);
             }
 
-            $tweetDb = Tweet::where('tweet_id', $tweet['id_str'])->first();
+            $tweetDb = Tweet::where('tweet_id', $tweet['id_str'])
+                ->with(['urls'])
+                ->first();
 
             if ($tweetDb) {
                 // If the tweet exists in the DB and with the API, update the favorite and RT counts
@@ -214,6 +218,18 @@ class TweetController extends Controller
                     $tweetDb->retweeted_retweet_count = $retweeted['retweet_count'];
                 }
 
+                if ($tweetDb->entities && $tweetDb->urls->isEmpty()) {
+                    $entities = @json_decode($tweetDb->entities, true);
+
+                    if (array_key_exists('urls', $entities)) {
+                        $url = end($entities['urls'])['expanded_url'];
+                        $meta = Tweet::getMetaTags($url);
+                        $meta['url'] = $url;
+                        $meta['tweet_id'] = $tweetDb->id;
+                        TweetUrl::create($meta);
+                    }
+                }
+
                 $tweetDb->save();
                 $tweetDb->refresh();
                 $tweet = $tweetDb;
@@ -226,13 +242,7 @@ class TweetController extends Controller
 
                 $imgUrl = Str::replace('_normal', '', $user['profile_image_url_https']);
                 $page = Page::where('social_media_id', $user['id_str'])->first();
-
-                if (empty($page)) {
-                    $img = 'pages/twitter/' . Str::random(24) . '.jpg';
-                } else {
-                    $img = $page->image;
-                }
-
+                $img = empty($page) ? 'pages/twitter/' . Str::random(24) . '.jpg' : $page->image;
                 Storage::disk('s3')->put($img, file_get_contents($imgUrl));
 
                 $page = Page::updateOrCreate(
@@ -265,13 +275,7 @@ class TweetController extends Controller
                     $quoted = $tweet['quoted_status'];
                     $imgUrl = Str::replace('_normal', '', $quoted['user']['profile_image_url_https']);
                     $page = Page::where('social_media_id', $quoted['user']['id_str'])->first();
-
-                    if (empty($page)) {
-                        $img = 'pages/twitter/' . Str::random(24) . '.jpg';
-                    } else {
-                        $img = $page->image;
-                    }
-
+                    $img = empty($page) ? 'pages/twitter/' . Str::random(24) . '.jpg' : $page->image;
                     Storage::disk('s3')->put($img, file_get_contents($imgUrl));
 
                     $qPage = Page::updateOrCreate(
@@ -302,13 +306,7 @@ class TweetController extends Controller
                     $retweeted = $tweet['retweeted_status'];
                     $imgUrl = Str::replace('_normal', '', $retweeted['user']['profile_image_url_https']);
                     $page = Page::where('social_media_id', $retweeted['user']['id_str'])->first();
-
-                    if (empty($page)) {
-                        $img = 'pages/twitter/' . Str::random(24) . '.jpg';
-                    } else {
-                        $img = $page->image;
-                    }
-
+                    $img = empty($page) ? 'pages/twitter/' . Str::random(24) . '.jpg' : $page->image;
                     Storage::disk('s3')->put($img, file_get_contents($imgUrl));
 
                     $rPage = Page::updateOrCreate(
@@ -337,13 +335,24 @@ class TweetController extends Controller
 
                 $data['tweet_json'] = json_encode($tweet, true);
                 Tweet::create($data);
+
+                $entities = $tweet['entities'];
+                $entities = is_array($entities) ? $entities : @json_decode($tweet['entities'], true);
+
+                if (array_key_exists('urls', $entities)) {
+                    $url = end($entities['urls'])['expanded_url'];
+                    $meta = Tweet::getMetaTags($url);
+                    $meta['url'] = $url;
+                    $meta['tweet_id'] = $tweetDb->id;
+                    TweetUrl::create($meta);
+                }
             }
         } catch (\Exception $e) {
             // echo 'Caught exception: ',  $e->getMessage(), "\n";
         }
 
         $tweet = Tweet::where('tweet_id', $id)
-            ->with(['arguments.argument'])
+            ->with(['arguments.argument', 'urls'])
             ->withCount(['arguments', 'fallacies'])
             ->first();
 

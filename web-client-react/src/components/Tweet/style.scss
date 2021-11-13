@@ -22,11 +22,21 @@
 		}
   	}
 
-  	.card {
+  	.ui.card {
+		&.urlCard {
+			max-width: 480px;
+			width: 100%;
+
+			.ui.image {
+				max-height: 220px;
+				overflow: hidden;
+			}
+		}
+
 		.content {
 	  		white-space: pre-line;
 
-	  		.description {
+	  		.description:not(.links) {
 				font-size: 16px !important;
 				line-height: 1.8;
 
@@ -71,6 +81,15 @@
 								color: $twitter;
 								cursor: pointer;
 								margin-right: 12px;
+							}
+
+							&.saveTweet {
+								cursor: pointer;
+
+								&.close {
+									margin-left: 0 !important;
+									width: 18px;
+								}
 							}
 						}
 

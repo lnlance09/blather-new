@@ -7,6 +7,7 @@ import PropTypes from "prop-types"
 
 const ImageUpload = ({
 	as = "image",
+	btnSize = "large",
 	callback = () => null,
 	fluid = false,
 	headerSize = "medium",
@@ -75,12 +76,34 @@ const ImageUpload = ({
 									<div className="imageUploadHeader">
 										<Icon
 											circular
-											color="blue"
-											name="image"
+											color="green"
+											inverted
+											name="plus"
 											onClick={(e) => e.preventDefault()}
 										/>
 										<span>{msg}</span>
 									</div>
+								</div>
+							</section>
+						)}
+					</Dropzone>
+				</>
+			)}
+
+			{as === "button" && (
+				<>
+					<Dropzone onDrop={onDrop}>
+						{({ getRootProps, getInputProps }) => (
+							<section>
+								<div {...getRootProps()}>
+									<input {...getInputProps()} />
+									<Button
+										color="blue"
+										icon="image"
+										fluid
+										onClick={(e) => e.preventDefault()}
+										size={btnSize}
+									/>
 								</div>
 							</section>
 						)}
@@ -93,6 +116,7 @@ const ImageUpload = ({
 
 ImageUpload.propTypes = {
 	as: PropTypes.string,
+	btnSize: PropTypes.string,
 	callback: PropTypes.func,
 	fluid: PropTypes.bool,
 	headerSize: PropTypes.string,

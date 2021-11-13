@@ -28,6 +28,7 @@ import PropTypes from "prop-types"
 import reducer from "reducers/tweet"
 import ThemeContext from "themeContext"
 import Tweet from "components/Tweet"
+import Tweets from "."
 
 const toastConfig = getConfig()
 toast.configure(toastConfig)
@@ -80,7 +81,7 @@ const TweetPage = ({ history, match }) => {
 						argument: 1
 					}
 				})
-				.then(async (response) => {
+				.then((response) => {
 					const { archived, tweet } = response.data
 					dispatchInternal({
 						type: "GET_TWEET",
@@ -240,6 +241,7 @@ const TweetPage = ({ history, match }) => {
 								quoted={tweet.quoted}
 								retweeted={tweet.retweeted}
 								user={tweet.user}
+								urls={tweet.urls}
 							/>
 
 							<Button

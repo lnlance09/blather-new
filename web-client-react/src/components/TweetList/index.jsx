@@ -70,6 +70,7 @@ const TweetList = ({
 								quoted={tweet.quoted}
 								retweeted={tweet.retweeted}
 								user={tweet.user}
+								urls={tweet.urls}
 							/>
 						)}
 					</div>

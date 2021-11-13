@@ -4,10 +4,12 @@ import {
 	Divider,
 	Dropdown,
 	Form,
+	Grid,
 	Image,
 	Label,
 	Placeholder,
-	Segment
+	Segment,
+	Transition
 } from "semantic-ui-react"
 import { useEffect, useReducer, useRef, useState } from "react"
 import { getGroupsOptions } from "options/group"
@@ -183,122 +185,138 @@ const FallacyForm = ({
 
 	return (
 		<div className={`fallacyFormComponent ${inverted ? "inverted" : ""}`}>
-			<Form inverted onSubmit={submitFallacy} size="large">
-				{showPageSelection && (
-					<Form.Group>
-						<Form.Field width={8}>
-							<Dropdown
-								clearable
-								disabled={groupId === null}
-								fluid
-								loading={groupOptions.length === 0}
-								onChange={onChangeGroup}
-								options={groupOptions}
-								placeholder="Group"
-								search
-								selection
-								value={groupValue}
-							/>
-						</Form.Field>
-						<Form.Field width={8}>
-							<Dropdown
-								clearable
-								disabled={groupId === null && pageId !== null}
-								fluid
-								loading={pageOptions.length === 0}
-								onChange={onChangePage}
-								options={pageOptions}
-								placeholder="Page"
-								search
-								selection
-								value={pageValue}
-							/>
-						</Form.Field>
-					</Form.Group>
-				)}
-				<Form.Field>
-					<div style={{ minHeight: "210px" }}>
-						<Label.Group color="blue" size="large">
-							{refOptions.map((ref, i) => (
-								<Label
-									className={`ref ${refValue === ref.value ? "active" : ""}`}
-									key={`refLabel${i}`}
-									onClick={() => setRefValue(ref.value)}
-								>
-									{ref.name}
-								</Label>
-							))}
-						</Label.Group>
-						<Divider hidden />
-						{activeRef && (
-							<Segment className="refDescSeg" placeholder textAlign="center">
-								{activeRef.description}
-							</Segment>
-						)}
-					</div>
-				</Form.Field>
-				<Form.Field>
-					<textarea
-						id="explanation"
-						placeholder="Please explain how this is fallacious."
-						ref={explanationRef}
-						rows={7}
-					/>
-
-					{(images.length > 0 || imagesLoading) && <Divider inverted />}
-
-					<Image.Group size="small">
-						{images.map((img, i) => (
-							<Image
-								key={img}
-								label={{
-									as: "a",
-									color: "red",
-									corner: "right",
-									icon: "close",
-									onClick: () => {
-										dispatch({
-											type: "REMOVE_IMAGE",
-											key: i
-										})
-
-										const explanation = _.isEmpty(explanationRef.current)
-											? ""
-											: explanationRef.current.value
-										explanationRef.current.value = explanation.replace(
-											`![Caption](${img} "")`,
-											""
-										)
-										explanationRef.current.focus()
-									}
-								}}
-								onLoad={(e) => (e.target.src = img)}
-								rounded
-								src={PlaceholderPic}
-							/>
-						))}
-						{imagesLoading && (
-							<Placeholder as={Image} rounded size="large">
-								<Placeholder.Image
-									onError={(i) => (i.target.src = PlaceholderPic)}
+			<Transition animation="fade up" duration={1200} visible={refOptions.length > 0}>
+				<Form inverted onSubmit={submitFallacy} size="large">
+					{showPageSelection && (
+						<Form.Group>
+							<Form.Field width={8}>
+								<Dropdown
+									clearable
+									disabled={groupId === null}
+									fluid
+									loading={groupOptions.length === 0}
+									onChange={onChangeGroup}
+									options={groupOptions}
+									placeholder="Group"
+									search
+									selection
+									value={groupValue}
 								/>
-							</Placeholder>
-						)}
-					</Image.Group>
+							</Form.Field>
+							<Form.Field width={8}>
+								<Dropdown
+									clearable
+									disabled={groupId === null && pageId !== null}
+									fluid
+									loading={pageOptions.length === 0}
+									onChange={onChangePage}
+									options={pageOptions}
+									placeholder="Page"
+									search
+									selection
+									value={pageValue}
+								/>
+							</Form.Field>
+						</Form.Group>
+					)}
+					<Form.Field>
+						<div className="refWrapper">
+							<Label.Group color="blue" size="large">
+								{refOptions.map((ref, i) => (
+									<Label
+										className={`ref ${refValue === ref.value ? "active" : ""}`}
+										key={`refLabel${i}`}
+										onClick={() => setRefValue(ref.value)}
+									>
+										{ref.name}
+									</Label>
+								))}
+							</Label.Group>
+							<Divider hidden />
+							{activeRef && (
+								<Segment className="refDescSeg" placeholder textAlign="center">
+									{activeRef.description}
+								</Segment>
+							)}
+						</div>
+					</Form.Field>
+					<Form.Field>
+						<textarea
+							id="explanation"
+							placeholder="Please explain how this is fallacious."
+							ref={explanationRef}
+							rows={7}
+						/>
 
-					{(images.length > 0 || imagesLoading) && <Divider />}
+						{(images.length > 0 || imagesLoading) && <Divider inverted />}
 
-					<ImageUpload
-						as="segment"
-						callback={(file) => addImage(file)}
-						headerSize="tiny"
-						inverted={inverted}
-						msg="add image"
-					/>
+						<Image.Group size="small">
+							{images.map((img, i) => (
+								<Image
+									key={img}
+									label={{
+										as: "a",
+										color: "red",
+										corner: "right",
+										icon: "close",
+										onClick: () => {
+											dispatch({
+												type: "REMOVE_IMAGE",
+												key: i
+											})
 
-					<Button color="blue" content="Submit" fluid loading={loading} size="large" />
-				</Form.Field>
-			</Form>
+											const explanation = _.isEmpty(explanationRef.current)
+												? ""
+												: explanationRef.current.value
+											explanationRef.current.value = explanation.replace(
+												`![Caption](${img} "")`,
+												""
+											)
+											explanationRef.current.focus()
+										}
+									}}
+									onLoad={(e) => (e.target.src = img)}
+									rounded
+									src={PlaceholderPic}
+								/>
+							))}
+							{imagesLoading && (
+								<Placeholder as={Image} rounded size="large">
+									<Placeholder.Image
+										onError={(i) => (i.target.src = PlaceholderPic)}
+									/>
+								</Placeholder>
+							)}
+						</Image.Group>
+
+						{(images.length > 0 || imagesLoading) && <Divider />}
+					</Form.Field>
+					<Form.Field>
+						<Grid>
+							<Grid.Row>
+								<Grid.Column mobile={12} width={15}>
+									<Button
+										color="black"
+										content="Submit"
+										fluid
+										loading={loading}
+										size="large"
+									/>
+								</Grid.Column>
+								<Grid.Column mobile={4} width={1} style={{ paddingLeft: 0 }}>
+									<ImageUpload
+										as="button"
+										callback={(file) => addImage(file)}
+										headerSize="tiny"
+										inverted={inverted}
+										msg="add image"
+									/>
+								</Grid.Column>
+							</Grid.Row>
+						</Grid>
+					</Form.Field>
+				</Form>
+			</Transition>
 		</div>
 	)
 }

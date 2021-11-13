@@ -15,6 +15,7 @@ import Moment from "react-moment"
 import NumberFormat from "react-number-format"
 import PlaceholderPic from "images/images/image-square.png"
 import PropTypes from "prop-types"
+import UrlPic from "images/images/white-image.png"
 
 const toastConfig = getConfig()
 toast.configure(toastConfig)
@@ -38,7 +39,8 @@ const Tweet = ({
 		counts: {},
 		isRetweeted: false
 	},
-	user
+	user,
+	urls = {}
 }) => {
 	const {
 		assignable,
@@ -235,34 +237,54 @@ const Tweet = ({
 							<div className="extEntitiesWrapper">{parseMedia(extEntities)}</div>
 						)}
 					</Card.Description>
+					{!_.isEmpty(urls.url) && (
+						<Card
+							className="urlCard"
+							onClick={(e) => {
+								e.stopPropagation()
+								window.open(urls.url, "_blank").focus()
+							}}
+						>
+							{!_.isEmpty(urls.image) && (
+								<Image
+									onError={(i) => (i.target.src = UrlPic)}
+									src={urls.image}
+									wrapped
+								/>
+							)}
+							<Card.Content>
+								<Card.Header>{urls.title}</Card.Header>
+								<Card.Meta>
+									<span className="date">{urls.url}</span>
+								</Card.Meta>
+								<Card.Description className="links">
+									{urls.description}
+								</Card.Description>
+							</Card.Content>
+						</Card>
+					)}
 					{isQuoted && (
-						<>
-							<Card
-								className={`quotedTweet ${!assignable ? " clickable" : ""}`}
-								fluid
+						<Card className={`quotedTweet ${!assignable ? " clickable" : ""}`} fluid>
+							<Card.Content
+								className="quotedTweetContent"
+								onClick={(e) => {
+									e.stopPropagation()
+									history.push(`/tweet/${qTweetId}`)
+								}}
 							>
-								<Card.Content
-									className="quotedTweetContent"
-									onClick={(e) => {
-										e.stopPropagation()
-										history.push(`/tweet/${qTweetId}`)
-									}}
-								>
-									<Card.Header className="quotedHeader">
-										{qName}{" "}
-										<span className="quotedScreenName">@{qUsername}</span>
-									</Card.Header>
-									<Card.Description className="quotedTextTweet">
-										<div
-											dangerouslySetInnerHTML={{
-												__html: linkifiedQTweetText
-											}}
-										/>
-										{qExtEntities && <>{parseMedia(qExtEntities)}</>}
-									</Card.Description>
-								</Card.Content>
-							</Card>
-						</>
+								<Card.Header className="quotedHeader">
+									{qName} <span className="quotedScreenName">@{qUsername}</span>
+								</Card.Header>
+								<Card.Description className="quotedTextTweet">
+									<div
+										dangerouslySetInnerHTML={{
+											__html: linkifiedQTweetText
+										}}
+									/>
+									{qExtEntities && <>{parseMedia(qExtEntities)}</>}
+								</Card.Description>
+							</Card.Content>
+						</Card>
 					)}
 				</Card.Content>
 
@@ -289,47 +311,32 @@ const Tweet = ({
 									/>
 								</Label>
 							</List.Item>
-							{counts.fallacies > 0 && (
-								<List.Item className="fallacyItem">
-									<Label>
-										<Icon
-											color="yellow"
-											inverted
-											name="sticky note"
-											size="large"
-										/>{" "}
-										<NumberFormat
-											displayType={"text"}
-											thousandSeparator={true}
-											value={counts.fallacies}
-										/>
-									</Label>
-								</List.Item>
-							)}
 						</List>
 						{showSaveOption && (
 							<List floated="right" horizontal>
 								<List.Item className="saveTweet">
-									<Button
-										className={hasSaved ? "saved" : ""}
-										content={hasSaved ? (hovering ? "Clear" : "Saved") : "Save"}
-										compact
-										color={hasSaved ? (hovering ? "red" : "teal") : "blue"}
-										icon={
-											hasSaved ? (hovering ? "close" : "checkmark") : "save"
-										}
-										loading={saveLoading}
-										name={
-											hasSaved ? (hovering ? "cancel" : "checkmark") : "save"
-										}
-										onBlur={(e) => setHovering(!hovering)}
-										onClick={(e) => {
-											e.stopPropagation()
-											saveTweet(id.toString())
-										}}
-										onMouseEnter={() => setHovering(true)}
-										onMouseLeave={() => setHovering(false)}
-									/>
+									<Label>
+										<Icon
+											className={`saveTweet ${hasSaved ? "saved" : ""}`}
+											color={hasSaved ? (hovering ? "red" : "teal") : "blue"}
+											loading={saveLoading}
+											name={
+												hasSaved
+													? hovering
+														? "close"
+														: "checkmark"
+													: "save"
+											}
+											onBlur={(e) => setHovering(!hovering)}
+											onClick={(e) => {
+												e.stopPropagation()
+												saveTweet(id.toString())
+											}}
+											onMouseEnter={() => setHovering(true)}
+											onMouseLeave={() => setHovering(false)}
+											size="large"
+										/>
+									</Label>
 								</List.Item>
 							</List>
 						)}
@@ -405,7 +412,7 @@ Tweet.propTypes = {
 		fullText: PropTypes.string,
 		tweetId: PropTypes.string,
 		user: PropTypes.shape({
-			img: PropTypes.string,
+			image: PropTypes.string,
 			name: PropTypes.string,
 			username: PropTypes.string
 		})
@@ -424,7 +431,7 @@ Tweet.propTypes = {
 		fullText: PropTypes.string,
 		tweetId: PropTypes.string,
 		user: PropTypes.shape({
-			img: PropTypes.string,
+			image: PropTypes.string,
 			name: PropTypes.string,
 			username: PropTypes.string
 		})
@@ -434,8 +441,16 @@ Tweet.propTypes = {
 		favorites: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
 		retweets: PropTypes.oneOfType([PropTypes.number, PropTypes.string])
 	}),
+	urls: PropTypes.arrayOf(
+		PropTypes.shape({
+			description: PropTypes.string,
+			image: PropTypes.string,
+			title: PropTypes.string,
+			url: PropTypes.string
+		})
+	),
 	user: PropTypes.shape({
-		img: PropTypes.string,
+		image: PropTypes.string,
 		name: PropTypes.string,
 		username: PropTypes.string
 	})

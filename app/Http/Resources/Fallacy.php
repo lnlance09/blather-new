@@ -22,7 +22,7 @@ class Fallacy extends JsonResource
     {
         return [
             'id' => $this->id,
-            'commentCount' => $this->comments_count,
+            'commentCount' => isset($this->comments_count) ? $this->comments_count : 0,
             'contradictionTwitter' => new FallacyTwitterResource($this->contradictionTwitter),
             'contradictionYouTube' => new FallacyYouTubeResource($this->contradictionYouTube),
             'explanation' => $this->explanation,
