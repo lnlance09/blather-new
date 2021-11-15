@@ -1,5 +1,10 @@
 const reducer = (state, action) => {
 	switch (action.type) {
+		case "GET_ARGUMENTS":
+			return {
+				...state,
+				args: action.args
+			}
 		case "GET_CONTRADICTIONS":
 			const contradictions =
 				action.page > 1
@@ -21,6 +26,13 @@ const reducer = (state, action) => {
 					data: fallacies,
 					loaded: true
 				}
+			}
+		case "GET_MODAL_TWEETS":
+			const mTweets =
+				action.page > 1 ? [...state.modalTweets, ...action.tweets] : action.tweets
+			return {
+				...state,
+				modalTweets: mTweets
 			}
 		case "GET_PAGE":
 			return {

@@ -1,4 +1,13 @@
-import { Divider, Grid, Header, Image, Loader, Menu, Visibility } from "semantic-ui-react"
+import {
+	Divider,
+	Grid,
+	Header,
+	Image,
+	Loader,
+	Menu,
+	PlaceholderImage,
+	Visibility
+} from "semantic-ui-react"
 import { useContext, useEffect, useReducer, useState } from "react"
 import { ReactSVG } from "react-svg"
 import { onClickRedirect } from "utils/linkFunctions"
@@ -235,8 +244,9 @@ const Member = ({ history, match }) => {
 			return (
 				<ImageUpload
 					callback={(file) => changeProfilePic(file)}
+					errorPic={PlaceholderPic}
 					fluid
-					img={member.image === null ? PlaceholderPic : member.image}
+					img={member.image}
 					inverted={inverted}
 					loading={profilePicLoading}
 				/>
@@ -262,14 +272,12 @@ const Member = ({ history, match }) => {
 			{loaded ? (
 				<>
 					{error && (
-						<>
-							<div className="centeredLoader">
-								<Header as="h1" image textAlign="center">
-									<ReactSVG className="errorSvg" src={Logo} />
-									<Header.Content>This user does not exist</Header.Content>
-								</Header>
-							</div>
-						</>
+						<div className="centeredLoader">
+							<Header as="h1" image textAlign="center">
+								<ReactSVG className="errorSvg" src={Logo} />
+								<Header.Content>This user does not exist</Header.Content>
+							</Header>
+						</div>
 					)}
 
 					{!error && (
@@ -311,7 +319,7 @@ const Member = ({ history, match }) => {
 								</Grid.Row>
 							</Grid>
 
-							<Menu secondary pointing size="large">
+							<Menu secondary pointing size="large" stackable>
 								<Menu.Item
 									active={activeItem === "fallacies"}
 									name="fallacies"

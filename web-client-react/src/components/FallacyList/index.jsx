@@ -1,5 +1,5 @@
 import "./style.scss"
-import { Grid, Header, Icon, Placeholder, Segment } from "semantic-ui-react"
+import { Grid, Header, Placeholder, Segment } from "semantic-ui-react"
 import { onClickRedirect } from "utils/linkFunctions"
 import FallacyExample from "components/FallacyExample"
 import PropTypes from "prop-types"

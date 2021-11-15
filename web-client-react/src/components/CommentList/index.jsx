@@ -284,7 +284,11 @@ const CommentList = ({
 						<Grid>
 							<Grid.Row>
 								<Grid.Column computer={1} mobile={3}>
-									<Image circular src={auth ? user.image : defaultImg} />
+									<Image
+										circular
+										onError={(i) => (i.target.src = defaultImg)}
+										src={auth ? user.image : defaultImg}
+									/>
 								</Grid.Column>
 								<Grid.Column computer={15} mobile={13}>
 									<Form inverted={inverted} onSubmit={onSubmitForm}>

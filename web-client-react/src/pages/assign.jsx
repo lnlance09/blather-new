@@ -418,6 +418,8 @@ const Assign = ({ history }) => {
 					<FallacyForm
 						cTweetId={cTweetLoaded ? cTweet.id : null}
 						groupId={groupId}
+						highlightedText={highlightedText}
+						highlightedTextC={highlightedTextC}
 						history={history}
 						inverted={inverted}
 						pageId={pageId}

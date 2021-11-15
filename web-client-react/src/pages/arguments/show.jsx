@@ -324,7 +324,7 @@ const Argument = ({ history, match }) => {
 						</Header.Content>
 					</Header>
 
-					<Grid>
+					<Grid stackable>
 						<Grid.Row>
 							<Grid.Column width={11}>
 								<p className="explanation">{explanation}</p>

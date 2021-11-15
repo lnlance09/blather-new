@@ -6,6 +6,7 @@ import {
 	Header,
 	Icon,
 	Input,
+	Loader,
 	Menu,
 	Message,
 	Segment,
@@ -44,12 +45,13 @@ const Settings = ({ history, match }) => {
 		initialState
 	)
 
-	const { twitter } = internalState
+	const { twitter, twitterLinked, twitterLoaded } = internalState
 
 	const [activeItem, setActiveItem] = useState(!tabs.includes(tab) ? "profile_info" : tab)
 	const [bio, setBio] = useState(user.bio === defaultBio ? "" : user.bio)
 	const [confirmPassword, setConfirmPassword] = useState("")
 	const [currentPassword, setCurrentPassword] = useState("")
+	const [loadingTwitter, setLoadingTwitter] = useState(false)
 	const [newPassword, setNewPassword] = useState("")
 	const [newUsername, setNewUsername] = useState(user.username)
 	const [usernameAvailable, setUsernameAvailable] = useState(true)
@@ -71,6 +73,19 @@ const Settings = ({ history, match }) => {
 		}
 		// eslint-disable-next-line
 	}, [tab])
+
+	const getRequestToken = () => {
+		setLoadingTwitter(true)
+		axios
+			.get(`${process.env.REACT_APP_BASE_URL}users/twitterRequestToken`)
+			.then((response) => {
+				const { data } = response
+				localStorage.setItem("requestTokenSecret", data.secret)
+				localStorage.setItem("requestToken", data.token)
+				window.location.href = data.url
+			})
+			.catch(() => {})
+	}
 
 	const changePassword = () => {
 		axios
@@ -151,6 +166,9 @@ const Settings = ({ history, match }) => {
 				})
 			})
 			.catch(() => {
+				dispatchInternal({
+					type: "SET_TWITTER_ERROR"
+				})
 				console.error("Error fetching Twitter info")
 			})
 	}
@@ -390,27 +408,60 @@ const Settings = ({ history, match }) => {
 
 						{activeItem === "twitter" && (
 							<>
-								<Header inverted={inverted}>
-									You linked your{" "}
-									<a
-										href={`https://twitter.com/${twitter.username}`}
-										target="_blank"
-										rel="noreferrer"
-									>
-										Twitter account
-									</a>{" "}
-									on <Moment date={twitter.createdAt} format="lll" />
-								</Header>
-								<Form inverted={inverted}>
-									<Form.Field>
-										<label>Token</label>
-										<Input fluid readOnly value={twitter.token} />
-									</Form.Field>
-									<Form.Field>
-										<label>Secret</label>
-										<Input fluid readOnly value={twitter.secret} />
-									</Form.Field>
-								</Form>
+								{twitterLoaded ? (
+									<>
+										{twitterLinked ? (
+											<>
+												<Header inverted={inverted}>
+													You linked your{" "}
+													<a
+														href={`https://twitter.com/${twitter.username}`}
+														target="_blank"
+														rel="noreferrer"
+													>
+														Twitter account
+													</a>{" "}
+													on{" "}
+													<Moment date={twitter.createdAt} format="lll" />
+												</Header>
+												<Form inverted={inverted}>
+													<Form.Field>
+														<label>Token</label>
+														<Input
+															fluid
+															readOnly
+															value={twitter.token}
+														/>
+													</Form.Field>
+													<Form.Field>
+														<label>Secret</label>
+														<Input
+															fluid
+															readOnly
+															value={twitter.secret}
+														/>
+													</Form.Field>
+												</Form>
+											</>
+										) : (
+											<>
+												<Button
+													color="twitter"
+													content="Link your Twitter"
+													fluid
+													icon="twitter"
+													loading={loadingTwitter}
+													onClick={getRequestToken}
+													size="large"
+												/>
+											</>
+										)}
+									</>
+								) : (
+									<div className="centeredLoader">
+										<Loader active inverted={inverted} size="big" />
+									</div>
+								)}
 							</>
 						)}
 					</Grid.Column>

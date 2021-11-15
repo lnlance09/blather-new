@@ -129,6 +129,24 @@ class ArgumentController extends Controller
         return new ArgumentCollection($args);
     }
 
+    public function getArgumentsByPage(Request $request)
+    {
+        $id = $request->input('id', null);
+
+        $args = Argument::whereHas('tweets', function ($query) use ($id) {
+            $tweetIds = Tweet::where('page_id', $id)->pluck('id')->toArray();
+            $query->whereIn('tweet_id', $tweetIds);
+        })
+            ->withCount(['tweets' => function ($query) use ($id) {
+                $tweetIds = Tweet::where('page_id', $id)->pluck('id')->toArray();
+                $query->whereIn('tweet_id', $tweetIds);
+            }])
+            ->orderBy('tweets_count', 'desc')
+            ->get();
+
+        return new ArgumentCollection($args);
+    }
+
     public function getFallaciesByArg(Request $request)
     {
         $id = $request->input('id', null);

@@ -25,6 +25,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/arguments', [ArgumentController::class, 'index']);
 Route::get('/arguments/getArgumentsByFallacy', [ArgumentController::class, 'getArgumentsByFallacy']);
+Route::get('/arguments/getArgumentsByPage', [ArgumentController::class, 'getArgumentsByPage']);
 Route::get('/arguments/getFallaciesByArg', [ArgumentController::class, 'getFallaciesByArg']);
 Route::get('/arguments/getPagesByArg', [ArgumentController::class, 'getPagesByArg']);
 Route::get('/arguments/showOptions', [ArgumentController::class, 'showOptions']);

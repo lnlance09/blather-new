@@ -54,7 +54,7 @@ const Forgot = ({ history }) => {
 			.then(() => {
 				toast.success("Password changed!")
 				setLoading(false)
-				history.push("/login")
+				history.push("/auth")
 			})
 			.catch((error) => {
 				let errorMsg = ""
@@ -95,9 +95,9 @@ const Forgot = ({ history }) => {
 					<>
 						<Header
 							as="h1"
-							className="massive"
 							content="Reset your password"
 							inverted={inverted}
+							size="large"
 							style={{ marginTop: 40 }}
 							textAlign="center"
 						/>

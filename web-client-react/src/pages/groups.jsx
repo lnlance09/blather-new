@@ -53,6 +53,12 @@ const Groups = ({ history }) => {
 
 			<Header as="h1" content="Groups" />
 
+			<Header as="p">
+				Groups on Blather are collections of people who work for or have worked for the same
+				organization and whose talking points are almost identical to those of their
+				colleagues who work at the same organization.
+			</Header>
+
 			<Divider hidden />
 
 			{loaded && (

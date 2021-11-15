@@ -1,7 +1,21 @@
 import "linkify-plugin-hashtag"
 import "linkify-plugin-mention"
-import { Button, Divider, Grid, Header, Image, Menu, Visibility } from "semantic-ui-react"
+import {
+	Button,
+	Divider,
+	Grid,
+	Header,
+	Icon,
+	Image,
+	Label,
+	Menu,
+	Message,
+	Modal,
+	Segment,
+	Visibility
+} from "semantic-ui-react"
 import { useContext, useEffect, useReducer, useState } from "react"
+import { formatPlural } from "utils/textFunctions"
 import { ReactSVG } from "react-svg"
 import { DisplayMetaTags } from "utils/metaFunctions"
 import { onClickRedirect } from "utils/linkFunctions"
@@ -33,22 +47,29 @@ const Page = ({ history, match }) => {
 		process.env.NODE_ENV === "development" ? logger(reducer) : reducer,
 		initialState
 	)
-	const { contradictions, error, fallacies, loaded, page, tweets } = internalState
+	const { args, contradictions, error, fallacies, loaded, modalTweets, page, tweets } =
+		internalState
 
-	const [activeItem, setActiveItem] = useState("fallacies")
+	const [activeItem, setActiveItem] = useState("arguments")
+	const [argId, setArgId] = useState(null)
 	const [hasMore, setHasMore] = useState(false)
 	const [hasMoreC, setHasMoreC] = useState(false)
 	const [hasMoreT, setHasMoreT] = useState(false)
+	const [hasMoreM, setHasMoreM] = useState(false)
 	const [loading, setLoading] = useState(true)
 	const [loadingC, setLoadingC] = useState(true)
 	const [loadingT, setLoadingT] = useState(true)
+	const [loadingM, setLoadingM] = useState(true)
 	const [loadingMore, setLoadingMore] = useState(false)
 	const [loadingMoreC, setLoadingMoreC] = useState(false)
 	const [loadingMoreT, setLoadingMoreT] = useState(false)
+	const [loadingMoreM, setLoadingMoreM] = useState(false)
 	const [imageLoaded, setImageLoaded] = useState(false)
 	const [pageNumber, setPageNumber] = useState(1)
 	const [pageNumberC, setPageNumberC] = useState(1)
 	const [pageNumberT, setPageNumberT] = useState(1)
+	const [pageNumberM, setPageNumberM] = useState(1)
+	const [modalOpen, setModalOpen] = useState(false)
 
 	useEffect(() => {
 		const getPage = async (slug) => {
@@ -60,6 +81,7 @@ const Page = ({ history, match }) => {
 						type: "GET_PAGE",
 						page
 					})
+					getArguments(page.id)
 					getFallacies([page.id])
 					getContradictions([page.id])
 
@@ -78,6 +100,52 @@ const Page = ({ history, match }) => {
 		getPage(slug)
 		// eslint-disable-next-line
 	}, [slug])
+
+	const getArguments = async (id) => {
+		await axios
+			.get(`${process.env.REACT_APP_BASE_URL}arguments/getArgumentsByPage`, {
+				params: {
+					id
+				}
+			})
+			.then((response) => {
+				const { data } = response.data
+				dispatchInternal({
+					type: "GET_ARGUMENTS",
+					args: data
+				})
+			})
+			.catch(() => {
+				console.error("Error fetching arguments")
+			})
+	}
+
+	const getArgTweets = async (argIds, pageIds, page = 1) => {
+		page === 1 ? setLoadingM(true) : setLoadingMoreM(true)
+		await axios
+			.get(`${process.env.REACT_APP_BASE_URL}tweets`, {
+				params: {
+					argIds,
+					pageIds,
+					page
+				}
+			})
+			.then((response) => {
+				const { data, meta } = response.data
+				dispatchInternal({
+					type: "GET_MODAL_TWEETS",
+					tweets: data,
+					page,
+					total: meta.total
+				})
+				setPageNumberM(page + 1)
+				setHasMoreM(true)
+				page === 1 ? setLoadingM(false) : setLoadingMoreM(false)
+			})
+			.catch(() => {
+				console.error("There was an error")
+			})
+	}
 
 	const getContradictions = async (pageIds, page = 1) => {
 		page === 1 ? setLoadingC(true) : setLoadingMoreC(true)
@@ -259,7 +327,14 @@ const Page = ({ history, match }) => {
 								</Grid.Row>
 							</Grid>
 
-							<Menu secondary pointing size="large">
+							<Menu secondary pointing size="large" stackable>
+								<Menu.Item
+									active={activeItem === "arguments"}
+									name="arguments"
+									onClick={handleItemClick}
+								>
+									Arguments
+								</Menu.Item>
 								<Menu.Item
 									active={activeItem === "fallacies"}
 									name="fallacies"
@@ -306,6 +381,40 @@ const Page = ({ history, match }) => {
 									</Menu.Item>
 								)}
 							</Menu>
+
+							{activeItem === "arguments" && (
+								<>
+									<Message
+										content={`Here's how often ${page.name} has recycled the same arguments`}
+										header={`How original is ${page.name}'s material?`}
+										icon={{
+											color: "green",
+											name: "recycle"
+										}}
+									/>
+									{args.map((arg, i) => (
+										<Segment
+											className="argSegment"
+											key={`argItem${i}`}
+											onClick={() => {
+												setArgId(arg.id)
+												setModalOpen(true)
+												getArgTweets([arg.id], [page.id])
+											}}
+											padded
+										>
+											<Label attached="top" basic size="large">
+												<Icon color="green" name="recycle" />
+												{arg.tweetCount}{" "}
+												{formatPlural(arg.tweetCount, "time")}
+											</Label>
+											<Header textAlign="center" size="medium">
+												{arg.description}
+											</Header>
+										</Segment>
+									))}
+								</>
+							)}
 
 							{activeItem === "fallacies" && (
 								<Visibility
@@ -373,6 +482,40 @@ const Page = ({ history, match }) => {
 							)}
 
 							<Divider hidden section />
+
+							<Modal
+								basic
+								centered={false}
+								closeIcon
+								dimmer="blurring"
+								onClose={() => setModalOpen(false)}
+								onOpen={() => setModalOpen(true)}
+								open={modalOpen}
+								size="large"
+							>
+								<Modal.Content>
+									<Segment>
+										<Visibility
+											continuous
+											offset={[50, 50]}
+											onBottomVisible={() => {
+												if (!loadingM && !loadingMoreM && hasMoreM) {
+													getArgTweets([argId], [page.id], pageNumberM)
+												}
+											}}
+										>
+											<TweetList
+												history={history}
+												inverted={inverted}
+												loading={false}
+												loadingMore={false}
+												showSaveOption={false}
+												tweets={modalTweets}
+											/>
+										</Visibility>
+									</Segment>
+								</Modal.Content>
+							</Modal>
 						</>
 					)}
 				</>

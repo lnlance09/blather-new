@@ -30,9 +30,10 @@ const toastConfig = getConfig()
 toast.configure(toastConfig)
 
 const FallacyForm = ({
-	auth,
 	cTweetId = null,
 	groupId = null,
+	highlightedText = "",
+	highlightedTextC = "",
 	history,
 	inverted,
 	pageId = null,
@@ -106,6 +107,8 @@ const FallacyForm = ({
 				{
 					cTweet: cTweetId,
 					explanation,
+					highlightedText,
+					highlightedTextC,
 					groupId,
 					refId: refValue,
 					tweet: tweetId
@@ -294,7 +297,7 @@ const FallacyForm = ({
 					<Form.Field>
 						<Grid>
 							<Grid.Row>
-								<Grid.Column mobile={12} width={15}>
+								<Grid.Column computer={15} mobile={12}>
 									<Button
 										color="black"
 										content="Submit"
@@ -303,7 +306,7 @@ const FallacyForm = ({
 										size="large"
 									/>
 								</Grid.Column>
-								<Grid.Column mobile={4} width={1} style={{ paddingLeft: 0 }}>
+								<Grid.Column computer={1} mobile={4} style={{ paddingLeft: 0 }}>
 									<ImageUpload
 										as="button"
 										callback={(file) => addImage(file)}
@@ -322,9 +325,10 @@ const FallacyForm = ({
 }
 
 FallacyForm.propTypes = {
-	auth: PropTypes.bool,
 	cTweetId: PropTypes.oneOfType([PropTypes.bool, PropTypes.number]),
 	groupId: PropTypes.oneOfType([PropTypes.bool, PropTypes.number]),
+	highlightedText: PropTypes.string,
+	highlightedTextC: PropTypes.string,
 	inverted: PropTypes.bool,
 	pageId: PropTypes.oneOfType([PropTypes.bool, PropTypes.number]),
 	refId: PropTypes.number,

@@ -156,7 +156,7 @@ class FallacyController extends Controller
         $endTime = $request->input('endTime', null);
 
         $cTweetId = $request->input('cTweet', null);
-        $cHighlightedText = $request->input('cHighlightedText', null);
+        $highlightedTextC = $request->input('highlightedTextC', null);
 
         $cVideoId = $request->input('cVideo', null);
         $cStartTime = $request->input('cStartTime', null);
@@ -245,7 +245,7 @@ class FallacyController extends Controller
         if ($cTweetId) {
             ContradictionTwitter::create([
                 'fallacy_id' => $fallacy->id,
-                'highlighted_text' => $cHighlightedText,
+                'highlighted_text' => $highlightedTextC,
                 'tweet_id' => $cTweetId
             ]);
         }

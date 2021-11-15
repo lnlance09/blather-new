@@ -28,7 +28,6 @@ import PropTypes from "prop-types"
 import reducer from "reducers/tweet"
 import ThemeContext from "themeContext"
 import Tweet from "components/Tweet"
-import Tweets from "."
 
 const toastConfig = getConfig()
 toast.configure(toastConfig)

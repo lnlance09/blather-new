@@ -1,13 +1,13 @@
 # ************************************************************
 # Sequel Ace SQL dump
-# Version 3041
+# Version 20016
 #
 # https://sequel-ace.com/
 # https://github.com/Sequel-Ace/Sequel-Ace
 #
 # Host: 127.0.0.1 (MySQL 8.0.23)
 # Database: blather
-# Generation Time: 2021-11-11 04:16:40 +0000
+# Generation Time: 2021-11-15 03:34:00 +0000
 # ************************************************************
 
 
@@ -30,7 +30,7 @@ INSERT INTO `arguments` (`id`, `description`, `explanation`, `slug`, `created_at
 VALUES
 	(1,'America isn\'t a democracy. It\'s a republic.','This is like saying \"LeBron James is NOT an athlete. He\'s a basketball player. Learn the difference!\". There actually isn\'t much of a difference. A constitutional republic is a kind of democracy','america-is-not-a-democracy','2021-10-08 04:33:23','2021-10-08 04:33:23'),
 	(2,'Amnesty is a slap in the face to those who waited legally','This is an appeal to suffering. It\'s like saying that the underground railroad was a bad thing because of all the slaves who waited to be legally emancipated. They think it\'s an injustice that some immigrants never had to go through the painfully tedious, and very costly process of becoming a citizen the legal way. In their minds, it\'s only fair if everyone has to suffer through the same experience.','slap-in-the-face-to-legal-immigrants','2021-10-08 04:33:30','2021-10-08 04:33:30'),
-	(3,'Anti-zionism equals with anti-semitism','Hating a government isn\'t the same thing as hating the people who are forced to live under that government.','anti-zionism-is-anti-semitism','2021-10-08 04:33:31','2021-10-08 04:33:31'),
+	(3,'Anti-zionism is anti-semitism','Hating a government isn\'t the same thing as hating the people who are forced to live under that government.','anti-zionism-is-anti-semitism','2021-10-08 04:33:31','2021-10-08 04:33:31'),
 	(4,'Antifa are violent super soldiers','The overwhelming majority of domestic terrorist attacks in America are committed by right wingers.','antifa-are-violent-super-soldiers','2021-10-08 04:33:31','2021-10-08 04:33:31'),
 	(5,'Antifa are weak soy boys','People who attack others because of a supposed lack of masculinity are just projecting their insecurities on to others.','antifa-are-soy-boys','2021-10-08 04:33:32','2021-10-08 04:33:32'),
 	(6,'Back the blue','Worshipping authority doesn\'t make someone strong; it makes them a bitch.','back-the-blue','2021-10-08 04:33:33','2021-10-08 04:33:33'),
@@ -115,7 +115,8 @@ VALUES
 	(85,'You aren\'t entitled to anything','This is a completely vacuous thing to say. There isn\'t a single thing that human beings are entitled to? Not one?. Likely projection on behalf of the person saying it. They\'re entitled but feel guilty about it so they unload that anger on to easy targets as a way of assuaging their guilt.','you-arent-entitled-to-anything','2021-10-08 04:34:23','2021-10-08 04:34:23'),
 	(86,'You have low IQ','People with high IQs generally don\'t brag about their IQs. Intelligence is something that\'s more demonstrated than said. If you\'re truly intelligent, you shouldn\'t have to go around telling others that you\'re intelligent. People who brag about their supposed high IQs or who put others down for supposedly having low IQs are almost certainly projecting. Anyone who uses this argument almost definitely has a case of Dunning-Kruger.','low-iq','2021-10-08 04:34:23','2021-10-08 04:34:23'),
 	(87,'You keep your front door locked but you support open borders','Homes and countries aren\'t the same things. This should be obvious to almost everyone. A person can own a home and the owner can decide who gets to come in and out of his/her property. A person cannot own a country.','you-put-locks-on-your-front-doors','2021-10-08 04:34:24','2021-10-08 04:34:24'),
-	(88,'You shouldn’t have to reveal private health info in order to participate in society','Anti-vaxxers will often use this argument in regards to having to provide proof of COVID vaccinations.','proof-of-covid-vaccines','2021-10-08 04:34:25','2021-10-08 04:34:25');
+	(88,'You shouldn’t have to reveal private health info in order to participate in society','Anti-vaxxers will often use this argument in regards to having to provide proof of COVID vaccinations.','proof-of-covid-vaccines','2021-10-08 04:34:25','2021-10-08 04:34:25'),
+	(89,'You criticize society yet you participate in it','Gotcha moment type argument that makes mental midgets feel like they\'ve dished out some hard-hitting criticism. Rather than address the issue at hand, they\'ll attack you personally for owning a smart phone or for once having a package delivered from Amazon as if that somehow discredits your thoughts on income inequality.','you-criticize-society-yet-you-participate-in-it',NULL,NULL);
 
 /*!40000 ALTER TABLE `arguments` ENABLE KEYS */;
 UNLOCK TABLES;

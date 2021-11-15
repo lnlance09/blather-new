@@ -9,6 +9,7 @@ const ImageUpload = ({
 	as = "image",
 	btnSize = "large",
 	callback = () => null,
+	errorPic = ImagePic,
 	fluid = false,
 	headerSize = "medium",
 	img = ImagePic,
@@ -55,7 +56,7 @@ const ImageUpload = ({
 							dimmed={active}
 							dimmer={{ active, content, inverted: true }}
 							fluid={fluid}
-							onError={(i) => (i.target.src = ImagePic)}
+							onError={(i) => (i.target.src = errorPic)}
 							onMouseEnter={() => setActive(true)}
 							onMouseLeave={() => setActive(false)}
 							rounded

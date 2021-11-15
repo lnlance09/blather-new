@@ -1,5 +1,15 @@
 import "./style.scss"
-import { Button, Container, Dropdown, Icon, Image, Label, Menu, Sidebar } from "semantic-ui-react"
+import {
+	Button,
+	Container,
+	Dropdown,
+	Header,
+	Icon,
+	Image,
+	Label,
+	Menu,
+	Sidebar
+} from "semantic-ui-react"
 import { useContext, useEffect, useReducer, useState } from "react"
 import { Link } from "react-router-dom"
 import { ReactSVG } from "react-svg"
@@ -8,7 +18,7 @@ import Echo from "laravel-echo"
 import initialState from "./state"
 import logger from "use-reducer-logger"
 import Logo from "images/logos/brain.svg"
-import NumberFormat from "react-number-format"
+import Moment from "react-moment"
 import PropTypes from "prop-types"
 import reducer from "./reducer"
 import ThemeContext from "themeContext"
@@ -92,7 +102,7 @@ const PageHeader = ({ activeItem = null, history, showBanner = false, simple = f
 		localStorage.removeItem("unreadCount")
 		localStorage.removeItem("user")
 		localStorage.removeItem("verify")
-		// window.Echo.leave(`users.${user.id}`)
+		window.Echo.leave(`users.${user.id}`)
 		dispatch({
 			type: "LOGOUT"
 		})
@@ -128,21 +138,30 @@ const PageHeader = ({ activeItem = null, history, showBanner = false, simple = f
 										className="paddedDropdownItem"
 										key={`${item.id}${i}`}
 										onClick={() =>
-											history.push(`/predictions/${item.id}?clear=1`)
+											history.push(`/fallacies/${item.id}?clear=1`)
 										}
 										value={item.id}
 									>
-										<Image avatar src={item.coin.logo} />
-										<div style={{ marginLeft: 8, display: "inline-block" }}>
-											{item.user.username} predicted ${item.coin.symbol} at{" "}
-											<NumberFormat
-												decimalScale={item.predictionPrice > 1 ? 2 : 6}
-												displayType={"text"}
-												prefix={"$"}
-												thousandSeparator
-												value={item.predictionPrice}
+										<Header size="tiny">
+											<Image
+												avatar
+												onError={(i) => (i.target.src = defaultImg)}
+												src={item.page.image}
 											/>
-										</div>
+											<Header.Content>
+												{item.user.name}{" "}
+												<Icon
+													color="green"
+													name="arrow right"
+													style={{ marginLeft: "6px" }}
+												/>{" "}
+												{item.page.name}
+												<Header.Subheader>
+													{item.reference.name} •{" "}
+													<Moment date={item.createdAt} fromNow />
+												</Header.Subheader>
+											</Header.Content>
+										</Header>
 									</Dropdown.Item>
 								)
 							})}
@@ -356,23 +375,23 @@ const PageHeader = ({ activeItem = null, history, showBanner = false, simple = f
 				vertical
 				visible={sidebarVisible}
 			>
-				<Menu.Item as="a" onClick={() => history.push("/activity")}>
-					Activity
-				</Menu.Item>
 				<Menu.Item as="a" onClick={() => history.push("/")}>
-					Assign
+					🪄 Assign
+				</Menu.Item>
+				<Menu.Item as="a" onClick={() => history.push("/activity")}>
+					📎 Activity
 				</Menu.Item>
 				<Menu.Item as="a" onClick={() => history.push("/tweets")}>
-					Tweets
+					📌 Tweets
 				</Menu.Item>
 				<Menu.Item as="a" onClick={() => history.push("/grifters")}>
-					Grifters
+					🤮 Grifters
 				</Menu.Item>
 				<Menu.Item as="a" onClick={() => history.push("/arguments")}>
-					Arguments
+					🤢 Arguments
 				</Menu.Item>
 				<Menu.Item as="a" onClick={() => history.push("/reference")}>
-					Reference
+					📚 Reference
 				</Menu.Item>
 				{auth ? (
 					<>

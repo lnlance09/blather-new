@@ -41,7 +41,7 @@ const Grifters = ({ history }) => {
 						failed comedians, musicians, actors, models etc. And it’s easy. Super easy.
 						It’s literally reciting scripted talking points and telling your audience
 						what they already believe, but doing it as a one-dimensional personality
-						brand. Bonus points in one is a member of a marginalized group.
+						brand. Bonus points if one is a member of a marginalized group.
 					</p>
 
 					<div className="gallery-wrapper">
@@ -78,6 +78,9 @@ const Grifters = ({ history }) => {
 						using the words "hustle" or "grind." Or if they're constantly posting vapid
 						motivational crap mixed in with their preposterous financial posts. The odds
 						of said person wanting to con you into a pyramid scheme are astronomical.
+						Similar to cryptocurrency grifters, these vultures take advantage of
+						insecure dude bros' desire to get rich quick without having to put in any
+						real work.
 					</p>
 					<div className="gallery-wrapper">
 						<div className="tiles">
@@ -146,7 +149,10 @@ const Grifters = ({ history }) => {
 					</div>
 
 					<Header as="h1">Evangelical Grifters</Header>
-					<p></p>
+					<p>
+						Sleazy televangelist types, bible thumpers and hate preachers. Many of the
+						more homophobic ones are closeted gay themselves.
+					</p>
 					<div className="gallery-wrapper">
 						<div className="tiles">
 							{evangelicals.map((m, i) => (
@@ -214,7 +220,7 @@ const Grifters = ({ history }) => {
 						</div>
 					</div>
 
-					<Header as="h1">Entrepreneurial Grifters</Header>
+					<Header as="h1">Blue Check Mark Grifters</Header>
 					<p>
 						These are opportunistic grifters of the Ivanka Trump flavor. Usually Ivy
 						League educated Forbes 30 under 30 types. I
@@ -246,6 +252,32 @@ const Grifters = ({ history }) => {
 							))}
 						</div>
 					</div>
+
+					<Header as="h1">What do all of these grifters have in common?</Header>
+					<p>
+						They all pull from the same bag of tricks. They all employ the same core
+						arguments and take advantage of the same human weaknesses in pursuit of
+						either enriching themselves and/or advancing an agenda. Whatever success
+						they have had at conning people, it's much more a testament to the
+						gullibility and desperation of their audience than it is to any supposed
+						skill on their side.
+					</p>
+
+					<Header as="h1">What do all of the victims of these grifters in common?</Header>
+					<p>
+						The MLM capital of the US is Salt Lake City, Utah, which is also the Mormon
+						capital of the US, which is also in a deeply red state. When people choose
+						to believe conspiracy theories they usually don't believe just one; they
+						believe all of them - even if they conflict with each other. There's no
+						polite way to say this, but the victims of these grifts are gullible people
+						in probably almost every facet of their lives. It's why there's so much
+						overlap between the Qanon, Evangelical and MLM communities. If someone has
+						made a conscious decision to dedicate their life to an imaginary person, how
+						hard could it possibly be to convice that person that they'll get rich quick
+						or that JFK Jr. will come back from the dead in Dallas one fall afternoon?
+						Probably not that hard. If there's one thing that grifters deserve credit
+						for, it's spotting a good mark when they see one.
+					</p>
 
 					<Divider hidden />
 				</Grid.Column>

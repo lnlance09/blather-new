@@ -1,4 +1,5 @@
 const initialState = {
+	args: [{}, {}, {}],
 	contradictions: {
 		data: [{}, {}, {}],
 		loaded: false
@@ -9,6 +10,7 @@ const initialState = {
 		loaded: false
 	},
 	loaded: false,
+	modalTweets: [],
 	page: {},
 	tweets: {
 		data: [{}, {}, {}],

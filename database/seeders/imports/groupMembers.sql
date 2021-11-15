@@ -1,13 +1,13 @@
 # ************************************************************
 # Sequel Ace SQL dump
-# Version 3030
+# Version 3041
 #
 # https://sequel-ace.com/
 # https://github.com/Sequel-Ace/Sequel-Ace
 #
 # Host: 127.0.0.1 (MySQL 8.0.23)
 # Database: blather
-# Generation Time: 2021-10-15 03:16:00 +0000
+# Generation Time: 2021-11-13 21:51:52 +0000
 # ************************************************************
 
 
@@ -28,14 +28,14 @@ LOCK TABLES `groups_members` WRITE;
 
 INSERT INTO `groups_members` (`id`, `group_id`, `page_id`, `created_at`, `updated_at`)
 VALUES
-	(1,1,6,NULL,NULL),
+	(1,1,41,NULL,NULL),
 	(2,1,24,NULL,NULL),
 	(3,1,383,NULL,NULL),
 	(4,1,262,NULL,NULL),
 	(5,1,1083,NULL,NULL),
 	(6,1,573,NULL,NULL),
 	(7,1,495,NULL,NULL),
-	(8,1,41,NULL,NULL),
+	(8,1,6,NULL,NULL),
 	(9,2,510,NULL,NULL),
 	(10,2,75,NULL,NULL),
 	(11,2,287,NULL,NULL),

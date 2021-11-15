@@ -24,7 +24,7 @@ import validator from "validator"
 const toastConfig = getConfig()
 toast.configure(toastConfig)
 
-const Authentication = ({ history, inverted, showLogin = true, size }) => {
+const Authentication = ({ history, inverted, showLogin = true, size = "large" }) => {
 	const { state, dispatch } = useContext(ThemeContext)
 
 	const [internalState, dispatchInternal] = useReducer(
@@ -268,7 +268,10 @@ const Authentication = ({ history, inverted, showLogin = true, size }) => {
 								<Form.Field>
 									<Input
 										inverted={inverted}
-										label="email"
+										label={{
+											color: "black",
+											content: "email"
+										}}
 										onChange={(e, { value }) => setForgotEmail(value)}
 										placeholder="Enter your email"
 										value={forgotEmail}
@@ -304,7 +307,10 @@ const Authentication = ({ history, inverted, showLogin = true, size }) => {
 								<Form.Field>
 									<Input
 										inverted={inverted}
-										label="code"
+										label={{
+											color: "black",
+											content: "code"
+										}}
 										maxLength={4}
 										onChange={(e, { value }) => setVerificationCode(value)}
 										placeholder="Verification code"
@@ -511,12 +517,6 @@ Authentication.propTypes = {
 	inverted: PropTypes.bool,
 	showLogin: PropTypes.bool,
 	size: PropTypes.string
-}
-
-Authentication.defaultProps = {
-	inverted: false,
-	showLogin: false,
-	size: "large"
 }
 
 export default Authentication

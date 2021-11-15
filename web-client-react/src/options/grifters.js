@@ -1,40 +1,10 @@
 export const grifters = {
 	maga: [
 		{
-			src: "public/candace-owens.jpeg",
-			name: "Candace Owens",
-			network: "twitter",
-			username: "realcandaceo"
-		},
-		{
 			src: "public/charlie-kirk.jpeg",
 			name: "Charlie Kirk",
 			network: "twitter",
 			username: "charliekirk11"
-		},
-		{
-			src: "public/dennis-prager.jpeg",
-			name: "PragerU",
-			network: "twitter",
-			username: "prageru"
-		},
-		{
-			src: "public/brandon-tatum.jpeg",
-			name: "Brandon Tatum",
-			network: "twitter",
-			username: "theofficertatum"
-		},
-		{
-			src: "public/cj-pearson.jpeg",
-			name: "CJ Pearson",
-			network: "twitter",
-			username: "thecjpearson"
-		},
-		{
-			src: "public/larry-elder.jpeg",
-			name: "Larry Elder",
-			network: "twitter",
-			username: "larryelder"
 		},
 		{
 			src: "public/steven-crowder.jpeg",
@@ -43,64 +13,28 @@ export const grifters = {
 			username: "scrowder"
 		},
 		{
+			src: "public/matt-walsh.jpeg",
+			name: "Matt Walsh",
+			network: "twitter",
+			username: "mattwalshblog"
+		},
+		{
 			src: "public/pjw.jpeg",
 			name: "Paul Joseph Watson",
 			network: "twitter",
 			username: "prisonplanet"
 		},
 		{
-			src: "public/dave-rubin.jpeg",
-			name: "Dave Rubin",
+			src: "public/larry-elder.jpeg",
+			name: "Larry Elder",
 			network: "twitter",
-			username: "rubinreport"
+			username: "larryelder"
 		},
 		{
-			src: "public/tim-pool.jpeg",
-			name: "Tim Pool",
+			src: "public/dennis-prager.jpeg",
+			name: "PragerU",
 			network: "twitter",
-			username: "timcast"
-		},
-		{
-			src: "public/anna-paulina.jpeg",
-			name: "Anna Paulina Luna",
-			network: "twitter",
-			username: "realannapaulina"
-		},
-		{
-			src: "public/tomi-lahren.jpeg",
-			name: "Tomi Lahren",
-			network: "twitter",
-			username: "tomilahren"
-		},
-		{
-			src: "public/ryan-fournier.jpeg",
-			name: "Ryan Fournier",
-			network: "twitter",
-			username: "ryanafournier"
-		},
-		{
-			src: "public/liz-wheeler.jpeg",
-			name: "Liz Wheeler",
-			network: "twitter",
-			username: "lizwheeler"
-		},
-		{
-			src: "public/dinesh-dsouza.png",
-			name: "Dinesh D'Souza",
-			network: "twitter",
-			username: "dineshdsouza"
-		},
-		{
-			src: "public/jordan-peterson.jpeg",
-			name: "Jordan Peterson",
-			network: "twitter",
-			username: "jordanbpeterson"
-		},
-		{
-			src: "public/lauren-chen.jpeg",
-			name: "Lauren Chen",
-			network: "twitter",
-			username: "thelaurenchen"
+			username: "prageru"
 		},
 		{
 			src: "public/dan-bongino.jpg",
@@ -109,10 +43,34 @@ export const grifters = {
 			username: "dbongino"
 		},
 		{
+			src: "public/dinesh-dsouza.png",
+			name: "Dinesh D'Souza",
+			network: "twitter",
+			username: "dineshdsouza"
+		},
+		{
+			src: "public/ryan-fournier.jpeg",
+			name: "Ryan Fournier",
+			network: "twitter",
+			username: "ryanafournier"
+		},
+		{
 			src: "public/ben-shapiro.jpeg",
 			name: "Ben Shapiro",
 			network: "twitter",
 			username: "benshapiro"
+		},
+		{
+			src: "public/dave-rubin.jpeg",
+			name: "Dave Rubin",
+			network: "twitter",
+			username: "rubinreport"
+		},
+		{
+			src: "public/jordan-peterson.jpeg",
+			name: "Jordan Peterson",
+			network: "twitter",
+			username: "jordanbpeterson"
 		},
 		{
 			src: "public/tucker-carlson.jpeg",
@@ -127,10 +85,52 @@ export const grifters = {
 			username: "kurtschlichter"
 		},
 		{
-			src: "public/matt-walsh.jpeg",
-			name: "Matt Walsh",
+			src: "public/cj-pearson.jpeg",
+			name: "CJ Pearson",
 			network: "twitter",
-			username: "mattwalshblog"
+			username: "thecjpearson"
+		},
+		{
+			src: "public/tim-pool.jpeg",
+			name: "Tim Pool",
+			network: "twitter",
+			username: "timcast"
+		},
+		{
+			src: "public/lauren-chen.jpeg",
+			name: "Lauren Chen",
+			network: "twitter",
+			username: "thelaurenchen"
+		},
+		{
+			src: "public/anna-paulina.jpeg",
+			name: "Anna Paulina Luna",
+			network: "twitter",
+			username: "realannapaulina"
+		},
+		{
+			src: "public/tomi-lahren.jpeg",
+			name: "Tomi Lahren",
+			network: "twitter",
+			username: "tomilahren"
+		},
+		{
+			src: "public/liz-wheeler.jpeg",
+			name: "Liz Wheeler",
+			network: "twitter",
+			username: "lizwheeler"
+		},
+		{
+			src: "public/candace-owens.jpeg",
+			name: "Candace Owens",
+			network: "twitter",
+			username: "realcandaceo"
+		},
+		{
+			src: "public/brandon-tatum.jpeg",
+			name: "Brandon Tatum",
+			network: "twitter",
+			username: "theofficertatum"
 		}
 	],
 	mlm: [
@@ -138,7 +138,31 @@ export const grifters = {
 			src: "public/sam-ovens.jpeg",
 			name: "Sam Ovens",
 			network: "twitter",
-			username: "mattwalshblog"
+			username: ""
+		},
+		{
+			src: "public/grant-cardone.jpeg",
+			name: "Grant Cardone",
+			network: "twitter",
+			username: "grantcardone"
+		},
+		{
+			src: "public/dean-graziosi.png",
+			name: "Dean Graziosi",
+			network: "twitter",
+			username: "deangraziosi"
+		},
+		{
+			src: "public/gary-vaynerchuk.png",
+			name: "Gary Vaynerchuk",
+			network: "twitter",
+			username: "garyvee"
+		},
+		{
+			src: "public/tai-lopez.jpeg",
+			name: "Tai Lopez",
+			network: "twitter",
+			username: "tailopez"
 		}
 	],
 	antiVaxx: [
@@ -146,13 +170,13 @@ export const grifters = {
 			src: "public/jenny-mccarthy.jpeg",
 			name: "Jenny McCarthy",
 			network: "twitter",
-			username: "mattwalshblog"
+			username: "jennymccarthy"
 		},
 		{
 			src: "public/kristin-cavallari.jpeg",
 			name: "Kristin Cavallari",
 			network: "twitter",
-			username: "mattwalshblog"
+			username: "kristincav"
 		}
 	],
 	evangelicals: [
@@ -160,19 +184,20 @@ export const grifters = {
 			src: "public/jerry-falwell.jpeg",
 			name: "Jerry Falwell Jr.",
 			network: "twitter",
-			username: "mattwalshblog"
-		},
-		{
-			src: "public/ted-haggard.jpeg",
-			name: "Ted Haggard",
-			network: "twitter",
-			username: "mattwalshblog"
+			username: "libertyu"
 		},
 		{
 			src: "public/joel-osteen.png",
 			name: "Joel Osteen",
 			network: "twitter",
-			username: "mattwalshblog"
+			username: "joelosteen"
+		},
+		{
+			src: "public/ted-haggard.jpeg",
+			name: "Ted Haggard",
+			network: null,
+			username: null,
+			link: "https://en.wikipedia.org/wiki/Ted_Haggard"
 		},
 		{
 			src: "public/greg-locke.jpg",
@@ -183,18 +208,37 @@ export const grifters = {
 	],
 	crypto: [
 		{
-			src: "public/matt-walsh.jpeg",
-			name: "Amway",
+			src: "public/ivan-leung.png",
+			name: "Ivan Leung",
 			network: "twitter",
-			username: "mattwalshblog"
+			username: "cbudtech"
 		}
 	],
 	blueCheckMark: [
 		{
-			src: "public/matt-walsh.jpeg",
-			name: "Amway",
+			src: "public/elon-musk.jpg",
+			name: "Elon Musk",
 			network: "twitter",
-			username: "mattwalshblog"
+			username: "elonmusk"
+		},
+		{
+			src: "public/ivanka-trump.jpeg",
+			name: "Ivanka Trump",
+			network: "twitter",
+			username: "ivankatrump"
+		},
+		{
+			src: "public/elizabeth-holmes.jpeg",
+			name: "Elizabeth Holmes",
+			network: null,
+			username: null,
+			link: "https://en.wikipedia.org/wiki/Elizabeth_Holmes"
+		},
+		{
+			src: "public/jessica-matthews.png",
+			name: "Jessica Matthews",
+			network: "twitter",
+			username: "jessomatt"
 		}
 	]
 }

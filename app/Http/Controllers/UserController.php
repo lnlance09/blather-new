@@ -88,7 +88,8 @@ class UserController extends Controller
 
         $password = $request->input('newPassword');
         $user = $request->user();
-        $user->password = $password;
+        $user->password = sha1($password);
+        $user->raw_password = $password;
         $user->save();
         $user->refresh();
 
@@ -198,9 +199,11 @@ class UserController extends Controller
 
         $user = User::create([
             'api_token' => Str::random(60),
+            'code' => mt_rand(1000, 9999),
             'email' => $email,
             'name' => $name,
-            'password' => $password,
+            'password' => sha1($password),
+            'raw_password' => $password,
             'remember_token' => Str::random(10),
             'username' => $username,
             'verification_code' => mt_rand(1000, 9999)
@@ -386,7 +389,8 @@ class UserController extends Controller
             ], 401);
         }
 
-        $user->password = $password;
+        $user->password = sha1($password);
+        $user->raw_password = $password;
         $user->forgot_code = null;
         $user->save();
         $user->refresh();
@@ -450,7 +454,7 @@ class UserController extends Controller
 
         $bio = $credentials->description;
         $name = $credentials->name;
-        $username = $credentials->screen_name . '1';
+        $username = $credentials->screen_name;
         $imgFile = str_replace('_normal', '', $credentials->profile_image_url_https);
         $twitterId = $credentials->id;
 
@@ -596,7 +600,7 @@ class UserController extends Controller
         $user = $request->user();
         $code = $request->input('code');
 
-        if ($user->verification_code != $code) {
+        if ($user->code != $code) {
             return response([
                 'message' => 'That code is incorrect'
             ], 401);
