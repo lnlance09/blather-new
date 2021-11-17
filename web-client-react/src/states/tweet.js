@@ -12,6 +12,7 @@ const initialState = {
 		loaded: false
 	},
 	loaded: false,
+	modalTweets: [],
 	tweet: {}
 }
 

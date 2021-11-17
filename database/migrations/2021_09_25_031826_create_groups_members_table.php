@@ -17,6 +17,7 @@ class CreateGroupsMembersTable extends Migration
             $table->id();
             $table->unsignedBigInteger('group_id');
             $table->unsignedBigInteger('page_id');
+            $table->integer('order')->nullable()->default(null);
             $table->timestamps();
 
             $table->foreign('group_id')->references('id')->on('groups');

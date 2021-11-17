@@ -1,13 +1,13 @@
 # ************************************************************
 # Sequel Ace SQL dump
-# Version 3030
+# Version 20016
 #
 # https://sequel-ace.com/
 # https://github.com/Sequel-Ace/Sequel-Ace
 #
 # Host: 127.0.0.1 (MySQL 8.0.23)
 # Database: blather
-# Generation Time: 2021-10-21 01:41:57 +0000
+# Generation Time: 2021-11-17 04:27:48 +0000
 # ************************************************************
 
 
@@ -1229,7 +1229,7 @@ VALUES
 	(1196,'Senior Writer at RealClearInvestigations. \"After all these years of professional experience, why can’t I write good?\" Husband of @MZHemingway.','pages/twitter/eNEF5YuC9asLT4oOxPjABn2i.jpg',0,'Mark Hemingway','twitter','14347972','Heminator',NULL,'2021-10-21 01:04:55'),
 	(1197,'Right Side Broadcasting Network, Auburn AL. Telegram: @RSBNetwork  CEO @JoeSeales Telegram: https://t.co/wIDS7wCGIi','pages/twitter/onkhSdovxqnceG6R47DyDwEi.jpg',0,'RSBN 🇺🇸','twitter','4041824789','RSBNetwork',NULL,'2021-10-21 01:04:56'),
 	(1198,'Covering the world with a West Coast perspective. Subscribe now: https://t.co/6Kr8lqVIMd  Write to us: letters@latimes.com','pages/twitter/s2amJaKzbWK3NlAhCDnQRLfK.jpg',0,'Los Angeles Times','twitter','16664681','latimes',NULL,'2021-10-21 01:04:58'),
-	(1199,'Attorney. Christian. Contributor @newsmax. Chairwoman @Greatness_Fund. Special Counsel @ThomasMoreSoc. Fmr Senior Legal Adviser & Counsel @POTUS45 🇺🇸','pages/twitter/7OpCsS7W4CW5ryh7OcTqSbm3.jpg',0,'Jenna Ellis','twitter','778763106289758208','JennaEllisEsq',NULL,'2021-10-21 01:04:59'),
+	(1199,'Attorney. Christian. Contributor @newsmax. The Jenna Ellis Show @SalemMediaGrp. Special Counsel @ThomasMoreSoc. Fmr Senior Legal Adviser & Counsel @POTUS45 🇺🇸','pages/twitter/7OpCsS7W4CW5ryh7OcTqSbm3.jpg',0,'Jenna Ellis','twitter','778763106289758208','JennaEllisEsq',NULL,'2021-11-17 04:13:43'),
 	(1200,'@tpusa productions host 🇺🇸 frontlines author 📚 corgi enthusiast 🐾 @coloradostateu & @georgetown alum','pages/twitter/o2U3E3x2WX4JtJVZmeNWf6VG.jpg',0,'Isabel Brown','twitter','875016083975135233','theisabelb',NULL,'2021-10-21 01:05:00'),
 	(1201,'Author of Dear Reader, The New Right & The Anarchist Handbook\nHost of \"YOUR WELCOME\" \nSubject of Ego & Hubris by Harvey Pekar\nHe/Him ⚑\n@SheathUnderwear Model','pages/twitter/cmjDIV4QRhB5obShVaDm7szm.jpg',0,'Michael Malice','twitter','44067298','michaelmalice',NULL,'2021-10-21 01:05:01'),
 	(1202,'Official - Libertarian Party of Texas. The only political party for personal liberty, free markets, peace & prosperity. #VoteGold','pages/twitter/vyMb8MmJYZG4MTUNDySKsbir.jpg',0,'Libertarian Party of Texas','twitter','35801771','LPTexas',NULL,'2021-10-21 01:05:03'),
@@ -1244,7 +1244,14 @@ VALUES
 	(1211,'The Men\'s Rights Movement is a reactionary, *explicitly* anti-feminist movement, with deep ties to white supremacy, that only hurts men\'s issues.\nHe/him.','pages/twitter/M4MdllyTDrG79rkvRXSlZqWi.jpg',0,'TakedownMRAs','twitter','2911520575','TakedownMRAs',NULL,'2021-10-21 01:05:15'),
 	(1212,'A hub for commentary, insight, and innovation from @BostonGlobe.','pages/twitter/Boston Globe Ideas-24237542-1634778574.jpg',0,'Boston Globe Ideas','twitter','24237542','GlobeIdeas','2021-10-21 01:09:34','2021-10-21 01:09:34'),
 	(1213,'Official account for U.S. Senate Foreign Relations Committee | SFRC\nChairman @SenatorMenendez','pages/twitter/HS8hF81esBpgKXtjs24MjpvT.jpg',0,'Senate Foreign Relations Committee','twitter','1363974283156946948','SFRCdems','2021-10-21 01:24:52','2021-10-21 01:24:52'),
-	(1214,'@43ForAmerica, @bulwarkonline','pages/twitter/EWfy2Rb2buIJBZwTQC9WGjQq.jpg',0,'Christian Vanderbrouk','twitter','468657693','UrbanAchievr','2021-10-21 01:26:31','2021-10-21 01:26:31');
+	(1214,'@43ForAmerica, @bulwarkonline','pages/twitter/EWfy2Rb2buIJBZwTQC9WGjQq.jpg',0,'Christian Vanderbrouk','twitter','468657693','UrbanAchievr','2021-10-21 01:26:31','2021-10-21 01:26:31'),
+	(1215,'Author, screenwriter, essayist. Nominated for Edgar Award 5 times, won twice. Host of \"The Andrew Klavan Show\" at the @realDailyWire','pages/twitter/PYIus51mPcZNFztFOgBvcfCS.jpg',0,'Andrew Klavan','twitter','107210947','andrewklavan','2021-11-17 03:45:42','2021-11-17 03:45:42'),
+	(1216,'','pages/twitter/DdN1kGQQUUhQrOEN0e3gHK9g.jpg',0,'Nick','twitter','1691614230','picks1279','2021-11-17 03:45:43','2021-11-17 03:45:43'),
+	(1217,'Host of Will and Amala Live on @prageru, National Bestselling Author and short filmmaker. Booking: press@PragerU.com Joke writer for @craigstrazz','pages/twitter/dC8Grefb8swCHCI9WKccJdZ8.jpg',0,'Will Not Comply Witt','twitter','807309197348077568','thewillwitt','2021-11-17 03:47:05','2021-11-17 03:47:05'),
+	(1218,'Anchor, Global Markets Editor Mornings with Maria @MorningsMaria 6-9 AM et M-F on @FoxBusiness & @SundayFutures 10:00 AM et Sundays @FoxNews 2-time Emmy winner','pages/twitter/FX8rLzuyiq2u0PQ3Q5iygCIP.jpg',0,'Maria Bartiromo','twitter','208155240','MariaBartiromo','2021-11-17 04:07:26','2021-11-17 04:07:26'),
+	(1219,'Your nation. Your news. #OANN','pages/twitter/aCPVIXklIt7YfohbvLkVl8Qm.jpg',0,'One America News','twitter','1209936918','OANN','2021-11-17 04:10:15','2021-11-17 04:10:15'),
+	(1220,'Award-winning Journalist, Publisher,  ⏩⏩https://t.co/neTlh1J8UH, AMConsequences\nHost, \'The Trish Regan Show on Spotify, Apple iTunes — click here ▶️ ▶️https://t.co/6H79IYPJpp','pages/twitter/sa9kFY8DNE8rkcx29IrqWrZW.jpg',0,'Trish Regan','twitter','138182116','trish_regan','2021-11-17 04:18:06','2021-11-17 04:18:06'),
+	(1221,'Weeknights at 11/10c on @FoxNews','pages/twitter/hVtrTpIB0WmjKoqk0eBF0OB8.jpg',0,'Gutfeld!','twitter','3195591187','Gutfeldfox','2021-11-17 04:23:33','2021-11-17 04:23:33');
 
 /*!40000 ALTER TABLE `pages` ENABLE KEYS */;
 UNLOCK TABLES;

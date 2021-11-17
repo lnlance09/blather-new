@@ -208,6 +208,12 @@ export const grifters = {
 	],
 	crypto: [
 		{
+			src: "public/anthony-pompliano.jpeg",
+			name: "Anthony Pompliano",
+			network: "twitter",
+			username: "APompliano"
+		},
+		{
 			src: "public/ivan-leung.png",
 			name: "Ivan Leung",
 			network: "twitter",

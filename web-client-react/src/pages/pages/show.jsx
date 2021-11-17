@@ -388,28 +388,40 @@ const Page = ({ history, match }) => {
 										content={`Here's how often ${page.name} has recycled the same arguments`}
 										header={`How original is ${page.name}'s material?`}
 										icon={{
-											color: "green",
-											name: "recycle"
+											color: "red",
+											name: "question mark"
 										}}
 									/>
 									{args.map((arg, i) => (
 										<Segment
 											className="argSegment"
 											key={`argItem${i}`}
-											onClick={() => {
-												setArgId(arg.id)
-												setModalOpen(true)
-												getArgTweets([arg.id], [page.id])
+											onClick={(e) => {
+												onClickRedirect(
+													e,
+													history,
+													`/arguments/${arg.slug}`
+												)
 											}}
 											padded
 										>
-											<Label attached="top" basic size="large">
+											<Label
+												attached="top"
+												basic
+												onClick={(e) => {
+													e.stopPropagation()
+													setArgId(arg.id)
+													setModalOpen(true)
+													getArgTweets([arg.id], [page.id])
+												}}
+												size="large"
+											>
 												<Icon color="green" name="recycle" />
 												{arg.tweetCount}{" "}
 												{formatPlural(arg.tweetCount, "time")}
 											</Label>
 											<Header textAlign="center" size="medium">
-												{arg.description}
+												"{arg.description}"
 											</Header>
 										</Segment>
 									))}

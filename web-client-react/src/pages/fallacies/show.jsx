@@ -613,18 +613,14 @@ const Fallacy = ({ history, match }) => {
 												<Link to={`/arguments/${a.slug}`}>
 													{a.description}
 												</Link>
-												{a.tweetCount > 1 && (
-													<Feed.Meta onClick={() => setModalOpen(true)}>
-														<Feed.Like>
-															<Icon color="green" name="recycle" />{" "}
-															has recycled this argument{" "}
-															<span className="red">
-																{a.tweetCount}{" "}
-															</span>
-															{formatPlural(a.tweetCount, "time")}
-														</Feed.Like>
-													</Feed.Meta>
-												)}
+												<Feed.Meta onClick={() => setModalOpen(true)}>
+													<Feed.Like>
+														<Icon color="green" name="recycle" /> has
+														recycled this argument{" "}
+														<span className="red">{a.tweetCount} </span>
+														{formatPlural(a.tweetCount, "time")}
+													</Feed.Like>
+												</Feed.Meta>
 											</Feed.Summary>
 										</Feed.Content>
 									</Feed.Event>
@@ -802,7 +798,6 @@ const Fallacy = ({ history, match }) => {
 								open={modalOpen}
 								size="large"
 							>
-								<Modal.Header>{page.name} has recycled this argument</Modal.Header>
 								<Modal.Content>
 									<Segment>
 										<Visibility

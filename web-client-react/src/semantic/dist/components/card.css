@@ -558,7 +558,7 @@ a.ui.card:hover,
   cursor: pointer;
   z-index: 5;
   background: #FFFFFF;
-  border: 1px solid #D0D0D8;
+  border: solid 1px rgba(64, 66, 68, 0.15);
   box-shadow: none;
   transform: translateY(0px);
 }

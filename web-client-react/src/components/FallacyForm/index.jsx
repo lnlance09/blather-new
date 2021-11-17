@@ -225,15 +225,25 @@ const FallacyForm = ({
 					<Form.Field>
 						<div className="refWrapper">
 							<Label.Group color="blue" size="large">
-								{refOptions.map((ref, i) => (
-									<Label
-										className={`ref ${refValue === ref.value ? "active" : ""}`}
-										key={`refLabel${i}`}
-										onClick={() => setRefValue(ref.value)}
-									>
-										{ref.name}
-									</Label>
-								))}
+								{refOptions.map((ref, i) => {
+									const { value } = ref
+									let disabled = false
+									if (value !== 21 && value !== 35) {
+										disabled = cTweetId !== null
+									}
+									const active = refValue === value ? "active" : ""
+									return (
+										<Label
+											className={`ref ${active} ${
+												disabled ? "disabled" : ""
+											}`}
+											key={`refLabel${i}`}
+											onClick={() => setRefValue(value)}
+										>
+											{ref.name}
+										</Label>
+									)
+								})}
 							</Label.Group>
 							<Divider hidden />
 							{activeRef && (

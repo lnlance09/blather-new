@@ -26,7 +26,9 @@ class GroupController extends Controller
     public function index(Request $request)
     {
         $groups = Group::withCount(['members'])
-            ->with(['members'])
+            ->with(['members' => function ($query) {
+                return $query->orderBy('order');
+            }])
             ->orderBy('name')
             ->paginate(100);
         return new GroupCollection($groups);

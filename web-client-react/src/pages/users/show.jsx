@@ -1,13 +1,4 @@
-import {
-	Divider,
-	Grid,
-	Header,
-	Image,
-	Loader,
-	Menu,
-	PlaceholderImage,
-	Visibility
-} from "semantic-ui-react"
+import { Divider, Grid, Header, Image, Loader, Menu, Visibility } from "semantic-ui-react"
 import { useContext, useEffect, useReducer, useState } from "react"
 import { ReactSVG } from "react-svg"
 import { onClickRedirect } from "utils/linkFunctions"

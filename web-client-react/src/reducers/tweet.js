@@ -24,6 +24,13 @@ const reducer = (state, action) => {
 					loaded: true
 				}
 			}
+		case "GET_MODAL_TWEETS":
+			const tweets =
+				action.page > 1 ? [...state.modalTweets, ...action.tweets] : action.tweets
+			return {
+				...state,
+				modalTweets: tweets
+			}
 		case "GET_TWEET":
 			return {
 				...state,

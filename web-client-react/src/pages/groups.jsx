@@ -55,8 +55,10 @@ const Groups = ({ history }) => {
 
 			<Header as="p">
 				Groups on Blather are collections of people who work for or have worked for the same
-				organization and whose talking points are almost identical to those of their
-				colleagues who work at the same organization.
+				organization in the past and whose talking points are almost identical to those of
+				their colleagues who work at the same organization. Two tweets from two different
+				people who are part of the same group are allowed to be used as evidence against the
+				group as a whole.
 			</Header>
 
 			<Divider hidden />
@@ -75,7 +77,7 @@ const Groups = ({ history }) => {
 											<div className="tile" key={`tileKey${x}`}>
 												<Image
 													bordered
-													data-for={`groupsMember${x}`}
+													data-for={`groupsMember${group.id}${x}`}
 													data-iscapture="true"
 													data-tip={m.page.name}
 													onClick={() =>
@@ -90,7 +92,7 @@ const Groups = ({ history }) => {
 												<ReactTooltip
 													className="tooltipClass"
 													effect="solid"
-													id={`groupsMember${i}`}
+													id={`groupsMember${group.id}${x}`}
 													multiline={false}
 													place="left"
 													type="dark"

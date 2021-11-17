@@ -1,13 +1,13 @@
 # ************************************************************
 # Sequel Ace SQL dump
-# Version 3041
+# Version 20016
 #
 # https://sequel-ace.com/
 # https://github.com/Sequel-Ace/Sequel-Ace
 #
 # Host: 127.0.0.1 (MySQL 8.0.23)
 # Database: blather
-# Generation Time: 2021-11-13 21:51:52 +0000
+# Generation Time: 2021-11-17 04:28:20 +0000
 # ************************************************************
 
 
@@ -26,26 +26,49 @@ SET NAMES utf8mb4;
 LOCK TABLES `groups_members` WRITE;
 /*!40000 ALTER TABLE `groups_members` DISABLE KEYS */;
 
-INSERT INTO `groups_members` (`id`, `group_id`, `page_id`, `created_at`, `updated_at`)
+INSERT INTO `groups_members` (`id`, `group_id`, `page_id`, `order`, `created_at`, `updated_at`)
 VALUES
-	(1,1,41,NULL,NULL),
-	(2,1,24,NULL,NULL),
-	(3,1,383,NULL,NULL),
-	(4,1,262,NULL,NULL),
-	(5,1,1083,NULL,NULL),
-	(6,1,573,NULL,NULL),
-	(7,1,495,NULL,NULL),
-	(8,1,6,NULL,NULL),
-	(9,2,510,NULL,NULL),
-	(10,2,75,NULL,NULL),
-	(11,2,287,NULL,NULL),
-	(12,1,1074,NULL,NULL),
-	(13,1,892,NULL,NULL),
-	(14,2,50,NULL,NULL),
-	(15,2,1166,NULL,NULL),
-	(16,2,819,NULL,NULL),
-	(17,2,2,NULL,NULL),
-	(18,2,5,NULL,NULL);
+	(1,1,41,1,NULL,NULL),
+	(2,2,24,8,NULL,NULL),
+	(3,1,383,7,NULL,NULL),
+	(4,1,262,6,NULL,NULL),
+	(5,1,1083,5,NULL,NULL),
+	(6,1,573,4,NULL,NULL),
+	(7,1,495,3,NULL,NULL),
+	(8,1,6,2,NULL,NULL),
+	(9,2,510,1,NULL,NULL),
+	(10,2,75,7,NULL,NULL),
+	(11,2,287,6,NULL,NULL),
+	(12,1,1074,8,NULL,NULL),
+	(13,1,892,9,NULL,NULL),
+	(14,2,50,5,NULL,NULL),
+	(15,2,1166,4,NULL,NULL),
+	(16,2,819,3,NULL,NULL),
+	(17,2,2,2,NULL,NULL),
+	(18,2,5,9,NULL,NULL),
+	(19,2,383,10,NULL,NULL),
+	(21,5,51,2,NULL,NULL),
+	(22,5,1100,3,NULL,NULL),
+	(23,5,582,1,NULL,NULL),
+	(24,5,830,4,NULL,NULL),
+	(25,5,1215,5,NULL,NULL),
+	(26,2,1217,11,NULL,NULL),
+	(27,4,71,2,NULL,NULL),
+	(28,4,286,3,NULL,NULL),
+	(29,4,338,4,NULL,NULL),
+	(30,4,42,5,NULL,NULL),
+	(31,4,254,1,NULL,NULL),
+	(32,4,1218,6,NULL,NULL),
+	(33,3,371,3,NULL,NULL),
+	(34,3,1219,2,NULL,NULL),
+	(35,3,491,1,NULL,NULL),
+	(36,3,312,4,NULL,NULL),
+	(37,3,1199,5,NULL,NULL),
+	(38,3,168,6,NULL,NULL),
+	(40,3,1220,7,NULL,NULL),
+	(41,3,983,8,NULL,NULL),
+	(42,4,1221,7,NULL,NULL),
+	(43,3,320,9,NULL,NULL);
 
 /*!40000 ALTER TABLE `groups_members` ENABLE KEYS */;
 UNLOCK TABLES;

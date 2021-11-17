@@ -138,7 +138,7 @@ const PageHeader = ({ activeItem = null, history, showBanner = false, simple = f
 										className="paddedDropdownItem"
 										key={`${item.id}${i}`}
 										onClick={() =>
-											history.push(`/fallacies/${item.id}?clear=1`)
+											history.push(`/fallacies/${item.slug}?clear=1`)
 										}
 										value={item.id}
 									>
@@ -153,7 +153,7 @@ const PageHeader = ({ activeItem = null, history, showBanner = false, simple = f
 												<Icon
 													color="green"
 													name="arrow right"
-													style={{ marginLeft: "6px" }}
+													style={{ marginLeft: "4px" }}
 												/>{" "}
 												{item.page.name}
 												<Header.Subheader>

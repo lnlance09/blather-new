@@ -38,6 +38,7 @@ class ArgumentController extends Controller
     {
         $args = Argument::with(['contradictions.contradiction', 'images', 'tweets.tweet'])
             ->withCount(['contradictions', 'images', 'tweets'])
+            ->orderBy('description')
             ->get();
         return new ArgumentCollection($args);
     }

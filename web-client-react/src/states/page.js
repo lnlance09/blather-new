@@ -1,5 +1,5 @@
 const initialState = {
-	args: [{}, {}, {}],
+	args: [],
 	contradictions: {
 		data: [{}, {}, {}],
 		loaded: false

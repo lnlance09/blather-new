@@ -112,7 +112,7 @@ const Reference = ({ history }) => {
 										</Form.Field>
 										<Form.Field>
 											<Button
-												color="orange"
+												color="blue"
 												content="Save"
 												fluid
 												loading={loading}

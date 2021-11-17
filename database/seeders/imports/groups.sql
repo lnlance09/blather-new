@@ -1,13 +1,13 @@
 # ************************************************************
 # Sequel Ace SQL dump
-# Version 3030
+# Version 20016
 #
 # https://sequel-ace.com/
 # https://github.com/Sequel-Ace/Sequel-Ace
 #
 # Host: 127.0.0.1 (MySQL 8.0.23)
 # Database: blather
-# Generation Time: 2021-10-15 03:16:19 +0000
+# Generation Time: 2021-11-17 04:28:03 +0000
 # ************************************************************
 
 
@@ -30,7 +30,7 @@ INSERT INTO `groups` (`id`, `description`, `name`, `created_at`, `updated_at`)
 VALUES
 	(1,NULL,'Turning Point USA',NULL,NULL),
 	(2,NULL,'PragerU',NULL,NULL),
-	(3,NULL,'Info Wars',NULL,NULL),
+	(3,NULL,'Newsmax/OANN',NULL,NULL),
 	(4,NULL,'Fox News',NULL,NULL),
 	(5,NULL,'Daily Wire',NULL,NULL);
 

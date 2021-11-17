@@ -19,7 +19,8 @@ class GroupMember extends Model
      */
     protected $fillable = [
         'group_id',
-        'page_id'
+        'page_id',
+        'order'
     ];
 
     /**

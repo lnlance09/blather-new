@@ -51,7 +51,7 @@ const ArgumentForm = ({ contradictions, description, explanation, id, options, u
 			</Form.Field>
 			<Form.Field>
 				<Button
-					color="orange"
+					color="blue"
 					content="Save"
 					fluid
 					loading={loading}

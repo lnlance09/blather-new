@@ -10,12 +10,12 @@
 @borderBoxShadow: none;
 @shadowBoxShadow: none;
 
-@border: 1px solid rgba(34,36,38,.15);
-@internalBorderColor: rgba(34,36,38,.15);
+@border: 1px solid rgba(34, 36, 38, .15);
+@internalBorderColor: rgba(34, 36, 38, .15);
 
 // @contentPadding: 14px 20px;
 @metaColor: #A5A7AA;
 
 @linkHoverRaiseDistance: 0px;
 @linkHoverBoxShadow: none;
-@linkHoverBorder: 1px solid #D0D0D8;
+@linkHoverBorder: solid 1px rgba(64, 66, 68, .15);

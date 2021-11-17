@@ -120,9 +120,17 @@ const Tweet = ({
 	let imgUrl = headerImg
 	imgUrl += crossOriginAnonymous ? `?t=${new Date()}` : ""
 
+	const hasMedia = _.has(extEntities, "media") ? extEntities.media.length > 0 : false
+	const showUrl = !_.isEmpty(urls.url) && !hasMedia
+
 	const [hasSaved, setHasSaved] = useState(false)
 	const [saveLoading, setSaveLoading] = useState(false)
 	const [hovering, setHovering] = useState(false)
+
+	let saveImgName = saveLoading ? "circle notch" : "save"
+	if (hasSaved) {
+		saveImgName = hovering ? "close" : "checkmark"
+	}
 
 	useEffect(() => {
 		const savedTweets = localStorage.getItem("savedTweets")
@@ -233,11 +241,11 @@ const Tweet = ({
 								__html: linkifiedTweetText
 							}}
 						/>
-						{extEntities && (
+						{hasMedia && (
 							<div className="extEntitiesWrapper">{parseMedia(extEntities)}</div>
 						)}
 					</Card.Description>
-					{!_.isEmpty(urls.url) && (
+					{showUrl && (
 						<Card
 							className="urlCard"
 							onClick={(e) => {
@@ -320,14 +328,8 @@ const Tweet = ({
 											className={`saveTweet ${hasSaved ? "saved" : ""}`}
 											color={hasSaved ? (hovering ? "red" : "teal") : "blue"}
 											loading={saveLoading}
-											name={
-												hasSaved
-													? hovering
-														? "close"
-														: "checkmark"
-													: "save"
-											}
-											onBlur={(e) => setHovering(!hovering)}
+											name={saveImgName}
+											onBlur={() => setHovering(!hovering)}
 											onClick={(e) => {
 												e.stopPropagation()
 												saveTweet(id.toString())
@@ -441,14 +443,12 @@ Tweet.propTypes = {
 		favorites: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
 		retweets: PropTypes.oneOfType([PropTypes.number, PropTypes.string])
 	}),
-	urls: PropTypes.arrayOf(
-		PropTypes.shape({
-			description: PropTypes.string,
-			image: PropTypes.string,
-			title: PropTypes.string,
-			url: PropTypes.string
-		})
-	),
+	urls: PropTypes.shape({
+		description: PropTypes.string,
+		image: PropTypes.string,
+		title: PropTypes.string,
+		url: PropTypes.string
+	}),
 	user: PropTypes.shape({
 		image: PropTypes.string,
 		name: PropTypes.string,

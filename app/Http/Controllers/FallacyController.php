@@ -345,6 +345,7 @@ class FallacyController extends Controller
     public function show($slug)
     {
         $fallacy = Fallacy::where('slug', $slug)
+            ->orWhere('id', $slug)
             ->with(self::DEFAULT_WITH)
             ->first();
 

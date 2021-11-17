@@ -8,12 +8,22 @@ import PlaceholderPic from "images/images/image-square.png"
 import PropTypes from "prop-types"
 import ReactTooltip from "react-tooltip"
 import ThemeContext from "themeContext"
+import _ from "underscore"
 
 const Grifters = ({ history }) => {
 	const { state } = useContext(ThemeContext)
 	const { inverted } = state
 
 	const { antiVaxx, blueCheckMark, crypto, evangelicals, maga, mlm } = grifters
+
+	const clickRedirect = (m) => {
+		if (_.has(m, "link")) {
+			window.open(m.link, "_blank").focus()
+			return
+		}
+
+		history.push(`/pages/${m.network}/${m.username}`)
+	}
 
 	return (
 		<DefaultLayout activeItem="grifters" containerClassName="griftersPage" history={history}>
@@ -49,12 +59,10 @@ const Grifters = ({ history }) => {
 							{maga.map((m, i) => (
 								<div className="tile" key={`tileKey${i}`}>
 									<Image
-										data-for={`groupsMember${i}`}
+										data-for={`groupsMemberMaga${i}`}
 										data-iscapture="true"
 										data-tip={m.name}
-										onClick={() =>
-											history.push(`/pages/${m.network}/${m.username}`)
-										}
+										onClick={() => clickRedirect(m)}
 										onError={(e) => (e.target.src = PlaceholderPic)}
 										rounded
 										src={`${s3Url}${m.src}`}
@@ -62,7 +70,7 @@ const Grifters = ({ history }) => {
 									<ReactTooltip
 										className="tooltipClass"
 										effect="solid"
-										id={`groupsMember${i}`}
+										id={`groupsMemberMaga${i}`}
 										multiline={false}
 										place="left"
 										type="dark"
@@ -87,12 +95,10 @@ const Grifters = ({ history }) => {
 							{mlm.map((m, i) => (
 								<div className="tile" key={`tileKey${i}`}>
 									<Image
-										data-for={`groupsMember${i}`}
+										data-for={`groupsMemberMlm${i}`}
 										data-iscapture="true"
 										data-tip={m.name}
-										onClick={() =>
-											history.push(`/pages/${m.network}/${m.username}`)
-										}
+										onClick={() => clickRedirect(m)}
 										onError={(e) => (e.target.src = PlaceholderPic)}
 										rounded
 										src={`${s3Url}${m.src}`}
@@ -100,7 +106,7 @@ const Grifters = ({ history }) => {
 									<ReactTooltip
 										className="tooltipClass"
 										effect="solid"
-										id={`groupsMember${i}`}
+										id={`groupsMemberMlm${i}`}
 										multiline={false}
 										place="left"
 										type="dark"
@@ -117,20 +123,18 @@ const Grifters = ({ history }) => {
 						2020, this group consisted almost entirely of west coast hippie burnouts and
 						wealthy suburban soccer mom Gwenyth Paltrow types. However, the temptation
 						to own the libz proved to be too strong and this group is now dominated by
-						rural Republicans who think that being hospitalized for a preventable
-						disease is a cool way to score some political points.
+						rural Republicans who think that being hospitalized for a completely
+						preventable disease is a cool way to score some political points.
 					</p>
 					<div className="gallery-wrapper">
 						<div className="tiles">
 							{antiVaxx.map((m, i) => (
 								<div className="tile" key={`tileKey${i}`}>
 									<Image
-										data-for={`groupsMember${i}`}
+										data-for={`groupsMemberVaxx${i}`}
 										data-iscapture="true"
 										data-tip={m.name}
-										onClick={() =>
-											history.push(`/pages/${m.network}/${m.username}`)
-										}
+										onClick={() => clickRedirect(m)}
 										onError={(e) => (e.target.src = PlaceholderPic)}
 										rounded
 										src={`${s3Url}${m.src}`}
@@ -138,7 +142,7 @@ const Grifters = ({ history }) => {
 									<ReactTooltip
 										className="tooltipClass"
 										effect="solid"
-										id={`groupsMember${i}`}
+										id={`groupsMemberVaxx${i}`}
 										multiline={false}
 										place="left"
 										type="dark"
@@ -158,12 +162,10 @@ const Grifters = ({ history }) => {
 							{evangelicals.map((m, i) => (
 								<div className="tile" key={`tileKey${i}`}>
 									<Image
-										data-for={`groupsMember${i}`}
+										data-for={`groupsMemberEv${i}`}
 										data-iscapture="true"
 										data-tip={m.name}
-										onClick={() =>
-											history.push(`/pages/${m.network}/${m.username}`)
-										}
+										onClick={() => clickRedirect(m)}
 										onError={(e) => (e.target.src = PlaceholderPic)}
 										rounded
 										src={`${s3Url}${m.src}`}
@@ -171,7 +173,7 @@ const Grifters = ({ history }) => {
 									<ReactTooltip
 										className="tooltipClass"
 										effect="solid"
-										id={`groupsMember${i}`}
+										id={`groupsMemberEv${i}`}
 										multiline={false}
 										place="left"
 										type="dark"
@@ -183,26 +185,28 @@ const Grifters = ({ history }) => {
 
 					<Header as="h1">Cryptocurrency Grifters</Header>
 					<p>
-						Grifting in the cryptocurrency realm is a lot like grifting as a psychic.
+						Grifting as cryptocurrency influencer is a lot like grifting as a psychic.
 						What does a psychic do when they perform a cold reading? Basically, just
 						play a guessing game. Make a bunch of predictions about stuff. Most will be
-						wrong. But some, if you make enough of them, will ultimately come true
-						because of pure luck. Take credit for the ones that came true and completely
-						ignore the ones that didn't. Rinse and repeat. Crypto grifters are financial
-						fortune tellers who seize on young and naive peoples' desire to get rich
-						quick.
+						wrong but that's not the point. If you make enough of them, some will
+						ultimately come true. Not because of any talent or any unique ability to
+						make accurate predictions about the future. But, because it's a numbers
+						game. If enough predictions are made, sooner or later some of them will
+						become true purely because of luck. Take credit for the ones that came true
+						and completely ignore the ones that didn't. Rinse and repeat. Crypto
+						influencers are financial fortune tellers who are in the business of
+						convincing desperate people that financial freedom is right around the
+						corner.
 					</p>
 					<div className="gallery-wrapper">
 						<div className="tiles">
 							{crypto.map((m, i) => (
 								<div className="tile" key={`tileKey${i}`}>
 									<Image
-										data-for={`groupsMember${i}`}
+										data-for={`groupsMemberCrypto${i}`}
 										data-iscapture="true"
 										data-tip={m.name}
-										onClick={() =>
-											history.push(`/pages/${m.network}/${m.username}`)
-										}
+										onClick={() => clickRedirect(m)}
 										onError={(e) => (e.target.src = PlaceholderPic)}
 										rounded
 										src={`${s3Url}${m.src}`}
@@ -210,7 +214,7 @@ const Grifters = ({ history }) => {
 									<ReactTooltip
 										className="tooltipClass"
 										effect="solid"
-										id={`groupsMember${i}`}
+										id={`groupsMemberCrypto${i}`}
 										multiline={false}
 										place="left"
 										type="dark"
@@ -222,20 +226,34 @@ const Grifters = ({ history }) => {
 
 					<Header as="h1">Blue Check Mark Grifters</Header>
 					<p>
-						These are opportunistic grifters of the Ivanka Trump flavor. Usually Ivy
-						League educated Forbes 30 under 30 types. I
+						Self-absorbed opportunists and shameless self-promoters who think that
+						gracing the covers of magazines is a good substitute for having a
+						personality. Visit the Instagram account of one of these types and you'll
+						find a carefully curated stream of content that reaffirms their
+						self-appointed position in society as a "disruptor," a "game changer," and a
+						"revolutionary." They've probably attended a very prestigous school (they'll
+						let you know) or appeared on some 30 under 30 list. The goal is to cultivate
+						a reputation and then use that reputation to build a personal brand.
+						Remember Trump Steaks, Trump Vodka, Trump Magazine, Trump Airlines and so
+						on? It's a simimlar strategy here and it's one that's used by a ton of
+						celebrities. Once the brand has been successfully estabished (usually by
+						peddling vaporware), these folks can slap their name on a seminar or a
+						conference the same way that someone like Kylie Jenner can slap her name on
+						just about any generic product like lipstick or foundation and expect it to
+						sell from brand recognition alone. Silicon Valley is notorious for
+						glamorizing the founders of startups as mythical figures in televison and in
+						pop culture in general so it makes sense that it attracts its fair share of
+						celebrity wannabes.
 					</p>
 					<div className="gallery-wrapper">
 						<div className="tiles">
 							{blueCheckMark.map((m, i) => (
 								<div className="tile" key={`tileKey${i}`}>
 									<Image
-										data-for={`groupsMember${i}`}
+										data-for={`groupsMemberBlue${i}`}
 										data-iscapture="true"
 										data-tip={m.name}
-										onClick={() =>
-											history.push(`/pages/${m.network}/${m.username}`)
-										}
+										onClick={() => clickRedirect(m)}
 										onError={(e) => (e.target.src = PlaceholderPic)}
 										rounded
 										src={`${s3Url}${m.src}`}
@@ -243,7 +261,7 @@ const Grifters = ({ history }) => {
 									<ReactTooltip
 										className="tooltipClass"
 										effect="solid"
-										id={`groupsMember${i}`}
+										id={`groupsMemberBlue${i}`}
 										multiline={false}
 										place="left"
 										type="dark"

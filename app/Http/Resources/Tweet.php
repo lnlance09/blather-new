@@ -111,6 +111,7 @@ class Tweet extends JsonResource
         return [
             'id' => $this->id,
             'arguments' => $arguments,
+            'argumentsCount' => $this->arguments_count,
             'argumentOptions' => $argumentOptions,
             'contradictionCount' => $this->contradictions_count,
             'counts' => [
@@ -131,7 +132,7 @@ class Tweet extends JsonResource
                 'name' => $this->page->name,
                 'username' => $this->page->username,
             ],
-            'createdAt' => $this->created_at
+            'createdAt' => $tweet['created_at']
         ];
     }
 }

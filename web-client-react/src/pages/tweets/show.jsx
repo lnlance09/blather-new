@@ -4,14 +4,17 @@ import {
 	Divider,
 	Dropdown,
 	Header,
+	Icon,
 	Label,
 	Loader,
 	Menu,
+	Modal,
 	Segment,
 	Visibility
 } from "semantic-ui-react"
 import { onClickRedirect } from "utils/linkFunctions"
 import { DisplayMetaTags } from "utils/metaFunctions"
+import { formatPlural } from "utils/textFunctions"
 import { getArgumentOptions } from "options/arguments"
 import { tweetOptions } from "options/tweet"
 import { ReactSVG } from "react-svg"
@@ -28,6 +31,7 @@ import PropTypes from "prop-types"
 import reducer from "reducers/tweet"
 import ThemeContext from "themeContext"
 import Tweet from "components/Tweet"
+import TweetList from "components/TweetList"
 
 const toastConfig = getConfig()
 toast.configure(toastConfig)
@@ -47,19 +51,25 @@ const TweetPage = ({ history, match }) => {
 	const [btnLoading, setBtnLoading] = useState(false)
 	const [newArguments, setNewArguments] = useState([])
 
-	const { argOptions, contradictions, error, fallacies, loaded, tweet } = internalState
+	const { argOptions, contradictions, error, fallacies, loaded, modalTweets, tweet } =
+		internalState
 
-	const showArgs = loaded && !error ? tweet.arguments.length > 0 : false
+	const showArgs = loaded && !error ? tweet.arguments.data.length > 0 : false
 
 	const [activeItem, setActiveItem] = useState("fallacies")
+	const [modalOpen, setModalOpen] = useState(false)
 	const [hasMore, setHasMore] = useState(false)
 	const [hasMoreC, setHasMoreC] = useState(false)
+	const [hasMoreT, setHasMoreT] = useState(false)
 	const [loading, setLoading] = useState(true)
 	const [loadingC, setLoadingC] = useState(true)
 	const [loadingMore, setLoadingMore] = useState(false)
 	const [loadingMoreC, setLoadingMoreC] = useState(false)
+	const [loadingT, setLoadingT] = useState(true)
+	const [loadingMoreT, setLoadingMoreT] = useState(false)
 	const [pageNumber, setPageNumber] = useState(1)
 	const [pageNumberC, setPageNumberC] = useState(1)
+	const [pageNumberT, setPageNumberT] = useState(1)
 
 	const getArgOptions = async () => {
 		const options = await getArgumentOptions()
@@ -194,6 +204,33 @@ const TweetPage = ({ history, match }) => {
 			})
 	}
 
+	const getTweets = async (argIds, pageIds, page = 1) => {
+		page === 1 ? setLoadingT(true) : setLoadingMoreT(true)
+		await axios
+			.get(`${process.env.REACT_APP_BASE_URL}tweets`, {
+				params: {
+					argIds,
+					pageIds,
+					page
+				}
+			})
+			.then((response) => {
+				const { data, meta } = response.data
+				dispatchInternal({
+					type: "GET_MODAL_TWEETS",
+					tweets: data,
+					page,
+					total: meta.total
+				})
+				setPageNumberT(page + 1)
+				setHasMoreT(true)
+				page === 1 ? setLoadingT(false) : setLoadingMoreT(false)
+			})
+			.catch(() => {
+				console.error("There was an error")
+			})
+	}
+
 	const handleItemClick = (e, { name }) => {
 		setActiveItem(name)
 	}
@@ -272,7 +309,7 @@ const TweetPage = ({ history, match }) => {
 									/>
 									<Button
 										className="assignArgumentBtn"
-										color="orange"
+										color="blue"
 										content="Associate argument"
 										fluid
 										loading={btnLoading}
@@ -293,9 +330,33 @@ const TweetPage = ({ history, match }) => {
 										<Segment
 											className="argPlaceholder"
 											key={`argSegment${i}`}
-											placeholder
+											onClick={(e) => {
+												onClickRedirect(
+													e,
+													history,
+													`/arguments/${arg.argument.slug}`
+												)
+											}}
+											padded
 										>
-											<Header inverted textAlign="center" size="large">
+											<Label
+												attached="top"
+												basic
+												onClick={async (e) => {
+													e.stopPropagation()
+													await getTweets(
+														[arg.argument.id],
+														[tweet.user.id]
+													)
+													setModalOpen(true)
+												}}
+												size="large"
+											>
+												<Icon color="green" name="recycle" />
+												{arg.argument.tweetCount}{" "}
+												{formatPlural(arg.argument.tweetCount, "time")}
+											</Label>
+											<Header textAlign="center" size="large">
 												"{arg.argument.description}"
 											</Header>
 										</Segment>
@@ -384,6 +445,40 @@ const TweetPage = ({ history, match }) => {
 									/>
 								</Visibility>
 							)}
+
+							<Modal
+								basic
+								centered={false}
+								closeIcon
+								dimmer="blurring"
+								onClose={() => setModalOpen(false)}
+								onOpen={() => setModalOpen(true)}
+								open={modalOpen}
+								size="large"
+							>
+								<Modal.Content>
+									<Segment>
+										<Visibility
+											continuous
+											offset={[50, 50]}
+											onBottomVisible={() => {
+												if (!loadingT && !loadingMoreT && hasMoreT) {
+													getTweets([id], [tweet.user.id], pageNumberT)
+												}
+											}}
+										>
+											<TweetList
+												history={history}
+												inverted={inverted}
+												loading={false}
+												loadingMore={false}
+												showSaveOption={false}
+												tweets={modalTweets}
+											/>
+										</Visibility>
+									</Segment>
+								</Modal.Content>
+							</Modal>
 
 							<Divider hidden section />
 						</>

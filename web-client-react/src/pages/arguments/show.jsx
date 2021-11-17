@@ -369,30 +369,40 @@ const Argument = ({ history, match }) => {
 
 								<Header as="h2" content="From around the web..." />
 
-								<div className="tiles">
-									{images.data.map((img, i) => (
-										<div
-											className="tile"
-											key={`exampleTile${i}`}
-											style={{ width: "180px", height: "180px" }}
-										>
-											<Image
-												bordered
-												onClick={() => {
-													setActiveItem("photos")
-													setModalOpen(true)
-													const key = imageOptions
-														.map((img) => `${s3Url}${img}`)
-														.indexOf(img.s3Link)
-													setImgKey(key)
-												}}
-												onError={(e) => (e.target.src = PlaceholderPic)}
-												rounded
-												src={img.s3Link}
-											/>
-										</div>
-									))}
-								</div>
+								{images.data.length > 0 ? (
+									<div className="tiles">
+										{images.data.map((img, i) => (
+											<div
+												className="tile"
+												key={`exampleTile${i}`}
+												style={{ width: "180px", height: "180px" }}
+											>
+												<Image
+													bordered
+													onClick={() => {
+														setActiveItem("photos")
+														setModalOpen(true)
+														const key = imageOptions
+															.map((img) => `${s3Url}${img}`)
+															.indexOf(img.s3Link)
+														setImgKey(key)
+													}}
+													onError={(e) => (e.target.src = PlaceholderPic)}
+													rounded
+													src={img.s3Link}
+												/>
+											</div>
+										))}
+									</div>
+								) : (
+									<Segment placeholder>
+										<Header
+											content="No examples yet..."
+											textAlign="center"
+											size="large"
+										/>
+									</Segment>
+								)}
 							</Grid.Column>
 							<Grid.Column width={5}>
 								{ContradictionsCard()}
@@ -409,6 +419,8 @@ const Argument = ({ history, match }) => {
 						</Grid.Row>
 					</Grid>
 
+					<Divider hidden section />
+
 					<Modal
 						basic
 						centered={false}
@@ -419,7 +431,6 @@ const Argument = ({ history, match }) => {
 						open={modalOpen}
 						size="large"
 					>
-						{activeItem === "tweets" && <Modal.Header>Hot Takes</Modal.Header>}
 						<Modal.Content>
 							{activeItem === "photos" && (
 								<Carousel

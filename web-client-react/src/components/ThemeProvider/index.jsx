@@ -62,7 +62,7 @@ const reducer = (state, action) => {
 		case "SET_NOTIFICATIONS":
 			const notifications =
 				state.notifications.length > 0
-					? [...state.notifications, action.prediction]
+					? [action.prediction, ...state.notifications]
 					: [action.prediction]
 			localStorage.setItem("notifications", JSON.stringify(notifications))
 

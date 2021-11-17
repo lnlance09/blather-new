@@ -19,6 +19,12 @@ use Illuminate\Support\Str;
 
 class TweetController extends Controller
 {
+    const TWITTER_URLS = [
+        'twitter.com',
+        'www.twitter.com',
+        'mobile.twitter.com'
+    ];
+
     /**
      * Display a listing of the resource.
      *
@@ -178,6 +184,7 @@ class TweetController extends Controller
 
         $tweet = null;
         $archived = false;
+        $pageId = null;
 
         // Get the tweet from twitter's api
         try {
@@ -199,6 +206,8 @@ class TweetController extends Controller
                 ->first();
 
             if ($tweetDb) {
+                $pageId = $tweetDb->page_id;
+
                 // If the tweet exists in the DB and with the API, update the favorite and RT counts
                 $tweetDb->favorite_count = $tweet['favorite_count'];
                 $tweetDb->retweet_count = $tweet['retweet_count'];
@@ -223,10 +232,14 @@ class TweetController extends Controller
 
                     if (array_key_exists('urls', $entities)) {
                         $url = end($entities['urls'])['expanded_url'];
-                        $meta = Tweet::getMetaTags($url);
-                        $meta['url'] = $url;
-                        $meta['tweet_id'] = $tweetDb->id;
-                        TweetUrl::create($meta);
+                        $domain = parse_url($url, PHP_URL_HOST);
+
+                        if (!in_array($domain, self::TWITTER_URLS)) {
+                            $meta = Tweet::getMetaTags($url);
+                            $meta['url'] = $url;
+                            $meta['tweet_id'] = $tweetDb->id;
+                            TweetUrl::create($meta);
+                        }
                     }
                 }
 
@@ -258,6 +271,8 @@ class TweetController extends Controller
                         'username' => $user['screen_name']
                     ],
                 );
+                $page->refresh();
+                $pageId = $page->id;
 
                 $data = [
                     'full_text' => $tweet['full_text'],
@@ -341,10 +356,14 @@ class TweetController extends Controller
 
                 if (array_key_exists('urls', $entities)) {
                     $url = end($entities['urls'])['expanded_url'];
-                    $meta = Tweet::getMetaTags($url);
-                    $meta['url'] = $url;
-                    $meta['tweet_id'] = $tweetDb->id;
-                    TweetUrl::create($meta);
+                    $domain = parse_url($url, PHP_URL_HOST);
+
+                    if (!in_array($domain, self::TWITTER_URLS)) {
+                        $meta = Tweet::getMetaTags($url);
+                        $meta['url'] = $url;
+                        $meta['tweet_id'] = $tweetDb->id;
+                        TweetUrl::create($meta);
+                    }
                 }
             }
         } catch (\Exception $e) {
@@ -352,7 +371,16 @@ class TweetController extends Controller
         }
 
         $tweet = Tweet::where('tweet_id', $id)
-            ->with(['arguments.argument', 'urls'])
+            ->with([
+                'arguments.argument' => function ($query) use ($pageId) {
+                    return $query->withCount(['tweets' => function ($query) use ($pageId) {
+                        $query->whereHas('tweet', function ($query) use ($pageId) {
+                            $query->where('page_id', $pageId);
+                        });
+                    }]);
+                },
+                'urls'
+            ])
             ->withCount(['arguments', 'fallacies'])
             ->first();
 
