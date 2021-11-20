@@ -344,8 +344,12 @@ class FallacyController extends Controller
      */
     public function show($slug)
     {
+        $parts = explode('-', $slug);
+        $id = end($parts);
+
         $fallacy = Fallacy::where('slug', $slug)
             ->orWhere('id', $slug)
+            ->orWhere('id', $id)
             ->with(self::DEFAULT_WITH)
             ->first();
 
