@@ -13,7 +13,6 @@ import {
 import { useContext, useEffect, useReducer, useState } from "react"
 import { Link } from "react-router-dom"
 import { ReactSVG } from "react-svg"
-import _ from "underscore"
 import defaultImg from "images/avatar/small/veronika.jpg"
 import Echo from "laravel-echo"
 import initialState from "./state"
