@@ -49,7 +49,7 @@
 
         <!-- React build CSS -->
         <link rel="stylesheet" type="text/css" href="/static/css/2.4a753237.chunk.css">
-        <link rel="stylesheet" type="text/css" href="/static/css/main.6532dc48.chunk.css">
+        <link rel="stylesheet" type="text/css" href="/static/css/main.310ca5c5.chunk.css">
 
         <title>{{ $title }}</title>
     </head>
@@ -78,7 +78,7 @@
     </noscript>
 
     <!-- React build JS -->
-    <script src="/static/js/2.7c6ed64a.chunk.js"></script>
-    <script src="/static/js/main.253355f2.chunk.js"></script>
+    <script src="/static/js/2.99d39844.chunk.js"></script>
+    <script src="/static/js/main.452ee694.chunk.js"></script>
     <script src="/static/js/runtime-main.4849eda3.js"></script>
 </html>
