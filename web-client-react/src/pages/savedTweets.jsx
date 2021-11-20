@@ -19,16 +19,13 @@ const toastConfig = getConfig()
 toast.configure(toastConfig)
 
 const SavedTweets = ({ history }) => {
-	const { state } = useContext(ThemeContext)
-	const { inverted } = state
+	const { state, dispatch } = useContext(ThemeContext)
+	const { inverted, savedTweets } = state
 
-	let savedTweets = localStorage.getItem("savedTweets")
-	savedTweets = _.isEmpty(savedTweets) ? [] : JSON.parse(savedTweets)
 	const tweetCount = savedTweets.length
 	const isEmpty = tweetCount === 0
-	console.log("is empty", isEmpty)
 
-	const [internalState, dispatch] = useReducer(
+	const [internalState, dispatchInternal] = useReducer(
 		process.env.NODE_ENV === "development" ? logger(reducer) : reducer,
 		initialState
 	)
@@ -41,7 +38,7 @@ const SavedTweets = ({ history }) => {
 
 		getTweets(savedTweets)
 		// eslint-disable-next-line
-	}, [])
+	}, [savedTweets])
 
 	const getTweets = async (ids, page = 1) => {
 		axios
@@ -53,7 +50,7 @@ const SavedTweets = ({ history }) => {
 			})
 			.then((response) => {
 				const tweets = response.data.data
-				dispatch({
+				dispatchInternal({
 					type: "GET_TWEETS",
 					tweets
 				})
@@ -64,10 +61,8 @@ const SavedTweets = ({ history }) => {
 	}
 
 	const clearTweet = () => {
-		localStorage.setItem("savedTweets", JSON.stringify([]))
 		dispatch({
-			type: "GET_TWEETS",
-			tweets: []
+			type: "CLEAR_ALL_TWEETS"
 		})
 	}
 
@@ -78,9 +73,8 @@ const SavedTweets = ({ history }) => {
 			<Header as="h1">
 				{!isEmpty && (
 					<Button
-						compact
 						content={`Clear all (${tweetCount})`}
-						color="red"
+						color="twitter"
 						onClick={clearTweet}
 						style={{ float: "right" }}
 					/>

@@ -106,7 +106,7 @@ Route::get('/contact', function () use ($seo) {
 });
 
 Route::get('/fallacies/{slug}', function ($slug) use ($seo) {
-    $fallacy = Fallacy::where('slug', $slug)->first();
+    $fallacy = Fallacy::where('slug', $slug)->orWhere('id', $slug)->first();
     if (empty($fallacy)) {
         return view('index', $seo);
     }

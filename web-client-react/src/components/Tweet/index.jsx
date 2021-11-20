@@ -3,7 +3,7 @@ import linkifyHtml from "linkify-html"
 import "linkify-plugin-hashtag"
 import "linkify-plugin-mention"
 import { Card, Icon, Image, Label, List, Popup } from "semantic-ui-react"
-import { useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import { getHighlightedText } from "utils/textFunctions"
 import { tweetOptions } from "options/tweet"
 import { getConfig } from "options/toast"
@@ -15,6 +15,7 @@ import Moment from "react-moment"
 import NumberFormat from "react-number-format"
 import PlaceholderPic from "images/images/image-square.png"
 import PropTypes from "prop-types"
+import ThemeContext from "themeContext"
 import UrlPic from "images/images/white-image.png"
 
 const toastConfig = getConfig()
@@ -42,6 +43,9 @@ const Tweet = ({
 	user,
 	urls = {}
 }) => {
+	const { state, dispatch } = useContext(ThemeContext)
+	const { savedTweets } = state
+
 	const {
 		assignable,
 		crossOriginAnonymous,
@@ -169,28 +173,30 @@ const Tweet = ({
 	}
 
 	const saveTweet = async (id) => {
-		const savedTweets = localStorage.getItem("savedTweets")
-		const tweets = _.isEmpty(savedTweets) ? [] : JSON.parse(savedTweets)
-
-		if (!tweets.includes(id)) {
+		if (!savedTweets.includes(id)) {
 			setSaveLoading(true)
 			const archived = await archiveTweet(id)
 			setSaveLoading(false)
+
 			if (!archived) {
 				return
 			}
 
-			const newTweets = [id, ...tweets]
-			localStorage.setItem("savedTweets", JSON.stringify(newTweets))
+			dispatch({
+				type: "SET_SAVED_TWEETS",
+				tweet: id
+			})
 			setHasSaved(true)
 			toast.info("Tweet added!")
 			return
 		}
 
-		const newTweets = await tweets.filter((t) => t !== id)
-		localStorage.setItem("savedTweets", JSON.stringify(newTweets))
-		toast.error("Tweet removed!")
+		dispatch({
+			type: "CLEAR_TWEET",
+			id
+		})
 		setHasSaved(false)
+		toast.error("Tweet removed!")
 	}
 
 	return (

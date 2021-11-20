@@ -396,11 +396,7 @@ const Argument = ({ history, match }) => {
 									</div>
 								) : (
 									<Segment placeholder>
-										<Header
-											content="No examples yet..."
-											textAlign="center"
-											size="large"
-										/>
+										<Header content="No examples yet..." textAlign="center" />
 									</Segment>
 								)}
 							</Grid.Column>

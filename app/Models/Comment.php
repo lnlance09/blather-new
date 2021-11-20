@@ -2,13 +2,35 @@
 
 namespace App\Models;
 
+use App\Events\CommentCreated;
+use Illuminate\Database\Eloquent\BroadcastsEvents;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Facades\Log;
 
 class Comment extends Model
 {
-    use HasFactory;
+    use BroadcastsEvents, HasFactory;
+
+    /**
+     * The event map for the model.
+     *
+     * @var array
+     */
+    protected $dispatchesEvents = [
+        'created' => CommentCreated::class
+    ];
+
+    /**
+     * Get the channels that model events should broadcast on.
+     *
+     * @param  string  $event
+     * @return \Illuminate\Broadcasting\Channel|array
+     */
+    public function broadcastOn($event)
+    {
+        return [$this, $this->fallacy];
+    }
 
     /**
      * The attributes that are mass assignable.

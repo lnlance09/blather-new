@@ -13,6 +13,7 @@ import {
 import { useContext, useEffect, useReducer, useState } from "react"
 import { Link } from "react-router-dom"
 import { ReactSVG } from "react-svg"
+import _ from "underscore"
 import defaultImg from "images/avatar/small/veronika.jpg"
 import Echo from "laravel-echo"
 import initialState from "./state"
@@ -33,7 +34,7 @@ const echoConfig = {
 
 const PageHeader = ({ activeItem = null, history, showBanner = false, simple = false }) => {
 	const { state, dispatch } = useContext(ThemeContext)
-	const { auth, inverted, notifications, user } = state
+	const { auth, inverted, notifications, savedTweets, user } = state
 
 	const username = auth ? user.username : "anonymous"
 	const { contradictionsCount, fallaciesCount, targetsCount } = user
@@ -74,22 +75,19 @@ const PageHeader = ({ activeItem = null, history, showBanner = false, simple = f
 		// eslint-disable-next-line
 	}, [])
 
-	// eslint-disable-next-line
-	const addNotification = (prediction) => {
+	const addNotification = (notification) => {
 		dispatch({
 			type: "SET_NOTIFICATIONS",
-			prediction
+			notification
 		})
 	}
 
 	const clearAllNotifications = () => {
-		localStorage.removeItem("notifications")
 		dispatch({
 			type: "CLEAR_ALL_NOTIFICATIONS"
 		})
 	}
 
-	// eslint-disable-next-line
 	const incrementNotification = () => {
 		dispatch({
 			type: "INCREMENT_UNREAD_COUNT"
@@ -97,11 +95,6 @@ const PageHeader = ({ activeItem = null, history, showBanner = false, simple = f
 	}
 
 	const logout = () => {
-		localStorage.removeItem("auth")
-		localStorage.removeItem("bearer")
-		localStorage.removeItem("unreadCount")
-		localStorage.removeItem("user")
-		localStorage.removeItem("verify")
 		window.Echo.leave(`users.${user.id}`)
 		dispatch({
 			type: "LOGOUT"
@@ -117,9 +110,7 @@ const PageHeader = ({ activeItem = null, history, showBanner = false, simple = f
 				<div className="trigger item">
 					<Icon circular color="yellow" inverted name="bell" />
 					{notifications.length > 0 && (
-						<div className="top floating ui red label small">
-							{notifications.length}
-						</div>
+						<div className="top floating ui red label mini">{notifications.length}</div>
 					)}
 				</div>
 			}
@@ -302,13 +293,20 @@ const PageHeader = ({ activeItem = null, history, showBanner = false, simple = f
 						</Menu.Item>
 						<Menu.Item position="right">
 							<div className="iconsWrapper">
-								<Icon
-									circular
-									className="tweetsIcon"
-									inverted
-									name="twitter"
-									onClick={() => history.push("/tweets/saved")}
-								/>
+								<div style={{ display: "inline-block", position: "relative" }}>
+									<Icon
+										circular
+										className="tweetsIcon"
+										inverted
+										name="twitter"
+										onClick={() => history.push("/tweets/saved")}
+									/>
+									{savedTweets.length > 0 && (
+										<div className="top floating ui red label mini">
+											{savedTweets.length}
+										</div>
+									)}
+								</div>
 								<Icon
 									circular
 									className="searchIcon"

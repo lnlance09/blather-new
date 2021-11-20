@@ -5,6 +5,7 @@ import ThemeContext from "themeContext"
 let auth = localStorage.getItem("auth")
 let bearer = localStorage.getItem("bearer")
 let notifications = localStorage.getItem("notifications")
+let savedTweets = localStorage.getItem("savedTweets")
 let unreadCount = localStorage.getItem("unreadCount")
 let user = localStorage.getItem("user")
 let verify = localStorage.getItem("verify")
@@ -14,6 +15,7 @@ const initialState = {
 	bearer,
 	inverted: false,
 	notifications: notifications === null ? [] : JSON.parse(notifications),
+	savedTweets: savedTweets === null ? [] : JSON.parse(savedTweets),
 	unreadCount,
 	user: user === null ? {} : JSON.parse(user),
 	verify: verify === null || verify === "false" ? false : true
@@ -24,17 +26,32 @@ const reducer = (state, action) => {
 
 	switch (action.type) {
 		case "CLEAR_ALL_NOTIFICATIONS":
+			localStorage.removeItem("notifications")
 			return {
 				...state,
 				notifications: []
 			}
+		case "CLEAR_ALL_TWEETS":
+			localStorage.removeItem("savedTweets")
+			return {
+				...state,
+				savedTweets: []
+			}
 		case "CLEAR_NOTIFICATION":
-			const removed = state.notifications.filter((item, i) => item.id !== action.id)
+			const removed = state.notifications.filter((item) => item.id !== action.id)
 			localStorage.setItem("notifications", JSON.stringify(removed))
 
 			return {
 				...state,
 				notifications: removed
+			}
+		case "CLEAR_TWEET":
+			const removedTweets = state.savedTweets.filter((item) => item !== action.id)
+			localStorage.setItem("savedTweets", JSON.stringify(removedTweets))
+
+			return {
+				...state,
+				savedTweets: removedTweets
 			}
 		case "DECREMENT_UNREAD_COUNT":
 			return {
@@ -47,6 +64,14 @@ const reducer = (state, action) => {
 				unreadCount: state.unreadCount + 1
 			}
 		case "LOGOUT":
+			localStorage.removeItem("auth")
+			localStorage.removeItem("bearer")
+			localStorage.removeItem("notifications")
+			localStorage.removeItem("savedTweets")
+			localStorage.removeItem("unreadCount")
+			localStorage.removeItem("user")
+			localStorage.removeItem("verify")
+
 			return {
 				...state,
 				auth: false,
@@ -55,20 +80,25 @@ const reducer = (state, action) => {
 				user: {},
 				verify: false
 			}
-		case "SET_MESSAGES":
-			return {
-				...state
-			}
 		case "SET_NOTIFICATIONS":
 			const notifications =
 				state.notifications.length > 0
-					? [action.prediction, ...state.notifications]
-					: [action.prediction]
+					? [action.notification, ...state.notifications]
+					: [action.notification]
 			localStorage.setItem("notifications", JSON.stringify(notifications))
 
 			return {
 				...state,
 				notifications
+			}
+		case "SET_SAVED_TWEETS":
+			const tweets =
+				state.savedTweets.length > 0 ? [action.tweet, ...state.savedTweets] : [action.tweet]
+			localStorage.setItem("savedTweets", JSON.stringify(tweets))
+
+			return {
+				...state,
+				savedTweets: tweets
 			}
 		case "SET_UNREAD_COUNT":
 			return {

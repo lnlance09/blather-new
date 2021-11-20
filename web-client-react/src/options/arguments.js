@@ -15,7 +15,7 @@ export const getArgumentOptions = async () => {
 }
 
 export const argumentOptions = [
-	{ key: 1, text: "Right-Wing Arguments", value: 1 },
+	{ key: 1, text: "MAGA Arguments", value: 1 },
 	{ key: 2, text: "MLM Arguments (Coming Soon)", value: 2, disabled: true },
 	{ key: 3, text: "Anti-Vaxx Arguments (Coming Soon)", value: 3, disabled: true },
 	{ key: 4, text: "Evangelical Arguments (Coming Soon)", value: 4, disabled: true },
