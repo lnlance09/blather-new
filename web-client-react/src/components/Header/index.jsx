@@ -314,7 +314,9 @@ const PageHeader = ({ activeItem = null, history, showBanner = false, simple = f
 									name="search"
 									onClick={() => history.push("/search/")}
 								/>
+								{/*
 								{BellDropdown}
+								*/}
 							</div>
 							{ProfileDropdown}
 						</Menu.Item>
@@ -329,7 +331,9 @@ const PageHeader = ({ activeItem = null, history, showBanner = false, simple = f
 							/>
 						</Menu.Item>
 						<Menu.Item position="right">
-							{BellDropdown}
+							{/*
+								{BellDropdown}
+							*/}
 							<Icon
 								color={sidebarVisible ? "green" : null}
 								inverted
