@@ -79,6 +79,6 @@
 
     <!-- React build JS -->
     <script src="/static/js/2.27f70a28.chunk.js"></script>
-    <script src="/static/js/main.b0729dff.chunk.js"></script>
+    <script src="/static/js/main.e7e2c79e.chunk.js"></script>
     <script src="/static/js/runtime-main.4849eda3.js"></script>
 </html>
