@@ -32,7 +32,7 @@ export const DisplayMetaTags = ({ page, state }) => {
 				metaTags = {
 					description,
 					img,
-					title: `${state.description} - ${siteName}`
+					title: `${state.argument.description} - ${siteName}`
 				}
 			}
 			break
