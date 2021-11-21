@@ -95,7 +95,7 @@ const FallacyExample = ({
 					}}
 					counts={tweet.counts}
 					createdAt={tweet.createdAt}
-					extendedEntities={twitter.extendedEntities}
+					extendedEntities={tweet.extendedEntities}
 					fullText={tweet.fullText}
 					history={history}
 					id={tweet.tweetId}

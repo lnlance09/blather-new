@@ -449,12 +449,22 @@ Tweet.propTypes = {
 		favorites: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
 		retweets: PropTypes.oneOfType([PropTypes.number, PropTypes.string])
 	}),
-	urls: PropTypes.shape({
-		description: PropTypes.string,
-		image: PropTypes.string,
-		title: PropTypes.string,
-		url: PropTypes.string
-	}),
+	urls: PropTypes.oneOfType([
+		PropTypes.shape({
+			description: PropTypes.string,
+			image: PropTypes.string,
+			title: PropTypes.string,
+			url: PropTypes.string
+		}),
+		PropTypes.arrayOf(
+			PropTypes.shape({
+				description: PropTypes.string,
+				image: PropTypes.string,
+				title: PropTypes.string,
+				url: PropTypes.string
+			})
+		)
+	]),
 	user: PropTypes.shape({
 		image: PropTypes.string,
 		name: PropTypes.string,
