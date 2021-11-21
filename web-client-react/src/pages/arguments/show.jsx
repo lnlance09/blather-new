@@ -313,7 +313,7 @@ const Argument = ({ history, match }) => {
 
 	return (
 		<DefaultLayout activeItem="arguments" containerClassName="argumentPage" history={history}>
-			<DisplayMetaTags page="argument" />
+			<DisplayMetaTags page="argument" state={internalState} />
 
 			{loaded ? (
 				<>
