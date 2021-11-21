@@ -195,7 +195,7 @@ Route::get('sitemap', function () {
         $sitemap->add(URL::to('/search?q=&type=pages'), null, '0.6', 'monthly');
 
         // arguments
-        $args = DB::table('args')->orderBy('id', 'asc')->get();
+        $args = DB::table('arguments')->orderBy('id', 'asc')->get();
         foreach ($args as $a) {
             $sitemap->add(URL::to('/arguments/' . $a->slug), $a->updated_at, '0.9', 'weekly');
         }
