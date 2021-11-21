@@ -59,7 +59,7 @@ class Comment extends Model
 
     public function fallacy()
     {
-        return $this->belongsTo(Fallacy::class, 'id', 'fallacy_id');
+        return $this->belongsTo(Fallacy::class, 'fallacy_id', 'id');
     }
 
     public function likedByMe()
