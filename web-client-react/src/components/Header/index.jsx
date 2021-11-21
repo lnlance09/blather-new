@@ -401,7 +401,7 @@ const PageHeader = ({ activeItem = null, history, showBanner = false, simple = f
 						</Menu.Item>
 					</>
 				) : (
-					<Menu.Item as="a" onClick={() => history.push("/login")}>
+					<Menu.Item as="a" onClick={() => history.push("/auth")}>
 						👉 Sign In
 					</Menu.Item>
 				)}

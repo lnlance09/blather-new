@@ -28,10 +28,12 @@ export const DisplayMetaTags = ({ page, state }) => {
 			}
 			break
 		case "argument":
-			metaTags = {
-				description,
-				img,
-				title: `Arguments - ${siteName}`
+			if (state.loaded && !state.error) {
+				metaTags = {
+					description,
+					img,
+					title: `${state.description} - ${siteName}`
+				}
 			}
 			break
 		case "arguments":

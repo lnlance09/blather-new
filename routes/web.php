@@ -36,7 +36,7 @@ $seo = [
     'img' => [
         'height' => 100,
         'width' => 100,
-        'src' => $awsUrl . 'public/brain.png'
+        'src' => 'public/logo512.png'
     ],
     'keywords' => 'politics,logical fallacies,conservatives,trump,sycophants,critical thinking',
     'schema' => '',
@@ -234,6 +234,22 @@ Route::get('sitemap', function () {
     }
 
     return $sitemap->render('xml');
+});
+
+Route::get('/tweet/{id}', function ($id) use ($seo) {
+    $tweet = Tweet::where('tweet_id', $id)
+        ->with(['page'])
+        ->first();
+
+    if (empty($tweet)) {
+        return view('index', $seo);
+    }
+
+    $seo['description'] = $tweet->full_text;
+    $seo['title'] = 'Tweet by ' . $tweet->page->name . ' - ' . $seo['siteName'];
+    $seo['url'] = $seo['baseUrl'] . 'tweets/' . $id;
+
+    return view('index', $seo);
 });
 
 Route::get('/tweets', function () use ($seo) {
