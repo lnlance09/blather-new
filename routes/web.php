@@ -129,7 +129,7 @@ Route::get('/pages/{network}/{username}', function ($network, $username) use ($s
         return view('index', $seo);
     }
 
-    $img = $seo['awsUrl'] . $page->logo;
+    $img = $seo['awsUrl'] . $page->image;
     $imgData = getimagesize($img);
     $width = $imgData[0];
     $height = $imgData[1];
