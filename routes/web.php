@@ -253,23 +253,16 @@ Route::get('/tweets', function () use ($seo) {
 });
 
 Route::get('/tweets/{id}', function ($id) use ($seo) {
-    $tweet = Tweet::where('tweet_id', $id)->first();
+    $tweet = Tweet::where('tweet_id', $id)
+        ->with(['page'])
+        ->first();
+
     if (empty($tweet)) {
         return view('index', $seo);
     }
 
-    $img = $seo['awsUrl'] . $tweet->logo;
-    $imgData = getimagesize($img);
-    $width = $imgData[0];
-    $height = $imgData[1];
-
-    $seo['img'] = [
-        'height' => $height,
-        'src' => $img,
-        'width' => $width
-    ];
-    $seo['description'] = $tweet->explanation;
-    $seo['title'] = $tweet->title . ' - ' . $seo['siteName'];
+    $seo['description'] = $tweet->full_text;
+    $seo['title'] = 'Tweet by ' . $tweet->page->name . ' - ' . $seo['siteName'];
     $seo['url'] = $seo['baseUrl'] . 'tweets/' . $id;
 
     return view('index', $seo);
