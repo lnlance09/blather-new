@@ -76,16 +76,6 @@ Route::get('/arguments/{slug}', function ($slug) use ($seo) {
         return view('index', $seo);
     }
 
-    $img = $seo['awsUrl'] . $arg->logo;
-    $imgData = getimagesize($img);
-    $width = $imgData[0];
-    $height = $imgData[1];
-
-    $seo['img'] = [
-        'height' => $height,
-        'src' => $img,
-        'width' => $width
-    ];
     $seo['description'] = $arg->explanation;
     $seo['title'] = $arg->description . ' - ' . $seo['siteName'];
     $seo['url'] = $seo['baseUrl'] . 'arguments/' . $slug;
@@ -278,7 +268,7 @@ Route::get('/{username}', function ($username) use ($seo) {
         return view('index', $seo);
     }
 
-    $img = $seo['awsUrl'] . $user->img;
+    $img = $seo['awsUrl'] . $user->image;
     $imgData = getimagesize($img);
     $width = $imgData[0];
     $height = $imgData[1];
