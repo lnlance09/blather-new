@@ -1,10 +1,14 @@
 import { Button, Dropdown, Form, Label } from "semantic-ui-react"
-import { useState } from "react"
+import { useRef, useState } from "react"
+import _ from "underscore"
 import PropTypes from "prop-types"
 
 const ArgumentForm = ({ contradictions, description, explanation, id, options, updateArg }) => {
 	const [loading, setLoading] = useState(false)
 	const [newContradictions, setNewContradictions] = useState(contradictions)
+
+	const descriptionRef = useRef(null)
+	const explanationRef = useRef(null)
 
 	const onChangeC = async (e, { value }) => {
 		setNewContradictions(value)
@@ -16,6 +20,7 @@ const ArgumentForm = ({ contradictions, description, explanation, id, options, u
 				<input
 					defaultValue={description}
 					id="descText"
+					ref={descriptionRef}
 					rows={6}
 					placeholder="Enter title"
 					style={{
@@ -27,6 +32,7 @@ const ArgumentForm = ({ contradictions, description, explanation, id, options, u
 				<textarea
 					defaultValue={explanation}
 					id="expText"
+					ref={explanationRef}
 					rows={6}
 					placeholder="Enter description"
 					style={{
@@ -51,14 +57,18 @@ const ArgumentForm = ({ contradictions, description, explanation, id, options, u
 			</Form.Field>
 			<Form.Field>
 				<Button
-					color="blue"
+					color="red"
 					content="Save"
 					fluid
 					loading={loading}
 					onClick={async () => {
 						setLoading(true)
-						const explanation = document.getElementById(`expText`).value
-						const description = document.getElementById(`descText`).value
+						const explanation = _.isEmpty(explanationRef.current)
+							? ""
+							: explanationRef.current.value
+						const description = _.isEmpty(descriptionRef.current)
+							? ""
+							: descriptionRef.current.value
 						await updateArg(id, description, explanation, newContradictions)
 						setLoading(false)
 					}}

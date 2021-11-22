@@ -15,6 +15,7 @@ use App\Models\Fallacy;
 use App\Models\Page;
 use App\Models\Tweet;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -269,7 +270,7 @@ class ArgumentController extends Controller
             }
         }
 
-        ArgumentContradiction::where('id', $id)
+        ArgumentContradiction::where('argument_id', $id)
             ->whereNotIn('contradicting_argument_id', $contradictions)
             ->delete();
 
