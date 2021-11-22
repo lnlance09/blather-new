@@ -136,6 +136,12 @@ const Tweet = ({
 		saveImgName = hovering ? "close" : "checkmark"
 	}
 
+	let displayUrl
+	if (showUrl) {
+		const urlParsed = new URL(urls.url)
+		displayUrl = urlParsed.hostname
+	}
+
 	useEffect(() => {
 		const savedTweets = localStorage.getItem("savedTweets")
 		if (!_.isEmpty(savedTweets)) {
@@ -269,7 +275,7 @@ const Tweet = ({
 							<Card.Content>
 								<Card.Header>{urls.title}</Card.Header>
 								<Card.Meta>
-									<span className="date">{urls.url}</span>
+									<span className="date">{displayUrl}</span>
 								</Card.Meta>
 								<Card.Description className="links">
 									{urls.description}
