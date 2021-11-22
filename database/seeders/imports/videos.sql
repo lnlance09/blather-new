@@ -6,7 +6,7 @@
 # https://github.com/Sequel-Ace/Sequel-Ace
 #
 # Host: 127.0.0.1 (MySQL 8.0.23)
-# Database: preditc
+# Database: blather
 # Generation Time: 2021-09-28 03:11:16 +0000
 # ************************************************************
 
