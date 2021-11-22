@@ -48,7 +48,13 @@ const ArgumentForm = ({ contradictions, description, explanation, id, options, u
 					options={options}
 					placeholder="Contradictions"
 					renderLabel={(item) => {
-						return <Label color="blue" content={item.name} key={item.value} />
+						return (
+							<Label
+								color="blue"
+								content={`${item.name} - ${item.value}`}
+								key={item.value}
+							/>
+						)
 					}}
 					search
 					selection
