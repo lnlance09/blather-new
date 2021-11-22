@@ -234,6 +234,32 @@ const PageHeader = ({ activeItem = null, history, showBanner = false, simple = f
 		</Dropdown>
 	)
 
+	const savedTweetsBtn = (
+		<div style={{ display: "inline-block", position: "relative" }}>
+			<Icon
+				circular
+				className="tweetsIcon"
+				inverted
+				name="twitter"
+				onClick={() => history.push("/tweets/saved")}
+			/>
+			{savedTweets.length > 0 && (
+				<div className="top floating ui red label mini">{savedTweets.length}</div>
+			)}
+		</div>
+	)
+
+	const searchBtn = (
+		<Icon
+			circular
+			className="searchIcon"
+			color="red"
+			inverted
+			name="search"
+			onClick={() => history.push("/search/")}
+		/>
+	)
+
 	return (
 		<div className="pageHeaderComponent">
 			{simple ? (
@@ -292,28 +318,8 @@ const PageHeader = ({ activeItem = null, history, showBanner = false, simple = f
 						</Menu.Item>
 						<Menu.Item position="right">
 							<div className="iconsWrapper">
-								<div style={{ display: "inline-block", position: "relative" }}>
-									<Icon
-										circular
-										className="tweetsIcon"
-										inverted
-										name="twitter"
-										onClick={() => history.push("/tweets/saved")}
-									/>
-									{savedTweets.length > 0 && (
-										<div className="top floating ui red label mini">
-											{savedTweets.length}
-										</div>
-									)}
-								</div>
-								<Icon
-									circular
-									className="searchIcon"
-									color="red"
-									inverted
-									name="search"
-									onClick={() => history.push("/search/")}
-								/>
+								{savedTweetsBtn}
+								{searchBtn}
 								{/*
 								{BellDropdown}
 								*/}
@@ -331,6 +337,8 @@ const PageHeader = ({ activeItem = null, history, showBanner = false, simple = f
 							/>
 						</Menu.Item>
 						<Menu.Item position="right">
+							{savedTweetsBtn}
+							{searchBtn}
 							{/*
 								{BellDropdown}
 							*/}

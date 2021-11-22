@@ -10,6 +10,7 @@ import { getConfig } from "options/toast"
 import { toast } from "react-toastify"
 import _ from "underscore"
 import axios from "axios"
+import CopyToClipboard from "react-copy-to-clipboard"
 import ItemPic from "images/images/square-image.png"
 import Moment from "react-moment"
 import NumberFormat from "react-number-format"
@@ -57,6 +58,7 @@ const Tweet = ({
 		onClickCallback,
 		opacity,
 		raised,
+		showCopyUrlOption,
 		showSaveOption,
 		showStats
 	} = config
@@ -350,6 +352,30 @@ const Tweet = ({
 											onMouseLeave={() => setHovering(false)}
 											size="large"
 										/>
+									</Label>
+								</List.Item>
+							</List>
+						)}
+						{showCopyUrlOption && (
+							<List floated="right" horizontal>
+								<List.Item className="saveTweet">
+									<Label>
+										<CopyToClipboard
+											onCopy={() => {
+												toast.success("Copied")
+											}}
+											text={`https://twitter.com/${user.username}/status/${id}`}
+										>
+											<Icon
+												className="copyTweetUrl"
+												color="black"
+												name="paperclip"
+												onClick={(e) => {
+													e.stopPropagation()
+												}}
+												size="large"
+											/>
+										</CopyToClipboard>
 									</Label>
 								</List.Item>
 							</List>

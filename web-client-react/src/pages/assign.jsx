@@ -26,6 +26,7 @@ import qs from "query-string"
 import reducer from "reducers/assign"
 import ThemeContext from "themeContext"
 import Tweet from "components/Tweet"
+import validator from "validator"
 
 const toastConfig = getConfig()
 toast.configure(toastConfig)
@@ -204,9 +205,13 @@ const Assign = ({ history }) => {
 
 	const onPaste = (e, callback) => {
 		const url = e.clipboardData.getData("Text")
+		if (!validator.isURL(url)) {
+			return
+		}
+
 		const _url = new URL(url)
 		const { hostname, pathname } = _url
-		if (!["twitter.com", "blather.io", "127.0.0.1"].includes(hostname)) {
+		if (!["twitter.com", "mobile.twitter.com", "blather.io", "127.0.0.1"].includes(hostname)) {
 			return
 		}
 		callback(url, pathname)

@@ -69,6 +69,7 @@ export const tweetOptions = {
 	onClickCallback: () => null,
 	opacity: 1,
 	raised: false,
+	showCopyUrlOption: false,
 	showSaveOption: false,
 	showStats: true
 }
