@@ -24,7 +24,7 @@ export const getHighlightedText = (text, higlight, className = "") => {
 		return
 	}
 
-	const parts = text.split(new RegExp(`(${higlight.replace(/[()]/g, "")})`, "gi"))
+	const parts = text.split(new RegExp(`(${higlight.replace(/[()?]/g, "")})`, "gi"))
 	let newText = ""
 	for (let i = 0; i < parts.length; i++) {
 		const part = parts[i]
