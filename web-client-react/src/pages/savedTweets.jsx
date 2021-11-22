@@ -117,6 +117,7 @@ const SavedTweets = ({ history }) => {
 													onClickRedirect(e, history, `/tweets/${id}`)
 												}
 											},
+											showCopyUrlOption: true,
 											showSaveOption: true
 										}}
 										counts={tweet.counts}

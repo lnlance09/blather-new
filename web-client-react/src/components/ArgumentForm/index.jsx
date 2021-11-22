@@ -3,9 +3,17 @@ import { useRef, useState } from "react"
 import _ from "underscore"
 import PropTypes from "prop-types"
 
-const ArgumentForm = ({ contradictions, description, explanation, id, options, updateArg }) => {
+const ArgumentForm = ({
+	contradictions,
+	contradictionOptions,
+	description,
+	explanation,
+	id,
+	options,
+	updateArg
+}) => {
 	const [loading, setLoading] = useState(false)
-	const [newContradictions, setNewContradictions] = useState(contradictions)
+	const [newContradictions, setNewContradictions] = useState(contradictionOptions)
 
 	const descriptionRef = useRef(null)
 	const explanationRef = useRef(null)
@@ -15,13 +23,34 @@ const ArgumentForm = ({ contradictions, description, explanation, id, options, u
 	}
 
 	return (
-		<Form>
+		<Form
+			onClick={(e) => e.stopPropagation()}
+			onSubmit={async (e) => {
+				setLoading(true)
+
+				const explanations = []
+				const formData = new FormData(e.target)
+				// eslint-disable-next-line
+				for (let [key, value] of formData.entries()) {
+					explanations.push(value)
+				}
+
+				const explanation = _.isEmpty(explanationRef.current)
+					? ""
+					: explanationRef.current.value
+				const description = _.isEmpty(descriptionRef.current)
+					? ""
+					: descriptionRef.current.value
+
+				await updateArg(id, description, explanation, newContradictions, explanations)
+				setLoading(false)
+			}}
+		>
 			<Form.Field>
 				<input
 					defaultValue={description}
 					id="descText"
 					ref={descriptionRef}
-					rows={6}
 					placeholder="Enter title"
 					style={{
 						width: "100%"
@@ -48,36 +77,38 @@ const ArgumentForm = ({ contradictions, description, explanation, id, options, u
 					options={options}
 					placeholder="Contradictions"
 					renderLabel={(item) => {
-						return (
-							<Label
-								color="blue"
-								content={`${item.name} - ${item.value}`}
-								key={item.value}
-							/>
-						)
+						return <Label as="p" color="blue" content={item.name} key={item.value} />
 					}}
 					search
 					selection
 					value={newContradictions}
 				/>
 			</Form.Field>
+
+			{contradictions.map((c, i) => {
+				return (
+					<Form.Field key={`formField${i}`}>
+						<label>{c.description}</label>
+						<input
+							defaultValue={c.explanation}
+							name={c.id}
+							placeholder="Explanation"
+							style={{
+								width: "100%"
+							}}
+						/>
+					</Form.Field>
+				)
+			})}
+
 			<Form.Field>
 				<Button
 					color="red"
 					content="Save"
 					fluid
 					loading={loading}
-					onClick={async () => {
-						setLoading(true)
-						const explanation = _.isEmpty(explanationRef.current)
-							? ""
-							: explanationRef.current.value
-						const description = _.isEmpty(descriptionRef.current)
-							? ""
-							: descriptionRef.current.value
-						await updateArg(id, description, explanation, newContradictions)
-						setLoading(false)
-					}}
+					onClick={(e) => e.stopPropagation()}
+					type="submit"
 				/>
 			</Form.Field>
 		</Form>
@@ -92,6 +123,7 @@ ArgumentForm.propTypes = {
 			id: PropTypes.number
 		})
 	),
+	contradictionOptions: PropTypes.arrayOf(PropTypes.number),
 	description: PropTypes.string,
 	explanation: PropTypes.string,
 	id: PropTypes.number,

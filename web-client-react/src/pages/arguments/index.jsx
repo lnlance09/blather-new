@@ -64,13 +64,14 @@ const Arguments = ({ history }) => {
 			})
 	}
 
-	const updateArg = async (id, description, explanation, contradictions) => {
+	const updateArg = async (id, description, explanation, contradictions, explanations) => {
 		await axios
 			.post(
 				`${process.env.REACT_APP_BASE_URL}arguments/${id}/update`,
 				{
 					description,
 					explanation,
+					explanations,
 					contradictions
 				},
 				{
@@ -124,13 +125,18 @@ const Arguments = ({ history }) => {
 				const { contradictions, description, explanation } = arg
 				const hasContradictions = loaded ? !_.isEmpty(contradictions.data) : false
 				return (
-					<Card fluid key={`cardArg${i}`}>
+					<Card
+						fluid
+						key={`cardArg${i}`}
+						onClick={(e) => onClickRedirect(e, history, `/arguments/${arg.slug}`)}
+					>
 						{loaded ? (
 							<>
 								<Card.Content>
 									{canEdit ? (
 										<ArgumentForm
-											contradictions={arg.contradictionOptions}
+											contradictions={contradictions.data}
+											contradictionOptions={arg.contradictionOptions}
 											description={description}
 											explanation={explanation}
 											id={arg.id}
@@ -165,13 +171,7 @@ const Arguments = ({ history }) => {
 									)}
 								</Card.Content>
 								<Card.Content extra>
-									<Button
-										color="blue"
-										compact
-										onClick={(e) =>
-											onClickRedirect(e, history, `/arguments/${arg.slug}`)
-										}
-									>
+									<Button color="blue" compact>
 										{arg.tweetCount} {formatPlural(arg.tweetCount, "example")}
 										<Icon name="arrow right" />
 									</Button>

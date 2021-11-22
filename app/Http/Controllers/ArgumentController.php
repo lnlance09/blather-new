@@ -230,11 +230,11 @@ class ArgumentController extends Controller
      */
     public function update(Request $request, $id)
     {
-
         $user = $request->user();
 
         $description = $request->input('description', null);
         $explanation = $request->input('explanation', null);
+        $explanations = $request->input('explanations', []);
         $contradictions = $request->input('contradictions', []);
 
         if ($user->id !== 1) {
@@ -256,18 +256,24 @@ class ArgumentController extends Controller
         $arg->slug = Str::slug($description);
         $arg->save();
 
+        $i = 0;
+
         foreach ($contradictions as $c) {
-            $cExists = ArgumentContradiction::where([
+            $exp = array_key_exists($i, $explanations) ? $explanations[$i] : '';
+            ArgumentContradiction::updateOrCreate([
                 'argument_id' => $id,
                 'contradicting_argument_id' => $c
-            ])->count() == 1;
+            ], [
+                'explanation' => $exp
+            ]);
+            ArgumentContradiction::updateOrCreate([
+                'argument_id' => $c,
+                'contradicting_argument_id' => $id
+            ], [
+                'explanation' => $exp
+            ]);
 
-            if (!$cExists) {
-                ArgumentContradiction::create([
-                    'argument_id' => $id,
-                    'contradicting_argument_id' => $c
-                ]);
-            }
+            $i++;
         }
 
         ArgumentContradiction::where('argument_id', $id)
