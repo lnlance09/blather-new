@@ -41,8 +41,7 @@
 				line-height: 1.8;
 
 				b {
-					text-decoration: $red wavy underline 2px;
-					// text-decoration-thickness: 0.3px;
+					text-decoration: $red solid underline 2px;
 					text-underline-offset: 4px;
 				}
 	  		}
