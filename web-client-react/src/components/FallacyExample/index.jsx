@@ -223,7 +223,7 @@ const FallacyExample = ({
 						)}
 						{useRibbon && (
 							<>
-								<Header className="ribbonHeader" style={{ position: "absolute" }}>
+								<Header className="ribbonHeader">
 									<Image
 										circular
 										className="itemImg"
@@ -239,7 +239,7 @@ const FallacyExample = ({
 										</Header.Subheader>
 									</Header.Content>
 								</Header>
-								<Label as="a" color="black" ribbon="right" size="large">
+								<Label color="black" ribbon="right" size="large">
 									<Icon name="clock" />
 									{showDateDiff && (
 										<>
