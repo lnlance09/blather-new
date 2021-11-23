@@ -71,5 +71,6 @@ export const tweetOptions = {
 	raised: false,
 	showCopyUrlOption: false,
 	showSaveOption: false,
-	showStats: true
+	showStats: true,
+	showTweetUrls: true
 }

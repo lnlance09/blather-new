@@ -60,7 +60,8 @@ const Tweet = ({
 		raised,
 		showCopyUrlOption,
 		showSaveOption,
-		showStats
+		showStats,
+		showTweetUrls
 	} = config
 
 	const { isRetweeted } = retweeted
@@ -127,7 +128,7 @@ const Tweet = ({
 	imgUrl += crossOriginAnonymous ? `?t=${new Date()}` : ""
 
 	const hasMedia = _.has(extEntities, "media") ? extEntities.media.length > 0 : false
-	const showUrl = !_.isEmpty(urls.url) && !hasMedia
+	const showUrl = !_.isEmpty(urls.url) && !hasMedia && showTweetUrls
 
 	const [hasSaved, setHasSaved] = useState(false)
 	const [saveLoading, setSaveLoading] = useState(false)

@@ -86,6 +86,7 @@ const Fallacy = ({ history, match }) => {
 	const [editingExp, setEditingExp] = useState(false)
 	const [modalOpen, setModalOpen] = useState(false)
 	const [refId, setRefId] = useState(1)
+	const [showTweetUrls, setShowTweetUrls] = useState(false)
 	const [verticalMode, setVerticalMode] = useState(true)
 	const [visible, setVisible] = useState(false)
 
@@ -583,7 +584,30 @@ const Fallacy = ({ history, match }) => {
 							circular
 							color="blue"
 							icon="shuffle"
-							onClick={() => setVerticalMode(!verticalMode)}
+							onClick={() => {
+								setVerticalMode(!verticalMode)
+								window.scroll({
+									top: 0,
+									left: 0,
+									behavior: "smooth"
+								})
+							}}
+							style={{ verticalAlign: "none" }}
+						/>
+					</List.Item>
+					<List.Item position="right">
+						<Button
+							circular
+							color="black"
+							icon={showTweetUrls ? "unlinkify" : "linkify"}
+							onClick={() => {
+								setShowTweetUrls(!showTweetUrls)
+								window.scroll({
+									top: 0,
+									left: 0,
+									behavior: "smooth"
+								})
+							}}
 							style={{ verticalAlign: "none" }}
 						/>
 					</List.Item>
@@ -737,6 +761,7 @@ const Fallacy = ({ history, match }) => {
 											}
 											reference={reference}
 											showExplanation={false}
+											showTweetUrls={showTweetUrls}
 											slug={fallacy.slug}
 											stacked
 											twitter={twitter}

@@ -58,6 +58,7 @@ const FallacyList = ({
 										}
 										reference={fallacy.reference}
 										showCommentCount
+										showTweetUrls={false}
 										slug={fallacy.slug}
 										twitter={fallacy.twitter}
 										useCard={fallacy.reference.id !== 21}

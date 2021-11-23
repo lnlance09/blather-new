@@ -29,6 +29,7 @@ const FallacyExample = ({
 	reference,
 	showCommentCount = false,
 	showExplanation = true,
+	showTweetUrls = true,
 	slug,
 	stacked = false,
 	twitter,
@@ -91,7 +92,8 @@ const FallacyExample = ({
 							if (!isLink) {
 								onClickTweet(e, history, id)
 							}
-						}
+						},
+						showTweetUrls
 					}}
 					counts={tweet.counts}
 					createdAt={tweet.createdAt}
@@ -123,7 +125,8 @@ const FallacyExample = ({
 							if (!isLink) {
 								onClickTweet(e, history, id)
 							}
-						}
+						},
+						showTweetUrls
 					}}
 					counts={cTweet.counts}
 					createdAt={cTweet.createdAt}
@@ -342,6 +345,7 @@ FallacyExample.propTypes = {
 	reference: PropTypes.shape({}),
 	showCommentCount: PropTypes.bool,
 	showExplanation: PropTypes.bool,
+	showTweetUrls: PropTypes.bool,
 	slug: PropTypes.string,
 	stacked: PropTypes.bool,
 	twitter: PropTypes.shape({}),
