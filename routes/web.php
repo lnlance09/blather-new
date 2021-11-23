@@ -96,9 +96,25 @@ Route::get('/contact', function () use ($seo) {
 });
 
 Route::get('/fallacies/{slug}', function ($slug) use ($seo) {
-    $fallacy = Fallacy::where('slug', $slug)->orWhere('id', $slug)->first();
+    $fallacy = Fallacy::where('slug', $slug)
+        ->orWhere('id', $slug)
+        ->first();
     if (empty($fallacy)) {
         return view('index', $seo);
+    }
+
+    $s3Link = $fallacy->s3_link;
+    if (!empty($s3Link)) {
+        $img = $seo['awsUrl'] . $s3Link;
+        $imgData = getimagesize($img);
+        $width = $imgData[0];
+        $height = $imgData[1];
+
+        $seo['img'] = [
+            'height' => $height,
+            'src' => $img,
+            'width' => $width
+        ];
     }
 
     $seo['description'] = $fallacy->explanation;
