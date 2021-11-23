@@ -15,6 +15,7 @@ const TweetList = ({
 	loadingMore,
 	onClickTweet = null,
 	showSaveOption = false,
+	showTweetUrls = true,
 	tweets
 }) => {
 	const showEmptyMsg = tweets.length === 0 && !loading
@@ -58,7 +59,8 @@ const TweetList = ({
 											onClickRedirect(e, history, `/tweets/${id}`)
 										}
 									},
-									showSaveOption
+									showSaveOption,
+									showTweetUrls
 								}}
 								counts={tweet.counts}
 								createdAt={tweet.createdAt}
@@ -102,6 +104,7 @@ TweetList.propTypes = {
 	loadingMore: PropTypes.bool,
 	onClickTweet: PropTypes.func,
 	showSaveOption: PropTypes.bool,
+	showTweetUrls: PropTypes.bool,
 	tweets: PropTypes.arrayOf(PropTypes.shape({}))
 }
 
