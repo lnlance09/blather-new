@@ -65,14 +65,26 @@
         }
 
         .ribbonHeader {
+            position: absolute;
+
             .sub.header {
                 color: #a5a7aa !important;
                 line-height: 20px;
             }
         }
 
-        label.ribbon {
+        .label.ribbon {
             text-transform: capitalize;
+        }
+
+        @media only screen and (max-width: 500px) {
+            .ribbonHeader {
+                position: relative;
+            }
+    
+            .label.ribbon {
+                display: none;
+            }
         }
 
         .fallacyDateDiff {
