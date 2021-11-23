@@ -29,7 +29,14 @@ export const getHighlightedText = (text, higlight, className = "") => {
 	for (let i = 0; i < parts.length; i++) {
 		const part = parts[i]
 		if (part.toLowerCase() === higlight.toLowerCase()) {
-			newText += `<b key="${className}Highlighted${i}${part}">${part}</b>`
+			const exp = part.split(" ")
+			const length = exp.length
+			for (let x = 0; x < length; x++) {
+				newText += `<b key="${className}Highlighted${i}${exp[x]}">${exp[x]}</b>`
+				if (x !== length - 1) {
+					newText += " "
+				}
+			}
 		} else {
 			newText += part
 		}
