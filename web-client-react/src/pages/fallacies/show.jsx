@@ -103,6 +103,9 @@ const Fallacy = ({ history, match }) => {
 	const [highlightedText, setHighlightedText] = useState("")
 	const [highlightedText2, setHighlightedText2] = useState("")
 
+	const [currentArg, setCurrentArg] = useState("")
+	const [currentArgCount, setCurrentArgCount] = useState(0)
+
 	useEffect(() => {
 		const getFallacy = async (slug) => {
 			await axios
@@ -222,7 +225,7 @@ const Fallacy = ({ history, match }) => {
 
 				const argIds = await data.map((arg) => arg.id)
 				getRelatedFallacies(argIds, id)
-				getTweets(argIds)
+				getTweets(argIds, [pageId])
 			})
 			.catch(() => {
 				toast.error("There was an error")
@@ -278,12 +281,13 @@ const Fallacy = ({ history, match }) => {
 			})
 	}
 
-	const getTweets = async (argIds, page = 1) => {
+	const getTweets = async (argIds, pageIds, page = 1) => {
 		page === 1 ? setLoadingT(true) : setLoadingMoreT(true)
 		await axios
 			.get(`${process.env.REACT_APP_BASE_URL}tweets`, {
 				params: {
 					argIds,
+					pageIds,
 					page
 				}
 			})
@@ -637,7 +641,14 @@ const Fallacy = ({ history, match }) => {
 												<Link to={`/arguments/${a.slug}`}>
 													{a.description}
 												</Link>
-												<Feed.Meta onClick={() => setModalOpen(true)}>
+												<Feed.Meta
+													onClick={async () => {
+														await getTweets([a.id], [page.id])
+														setCurrentArg(a.description)
+														setCurrentArgCount(a.tweetCount)
+														setModalOpen(true)
+													}}
+												>
 													<Feed.Like>
 														<Icon color="green" name="recycle" /> has
 														recycled this argument{" "}
@@ -825,12 +836,22 @@ const Fallacy = ({ history, match }) => {
 							>
 								<Modal.Content>
 									<Segment>
+										<Header>
+											{currentArg}
+											<Header.Subheader>
+												<Icon color="green" name="recycle" />
+												{page.name} has recycled this argument{" "}
+												<b>{currentArgCount}</b>{" "}
+												{formatPlural(currentArgCount, "time")}
+											</Header.Subheader>
+										</Header>
+										<Divider hidden />
 										<Visibility
 											continuous
 											offset={[50, 50]}
 											onBottomVisible={() => {
 												if (!loadingT && !loadingMoreT && hasMoreT) {
-													getTweets([id], pageNumberT)
+													getTweets([id], [page.id], pageNumberT)
 												}
 											}}
 										>
@@ -839,6 +860,7 @@ const Fallacy = ({ history, match }) => {
 												inverted={inverted}
 												loading={false}
 												loadingMore={false}
+												showTweetUrls={false}
 												showSaveOption={false}
 												tweets={modalTweets}
 											/>
