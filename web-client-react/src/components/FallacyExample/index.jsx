@@ -222,20 +222,38 @@ const FallacyExample = ({
 							</Label>
 						)}
 						{useRibbon && (
-							<Label as="a" color="black" ribbon size="large">
-								<Icon name="clock" />
-								{showDateDiff && (
-									<>
-										<Moment ago from={dateOne}>
-											{dateTwo}
-										</Moment>{" "}
-										apart
-									</>
-								)}
-							</Label>
+							<>
+								<Header className="ribbonHeader" style={{ position: "absolute" }}>
+									<Image
+										circular
+										className="itemImg"
+										floated="left"
+										onError={(i) => (i.target.src = PlaceholderPic)}
+										src={user.image}
+										style={{ marginRight: 0, width: "35px", height: "35px" }}
+									/>
+									<Header.Content>
+										{reference.name} #{id}
+										<Header.Subheader>
+											<Moment date={createdAt} fromNow /> • {user.name}
+										</Header.Subheader>
+									</Header.Content>
+								</Header>
+								<Label as="a" color="black" ribbon="right" size="large">
+									<Icon name="clock" />
+									{showDateDiff && (
+										<>
+											<Moment ago from={dateOne}>
+												{dateTwo}
+											</Moment>{" "}
+											apart
+										</>
+									)}
+								</Label>
+							</>
 						)}
 						{showExplanation && (
-							<Segment basic>
+							<Segment basic className="expSegment">
 								<div
 									className="explanation"
 									dangerouslySetInnerHTML={{
