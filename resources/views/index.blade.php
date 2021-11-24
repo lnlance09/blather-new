@@ -5,6 +5,7 @@
         <meta name="viewport" content="width=device-width, user-scalable=0">
         <meta name="theme-color" content="#050505">
 
+        <meta property="fb:app_id" content="498572440350555">
         <meta property="og:description" content="{{ $description }}">
         <meta property="og:image" content="{{ $img['src'] }}">
         <meta property="og:image:height" content="{{ $img['height'] }}">
