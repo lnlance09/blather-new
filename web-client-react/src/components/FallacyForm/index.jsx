@@ -238,7 +238,14 @@ const FallacyForm = ({
 												disabled ? "disabled" : ""
 											}`}
 											key={`refLabel${i}`}
-											onClick={() => setRefValue(value)}
+											onClick={() => {
+												setRefValue(value)
+												document
+													.getElementById("refDescSeg")
+													.scrollIntoView({
+														behavior: "smooth"
+													})
+											}}
 										>
 											{ref.name}
 										</Label>
@@ -247,7 +254,12 @@ const FallacyForm = ({
 							</Label.Group>
 							<Divider hidden />
 							{activeRef && (
-								<Segment className="refDescSeg" placeholder textAlign="center">
+								<Segment
+									id="refDescSeg"
+									className="refDescSeg"
+									placeholder
+									textAlign="center"
+								>
 									{activeRef.description}
 								</Segment>
 							)}
@@ -256,7 +268,7 @@ const FallacyForm = ({
 					<Form.Field>
 						<textarea
 							id="explanation"
-							placeholder="Please explain how this is fallacious."
+							placeholder="👉 Please explain how this is fallacious."
 							ref={explanationRef}
 							rows={7}
 						/>
