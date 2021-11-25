@@ -240,7 +240,7 @@ const FallacyExample = ({
 									</Header.Content>
 								</Header>
 								<Label color="black" ribbon="right" size="large">
-									<Icon name="clock" />
+									<Icon name="clock outline" />
 									{showDateDiff && (
 										<>
 											<Moment ago from={dateOne}>

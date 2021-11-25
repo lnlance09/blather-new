@@ -277,12 +277,12 @@ const PageHeader = ({ activeItem = null, history, showBanner = false, simple = f
 							/>
 						</Menu.Item>
 						<Menu.Item
-							active={activeItem === "activity"}
+							active={activeItem === "assign"}
 							onClick={() => {
-								history.push("/activity")
+								history.push("/assign")
 							}}
 						>
-							Activity
+							Assign
 						</Menu.Item>
 						<Menu.Item
 							active={activeItem === "tweets"}

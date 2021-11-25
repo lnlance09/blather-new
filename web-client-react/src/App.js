@@ -39,7 +39,7 @@ const App = () => {
 								exact
 								path="/"
 								render={(props) => (
-									<Assign key={window.location.pathname} {...props} />
+									<Activity key={window.location.pathname} {...props} />
 								)}
 							/>
 
