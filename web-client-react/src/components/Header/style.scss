@@ -94,9 +94,14 @@ $logoHeight: 36px;
         &.inverted {
             background: $invertedBackgroundColor;
 
-            a.item.active {
-                background: $invertedBackgroundColor;
-                color: $offWhite !important;
+            a.item {
+                color: $white;
+
+                &.active {
+                    background: transparentize(lighten($invertedBackgroundColor, 8%), 0.05) !important;
+                    color: $offWhite !important;
+                    font-weight: 700;
+                }
             }
         }
 
@@ -104,10 +109,6 @@ $logoHeight: 36px;
             height: 76px;
             padding-left: 8px;
             padding-right: 8px;
-
-            .item.active {
-                background: transparentize(lighten($invertedBackgroundColor, 3%), 0.05) !important;
-            }
 
             .item.trigger {
                 cursor: pointer;

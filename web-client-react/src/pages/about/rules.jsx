@@ -1,7 +1,6 @@
 import { Divider, Header } from "semantic-ui-react"
 import { useContext } from "react"
 import { DisplayMetaTags } from "utils/metaFunctions"
-// import { Link } from "react-router-dom"
 import DefaultLayout from "layouts/default"
 import PropTypes from "prop-types"
 import ThemeContext from "themeContext"
@@ -16,14 +15,11 @@ const Rules = ({ history }) => {
 
 			<Header as="h1" content="Rules" inverted={inverted} />
 
-			{/*
-			<Header as="h2" content="Edits" inverted={inverted} />
-			<Header as="p" inverted={inverted}>
-				Predictions cannot be edited after they have been submitted. This is meant to
-				prevent people from trying to save face after one of their predictions fails to
-				materialize.
-			</Header>
-			*/}
+			<p className="description">
+				Rules are pretty simple. Just try to understand what the fallacies are before you
+				assign them. Keep in mind that while uncommon, it does occassionally happen that
+				someone genuinely changes their mind.
+			</p>
 
 			<Divider hidden />
 		</DefaultLayout>

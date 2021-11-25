@@ -119,9 +119,9 @@ const Grifters = ({ history }) => {
 					<Header as="h1">Anti-Vaxx Grifters</Header>
 					<p>
 						These are people who exploit the general population's scientific ignorance,
-						particuarly in regards to vaccines, for their own personal gain. Prior to
+						particularly in regards to vaccines, for their own personal gain. Prior to
 						2020, this group consisted almost entirely of west coast hippie burnouts and
-						wealthy suburban soccer mom Gwenyth Paltrow types. However, the temptation
+						wealthy suburban soccer mom Gwyneth Paltrow types. However, the temptation
 						to own the libz proved to be too strong and this group is now dominated by
 						rural Republicans who think that being hospitalized for a completely
 						preventable disease is a cool way to score some political points.
@@ -231,19 +231,19 @@ const Grifters = ({ history }) => {
 						personality. Visit the Instagram account of one of these types and you'll
 						find a carefully curated stream of content that reaffirms their
 						self-appointed position in society as a "disruptor," a "game changer," and a
-						"revolutionary." They've probably attended a very prestigous school (they'll
-						let you know) or appeared on some 30 under 30 list. The goal is to cultivate
-						a reputation and then use that reputation to build a personal brand.
-						Remember Trump Steaks, Trump Vodka, Trump Magazine, Trump Airlines and so
-						on? It's a simimlar strategy here and it's one that's used by a ton of
-						celebrities. Once the brand has been successfully estabished (usually by
+						"revolutionary." They've probably attended a very prestigious school
+						(they'll let you know) or appeared on some 30 under 30 list. The goal is to
+						cultivate a reputation and then use that reputation to build a personal
+						brand. Remember Trump Steaks, Trump Vodka, Trump Magazine, Trump Airlines
+						and so on? It's a similar strategy here and it's one that's used by a ton of
+						celebrities. Once the brand has been successfully established (usually by
 						peddling vaporware), these folks can slap their name on a seminar or a
 						conference the same way that someone like Kylie Jenner can slap her name on
 						just about any generic product like lipstick or foundation and expect it to
 						sell from brand recognition alone. Silicon Valley is notorious for
-						glamorizing the founders of startups as mythical figures in televison and in
-						pop culture in general so it makes sense that it attracts its fair share of
-						celebrity wannabes.
+						glamorizing the founders of startups as mythical figures in television and
+						in pop culture in general so it makes sense that it attracts its fair share
+						of celebrity wannabes.
 					</p>
 					<div className="gallery-wrapper">
 						<div className="tiles">
@@ -291,10 +291,10 @@ const Grifters = ({ history }) => {
 						in probably almost every facet of their lives. It's why there's so much
 						overlap between the Qanon, Evangelical and MLM communities. If someone has
 						made a conscious decision to dedicate their life to an imaginary person, how
-						hard could it possibly be to convice that person that they'll get rich quick
-						or that JFK Jr. will come back from the dead in Dallas one fall afternoon?
-						Probably not that hard. If there's one thing that grifters deserve credit
-						for, it's spotting a good mark when they see one.
+						hard could it possibly be to convince that person that they'll get rich
+						quick or that JFK Jr. will come back from the dead in Dallas one fall
+						afternoon? Probably not that hard. If there's one thing that grifters
+						deserve credit for, it's spotting a good mark when they see one.
 					</p>
 
 					<Divider hidden />

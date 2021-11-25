@@ -267,7 +267,7 @@ const PageHeader = ({ activeItem = null, history, showBanner = false, simple = f
 					<ReactSVG className="simpleLogo" onClick={() => history.push("/")} src={Logo} />
 				</Container>
 			) : (
-				<Menu borderless fixed="top" fluid inverted>
+				<Menu borderless fixed="top" fluid inverted secondary>
 					<Container className="desktop">
 						<Menu.Item className="logoItem">
 							<ReactSVG
