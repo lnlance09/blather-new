@@ -47,7 +47,7 @@ $seo = [
 ];
 
 Route::get('/', function () use ($seo) {
-    $seo['title'] = 'Assign a Logical Fallacy - ' . $seo['siteName'];
+    $seo['title'] = 'Activity - ' . $seo['siteName'];
     return view('index', $seo);
 });
 
@@ -80,6 +80,12 @@ Route::get('/arguments/{slug}', function ($slug) use ($seo) {
     $seo['title'] = $arg->description . ' - ' . $seo['siteName'];
     $seo['url'] = $seo['baseUrl'] . 'arguments/' . $slug;
 
+    return view('index', $seo);
+});
+
+Route::get('/assign', function () use ($seo) {
+    $seo['title'] = 'Assign a Logical Fallacy - ' . $seo['siteName'];
+    $seo['url'] = $seo['baseUrl'] . 'assign';
     return view('index', $seo);
 });
 
@@ -199,7 +205,7 @@ Route::get('sitemap', function () {
     if (!$sitemap->isCached()) {
         // static pages
         $sitemap->add(URL::to('/'), Carbon::now(), '1.0', 'monthly'); // home/assign page
-        $sitemap->add(URL::to('/activity'), null, '0.7', 'daily');
+        $sitemap->add(URL::to('/assign'), null, '0.7', 'daily');
         $sitemap->add(URL::to('/auth'), null, '0.4', 'monthly');
         $sitemap->add(URL::to('/grifters'), null, '0.8', 'monthly');
         $sitemap->add(URL::to('/groups'), null, '0.6', 'monthly');

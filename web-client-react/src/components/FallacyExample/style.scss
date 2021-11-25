@@ -2,6 +2,8 @@
 
 .fallacyExample {
     .segment {
+        border-top-left-radius: 4px !important;
+        border-top-right-radius: 4px !important;
         width: 100%;
 
         &.withGroup {
@@ -73,10 +75,6 @@
             }
         }
 
-        .label.ribbon {
-            text-transform: capitalize;
-        }
-
         @media only screen and (max-width: 500px) {
             .ribbonHeader {
                 position: relative;
@@ -94,9 +92,12 @@
     }
 
     .header.attached.bottom {
-        padding-left: 32px;
+        background: $offWhite;
+        color: $black;
+        padding-left: 18px;
 
         .commentIcon {
+            color: $lightBlue !important;
             font-size: 14px;
             margin-right: 4px !important;
         }
