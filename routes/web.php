@@ -111,16 +111,19 @@ Route::get('/fallacies/{slug}', function ($slug) use ($seo) {
 
     $s3Link = $fallacy->s3_link;
     if (!empty($s3Link)) {
-        $img = $seo['awsUrl'] . $s3Link;
-        $imgData = getimagesize($img);
-        $width = $imgData[0];
-        $height = $imgData[1];
+        try {
+            $img = $seo['awsUrl'] . $s3Link;
+            $imgData = getimagesize($img);
+            $width = $imgData[0];
+            $height = $imgData[1];
 
-        $seo['img'] = [
-            'height' => $height,
-            'src' => $img,
-            'width' => $width
-        ];
+            $seo['img'] = [
+                'height' => $height,
+                'src' => $img,
+                'width' => $width
+            ];
+        } catch (\Exception $e) {
+        }
     }
 
     $seo['description'] = $fallacy->explanation;
@@ -147,20 +150,25 @@ Route::get('/pages/{network}/{username}', function ($network, $username) use ($s
         'network' => $network,
         'username' => $username
     ])->first();
+
     if (empty($page)) {
         return view('index', $seo);
     }
 
-    $img = $seo['awsUrl'] . $page->image;
-    $imgData = getimagesize($img);
-    $width = $imgData[0];
-    $height = $imgData[1];
+    try {
+        $img = $seo['awsUrl'] . $page->image;
+        $imgData = getimagesize($img);
+        $width = $imgData[0];
+        $height = $imgData[1];
 
-    $seo['img'] = [
-        'height' => $height,
-        'src' => $img,
-        'width' => $width
-    ];
+        $seo['img'] = [
+            'height' => $height,
+            'src' => $img,
+            'width' => $width
+        ];
+    } catch (\Exception $e) {
+    }
+
     $seo['description'] = $page->bio;
     $seo['title'] = $page->name . ' - ' . $seo['siteName'];
     $seo['url'] = $seo['baseUrl'] . 'pages/' . $network . '/' . $username;
@@ -306,16 +314,19 @@ Route::get('/{username}', function ($username) use ($seo) {
         return view('index', $seo);
     }
 
-    $img = $seo['awsUrl'] . $user->image;
-    $imgData = getimagesize($img);
-    $width = $imgData[0];
-    $height = $imgData[1];
+    try {
+        $img = $seo['awsUrl'] . $user->image;
+        $imgData = getimagesize($img);
+        $width = $imgData[0];
+        $height = $imgData[1];
 
-    $seo['img'] = [
-        'height' => $height,
-        'src' => $img,
-        'width' => $width
-    ];
+        $seo['img'] = [
+            'height' => $height,
+            'src' => $img,
+            'width' => $width
+        ];
+    } catch (\Exception $e) {
+    }
 
     $defaultBio = $user->name . ' has ' . $user->fallacies_count . ' fallacies and ' . $user->contradictions_count . ' contradictions';
     $seo['description'] = empty($user->bio) ? $defaultBio : $user->bio;
