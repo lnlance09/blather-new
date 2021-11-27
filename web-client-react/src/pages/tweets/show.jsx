@@ -284,6 +284,7 @@ const TweetPage = ({ history, match }) => {
 								className="assignFallacyBtn"
 								color="blue"
 								content="Assign a fallacy"
+								fluid
 								icon="gavel"
 								onClick={() =>
 									history.push(
@@ -293,7 +294,7 @@ const TweetPage = ({ history, match }) => {
 							/>
 
 							{canEdit && (
-								<Segment basic style={{ padding: "10px 0" }}>
+								<Segment>
 									<Dropdown
 										fluid
 										multiple
@@ -380,7 +381,7 @@ const TweetPage = ({ history, match }) => {
 										<NumberFormat
 											displayType={"text"}
 											thousandSeparator
-											value={tweet.fallacyCount}
+											value={fallacies.count}
 										/>
 										)
 									</span>
