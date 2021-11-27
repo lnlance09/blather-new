@@ -304,7 +304,7 @@ Route::get('/tweets/{id}', function ($id) use ($seo) {
     return view('index', $seo);
 });
 
-Route::get('/{username}', function ($username) use ($seo) {
+Route::get('/{username}/{tab?}', function ($username) use ($seo) {
     $user = User::where('username', $username)->withCount([
         'fallacies',
         'contradictions'
