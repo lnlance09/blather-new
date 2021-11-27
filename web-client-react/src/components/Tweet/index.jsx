@@ -320,7 +320,7 @@ const Tweet = ({
 									<NumberFormat
 										displayType={"text"}
 										thousandSeparator={true}
-										value={favCount}
+										value={rtCount}
 									/>
 								</Label>
 							</List.Item>
@@ -330,7 +330,7 @@ const Tweet = ({
 									<NumberFormat
 										displayType={"text"}
 										thousandSeparator={true}
-										value={rtCount}
+										value={favCount}
 									/>
 								</Label>
 							</List.Item>
