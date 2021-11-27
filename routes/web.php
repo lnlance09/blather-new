@@ -34,9 +34,9 @@ $seo = [
     'baseUrl' => $baseUrl,
     'description' => $siteName . ' is a website and application that lets users assign logical fallacies to tweets. You can make political memes out of tweets and fallacies.',
     'img' => [
-        'height' => 100,
-        'width' => 100,
-        'src' => 'public/logo512.png'
+        'height' => 512,
+        'width' => 512,
+        'src' => $awsUrl . 'public/icon-512x512.png'
     ],
     'keywords' => 'politics,logical fallacies,conservatives,trump,sycophants,critical thinking',
     'schema' => '',

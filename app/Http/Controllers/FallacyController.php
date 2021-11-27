@@ -97,8 +97,12 @@ class FallacyController extends Controller
         }
 
         if ($tweetId) {
-            $fallacies = $fallacies->whereHas('twitter', function ($query) use ($tweetId) {
-                $query->where('tweet_id', $tweetId);
+            $fallacies = $fallacies->where(function ($query) use ($tweetId) {
+                $query->whereHas('twitter', function ($query) use ($tweetId) {
+                    $query->where('tweet_id', $tweetId);
+                })->orWhereHas('contradictionTwitter', function ($query) use ($tweetId) {
+                    $query->where('tweet_id', $tweetId);
+                });
             });
         }
 
