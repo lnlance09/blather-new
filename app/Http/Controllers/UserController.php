@@ -402,7 +402,8 @@ class UserController extends Controller
 
     public function twitterRequestToken(Request $request)
     {
-        $token = Twitter::getRequestToken(env('APP_URL', 'https://blather.io/'));
+        $appUrl = env('APP_URL', 'https://blather.io/');
+        $token = Twitter::getRequestToken($appUrl . 'assign');
 
         if (isset($token['oauth_token_secret'])) {
             $url = Twitter::getAuthenticateUrl($token['oauth_token']);
