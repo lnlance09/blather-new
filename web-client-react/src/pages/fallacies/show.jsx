@@ -549,7 +549,7 @@ const Fallacy = ({ history, match }) => {
 	)
 
 	const shareList = (
-		<>
+		<Segment textAlign="center">
 			{loaded && !error ? (
 				<List className="shareList" horizontal size="mini">
 					<List.Item>
@@ -617,7 +617,7 @@ const Fallacy = ({ history, match }) => {
 					</List.Item>
 				</List>
 			) : null}
-		</>
+		</Segment>
 	)
 
 	const argumentsCard = (
@@ -816,9 +816,9 @@ const Fallacy = ({ history, match }) => {
 											<Divider hidden section />
 										</Grid.Column>
 										<Grid.Column width={5}>
+											{shareList}
 											{argumentsCard}
 											{relatedFallaciesCard}
-											{shareList}
 										</Grid.Column>
 									</Grid>
 								</Container>
