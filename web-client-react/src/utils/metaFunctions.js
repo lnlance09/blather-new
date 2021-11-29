@@ -63,7 +63,7 @@ export const DisplayMetaTags = ({ page, state }) => {
 				metaTags = {
 					description: fallacy.explanation,
 					img: fallacy.user.image,
-					title: `${fallacy.reference.name} Fallacy by ${fallacy.page.name}`
+					title: `${fallacy.reference.name} Fallacy by ${fallacy.page.name} - ${siteName}`
 				}
 			}
 			break
