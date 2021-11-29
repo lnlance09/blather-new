@@ -270,6 +270,7 @@ const Tweet = ({
 						>
 							{!_.isEmpty(urls.image) && (
 								<Image
+									crossOrigin={crossOriginAnonymous ? "true" : null}
 									onError={(i) => (i.target.src = UrlPic)}
 									src={urls.image}
 									wrapped
