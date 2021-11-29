@@ -160,6 +160,7 @@ const Page = ({ history, match }) => {
 						"reference"
 					],
 					includeContradictions: true,
+					commentCount: true,
 					page,
 					pageIds,
 					refIds: [21]
@@ -187,6 +188,7 @@ const Page = ({ history, match }) => {
 			.get(`${process.env.REACT_APP_BASE_URL}fallacies`, {
 				params: {
 					with: ["reference", "user", "twitter.tweet", "youtube.video"],
+					commentCount: true,
 					page,
 					pageIds
 				}
