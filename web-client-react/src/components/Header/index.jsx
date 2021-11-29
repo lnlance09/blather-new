@@ -384,7 +384,7 @@ const PageHeader = ({ activeItem = null, history, showBanner = false, simple = f
 				vertical
 				visible={sidebarVisible}
 			>
-				<Menu.Item as="a" onClick={() => history.push("/")}>
+				<Menu.Item as="a" onClick={() => history.push("/assign")}>
 					🪄 Assign
 				</Menu.Item>
 				<Menu.Item as="a" onClick={() => history.push("/activity")}>
