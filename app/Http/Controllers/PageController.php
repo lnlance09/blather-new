@@ -152,6 +152,7 @@ class PageController extends Controller
     public function showOptions(Request $request)
     {
         $groupId = $request->input('groupId', null);
+        $network = $request->input('network', 'both');
 
         $pages = Page::withCount(['fallacies']);
 
@@ -160,6 +161,10 @@ class PageController extends Controller
                 ->whereHas('groupMembers', function ($query) use ($groupId) {
                     $query->where('group_id', $groupId);
                 });
+        }
+
+        if ($network == 'twitter' || $network == 'youtube') {
+            $pages = $pages->where('network', $network);
         }
 
         $pages = $pages->orderBy('fallacies_count', 'desc')

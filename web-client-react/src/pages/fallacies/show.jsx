@@ -118,7 +118,7 @@ const Fallacy = ({ history, match }) => {
 					})
 					setVisible(true)
 					getComments(fallacy.id)
-					getArguments(fallacy.id, fallacy.page.id)
+					getArguments(fallacy)
 					setRefId(fallacy.reference.id)
 
 					const { contradictionTwitter, twitter } = fallacy
@@ -208,7 +208,10 @@ const Fallacy = ({ history, match }) => {
 		})
 	}
 
-	const getArguments = async (id, pageId) => {
+	const getArguments = async (fallacy) => {
+		const { contradictionTwitter, id, page, twitter } = fallacy
+		const pageId = page.id
+
 		await axios
 			.get(`${process.env.REACT_APP_BASE_URL}arguments/getArgumentsByFallacy`, {
 				params: {
@@ -223,8 +226,18 @@ const Fallacy = ({ history, match }) => {
 					args: data
 				})
 
+				let network = "twitter"
+				const tweetIds = []
+				if (!_.isEmpty(twitter)) {
+					tweetIds.push(twitter.tweet.id)
+				}
+
+				if (!_.isEmpty(contradictionTwitter)) {
+					tweetIds.push(contradictionTwitter.tweet.id)
+				}
+
 				const argIds = await data.map((arg) => arg.id)
-				getRelatedFallacies(argIds, id)
+				getRelatedFallacies(id, argIds, network, tweetIds)
 				getTweets(argIds, [pageId])
 			})
 			.catch(() => {
@@ -260,12 +273,14 @@ const Fallacy = ({ history, match }) => {
 			})
 	}
 
-	const getRelatedFallacies = async (args, id) => {
+	const getRelatedFallacies = async (id, args, network, tweetIds) => {
 		await axios
 			.get(`${process.env.REACT_APP_BASE_URL}fallacies/related`, {
 				params: {
+					id,
 					args,
-					id
+					network,
+					tweetIds
 				}
 			})
 			.then((response) => {

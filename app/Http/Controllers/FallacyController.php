@@ -302,17 +302,41 @@ class FallacyController extends Controller
     {
         $args = $request->input('args', []);
         $id = $request->input('id', null);
+        $network = $request->input('network', 'twitter');
+        $tweetIds = $request->input('tweetIds', []);
 
-        $fallacies = Fallacy::whereHas('twitter', function ($query) use ($args) {
-            $query->whereHas('tweet', function ($query) use ($args) {
-                $query->whereHas('arguments', function ($query) use ($args) {
-                    $query->whereHas('argument', function ($query) use ($args) {
-                        $query->whereIn('id', $args);
+        if ($network == 'twitter') {
+            $fallacies = Fallacy::where(function ($query) use ($args, $tweetIds) {
+                $query->whereHas('twitter', function ($query) use ($args, $tweetIds) {
+                    $query->whereHas('tweet', function ($query) use ($args, $tweetIds) {
+                        $query->where(function ($query) use ($args) {
+                            $query->whereHas('arguments', function ($query) use ($args) {
+                                $query->whereHas('argument', function ($query) use ($args) {
+                                    $query->whereIn('id', $args);
+                                });
+                            });
+                        })->orWhereIn('id', $tweetIds);
+                    });
+                });
+            })->orWhere(function ($query) use ($args, $tweetIds) {
+                $query->whereHas('contradictionTwitter', function ($query) use ($args, $tweetIds) {
+                    $query->whereHas('tweet', function ($query) use ($args, $tweetIds) {
+                        $query->where(function ($query) use ($args) {
+                            $query->whereHas('arguments', function ($query) use ($args) {
+                                $query->whereHas('argument', function ($query) use ($args) {
+                                    $query->whereIn('id', $args);
+                                });
+                            });
+                        })->orWhereIn('id', $tweetIds);
                     });
                 });
             });
-        })
-            ->where('id', '!=', $id)
+        }
+
+        if ($network == 'youtube') {
+        }
+
+        $fallacies = $fallacies->where('id', '!=', $id)
             ->get();
 
         return new FallacyCollection($fallacies);
