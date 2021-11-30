@@ -10,6 +10,7 @@ const initialState = {
 		loaded: false
 	},
 	pageOptions: [],
+	pageOptionsTwitter: [],
 	pages: {
 		count: 0,
 		data: [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}],

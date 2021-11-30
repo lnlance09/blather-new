@@ -69,7 +69,15 @@ const Search = ({ history }) => {
 		process.env.NODE_ENV === "development" ? logger(reducer) : reducer,
 		initialState
 	)
-	const { contradictions, fallacies, pageOptions, pages, refOptions, tweets } = internalState
+	const {
+		contradictions,
+		fallacies,
+		pageOptions,
+		pageOptionsTwitter,
+		pages,
+		refOptions,
+		tweets
+	} = internalState
 	const { twitterCount, youtubeCount } = pages
 
 	const [activeItem, setActiveItem] = useState(type)
@@ -102,10 +110,15 @@ const Search = ({ history }) => {
 	const [pageIdsF, setPageIdsF] = useState(_pageIdsF)
 	const [pageIdsC, setPageIdsC] = useState(_pageIdsC)
 
-	const getPageOptions = async () => {
-		const options = await getDropdownOptions()
+	const getPageOptions = async (network = "both") => {
+		let type = "SET_PAGE_OPTIONS"
+		if (network === "twitter") {
+			type = "SET_PAGE_OPTIONS_TWITTER"
+		}
+
+		const options = await getDropdownOptions(null, network)
 		dispatch({
-			type: "SET_PAGE_OPTIONS",
+			type,
 			options
 		})
 	}
@@ -121,6 +134,7 @@ const Search = ({ history }) => {
 	useEffect(() => {
 		getRefOptions(pageIdsF)
 		getPageOptions()
+		getPageOptions("twitter")
 		getCounts()
 		// eslint-disable-next-line
 	}, [])
@@ -730,7 +744,7 @@ const Search = ({ history }) => {
 						fluid
 						multiple
 						onChange={onChangeTwitterUser}
-						options={pageOptions}
+						options={pageOptionsTwitter}
 						placeholder="Filter by page"
 						renderLabel={(item) => {
 							return <Label color="blue" content={item.name} image={item.image} />

@@ -74,6 +74,11 @@ const reducer = (state, action) => {
 				...state,
 				pageOptions: action.options
 			}
+		case "SET_PAGE_OPTIONS_TWITTER":
+			return {
+				...state,
+				pageOptionsTwitter: action.options
+			}
 		case "SET_PAGES_TWITTER_COUNT":
 			return {
 				...state,
