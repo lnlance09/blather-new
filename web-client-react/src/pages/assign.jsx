@@ -21,10 +21,13 @@ import DefaultLayout from "layouts/default"
 import initialState from "states/assign"
 import FallacyForm from "components/FallacyForm"
 import logger from "use-reducer-logger"
+import moment from "moment"
 import PropTypes from "prop-types"
 import qs from "query-string"
+import ReactPlayer from "react-player"
 import reducer from "reducers/assign"
 import ThemeContext from "themeContext"
+import TimeField from "react-simple-timefield"
 import Tweet from "components/Tweet"
 import validator from "validator"
 
@@ -67,6 +70,17 @@ const sampleTweetC = (
 	/>
 )
 
+const validUrls = [
+	"www.twitter.com",
+	"twitter.com",
+	"mobile.twitter.com",
+	"www.youtube.com",
+	"youtube.com",
+	"youtu.be",
+	"blather.io",
+	"127.0.0.1"
+]
+
 const Assign = ({ history }) => {
 	const query = qs.parse(window.location.search)
 	const _url = _.isEmpty(query.url) ? "" : query.url
@@ -84,14 +98,33 @@ const Assign = ({ history }) => {
 	const [groupId, setGroupId] = useState(null)
 	const [highlightedText, setHighlightedText] = useState("")
 	const [highlightedTextC, setHighlightedTextC] = useState("")
+	const [inputIcon, setInputIcon] = useState("twitter")
+	const [inputIconCont, setInputIconCont] = useState("twitter")
 	const [pageId, setPageId] = useState(null)
 	const [refId, setRefId] = useState(1)
 	const [tweetLoading, setTweetLoading] = useState(false)
 	const [tweetLoadingC, setTweetLoadingC] = useState(false)
+	const [videoLoading, setVideoLoading] = useState(false)
+	const [videoLoadingC, setVideoLoadingC] = useState(false)
 	const [url, setUrl] = useState(_url)
 	const [urlC, setUrlC] = useState("")
 
-	const { cTweet, cTweetLoaded, groups, tweetLoaded, tweet } = internalState
+	const [startTime, setStartTime] = useState(0)
+	const [endTime, setEndTime] = useState(0)
+	const [startTimeCont, setStartTimeCont] = useState(0)
+	const [endTimeCont, setEndTimeCont] = useState(0)
+
+	const {
+		cTweet,
+		cVideo,
+		cVideoLoaded,
+		cTweetLoaded,
+		groups,
+		tweetLoaded,
+		tweet,
+		video,
+		videoLoaded
+	} = internalState
 
 	const showGroups = tweetLoaded && groups.length > 0
 
@@ -182,6 +215,32 @@ const Assign = ({ history }) => {
 			})
 	}
 
+	const getVideo = async (id, contradiction = false) => {
+		contradiction ? setVideoLoadingC(true) : setVideoLoading(true)
+		await axios
+			.get(`${process.env.REACT_APP_BASE_URL}videos/${id}`)
+			.then(async (response) => {
+				const { archived, video } = response.data
+				const type = contradiction ? "GET_VIDEO_CONTRADICTION" : "GET_VIDEO"
+				dispatchInternal({
+					type,
+					video
+				})
+				contradiction ? setVideoLoadingC(false) : setVideoLoading(false)
+
+				if (contradiction) {
+					setRefId(21)
+				}
+
+				if (archived) {
+					toast.info("Video archived!")
+				}
+			})
+			.catch((e) => {
+				toast.error("There was an error")
+			})
+	}
+
 	const handleHoverOn = () => {
 		let text = ""
 		if (window.getSelection) {
@@ -203,7 +262,7 @@ const Assign = ({ history }) => {
 		}
 	}
 
-	const onPaste = (e, callback) => {
+	const onPaste = (e, callback, contradiction = false) => {
 		const url = e.clipboardData.getData("Text")
 		if (!validator.isURL(url)) {
 			return
@@ -211,9 +270,30 @@ const Assign = ({ history }) => {
 
 		const _url = new URL(url)
 		const { hostname, pathname } = _url
-		if (!["twitter.com", "mobile.twitter.com", "blather.io", "127.0.0.1"].includes(hostname)) {
+		if (validUrls.indexOf(hostname) === -1) {
 			return
 		}
+
+		if (["www.youtube.com", "youtube.com", "youtu.be"].includes(hostname)) {
+			const params = qs.parse(_url.search)
+			if (_.isEmpty(params.v)) {
+				return
+			}
+
+			if (contradiction) {
+				setUrlC(url)
+				setInputIconCont("youtube")
+			} else {
+				setUrl(url)
+				setInputIcon("youtube")
+			}
+
+			getVideo(params.v, contradiction)
+			return
+		}
+
+		contradiction ? setInputIconCont("twitter") : setInputIcon("twitter")
+
 		callback(url, pathname)
 	}
 
@@ -231,10 +311,14 @@ const Assign = ({ history }) => {
 	}
 
 	const onPasteTweetC = (e) => {
-		onPaste(e, (url, pathname) => {
-			setUrlC(url)
-			onPasteCallback(pathname, true)
-		})
+		onPaste(
+			e,
+			(url, pathname) => {
+				setUrlC(url)
+				onPasteCallback(pathname, true)
+			},
+			true
+		)
 	}
 
 	useEffect(() => {
@@ -265,13 +349,16 @@ const Assign = ({ history }) => {
 							<Input
 								className="tweetInput"
 								fluid
-								icon="twitter"
+								icon={inputIcon}
 								iconPosition="left"
 								onKeyUp={(e) =>
 									onKeyUp(e, () => {
 										setUrl("")
 										dispatchInternal({
 											type: "RESET_TWEET"
+										})
+										dispatchInternal({
+											type: "RESET_VIDEO"
 										})
 									})
 								}
@@ -285,13 +372,16 @@ const Assign = ({ history }) => {
 							<Input
 								className="tweetInput"
 								fluid
-								icon="twitter"
+								icon={inputIconCont}
 								iconPosition="left"
 								onKeyUp={(e) =>
 									onKeyUp(e, () => {
 										setUrlC("")
 										dispatchInternal({
-											type: "RESET_CONTRADICTING_TWEET"
+											type: "RESET_TWEET_CONTRADICTION"
+										})
+										dispatchInternal({
+											type: "RESET_VIDEO_CONTRADICTION"
 										})
 									})
 								}
@@ -307,80 +397,211 @@ const Assign = ({ history }) => {
 
 					<Grid className={`${tweetLoaded ? "" : "loading"}`} stackable>
 						<Grid.Column width={8}>
-							<div className="sampleWrapper">
-								{tweetLoaded ? (
-									<Tweet
-										config={{
-											...tweetOptions,
-											handleHoverOn: () => {
-												const text = handleHoverOn()
-												setHighlightedText(text)
-											},
-											highlightedText
-										}}
-										counts={tweet.counts}
-										createdAt={tweet.createdAt}
-										extendedEntities={tweet.extendedEntities}
-										fullText={tweet.fullText}
-										history={history}
-										id={tweet.tweetId}
-										quoted={tweet.quoted}
-										retweeted={tweet.retweeted}
-										user={tweet.user}
-										urls={tweet.urls}
+							{!videoLoaded && (
+								<div className="sampleWrapper">
+									{tweetLoaded ? (
+										<Tweet
+											config={{
+												...tweetOptions,
+												handleHoverOn: () => {
+													const text = handleHoverOn()
+													setHighlightedText(text)
+												},
+												highlightedText
+											}}
+											counts={tweet.counts}
+											createdAt={tweet.createdAt}
+											extendedEntities={tweet.extendedEntities}
+											fullText={tweet.fullText}
+											history={history}
+											id={tweet.tweetId}
+											quoted={tweet.quoted}
+											retweeted={tweet.retweeted}
+											user={tweet.user}
+											urls={tweet.urls}
+										/>
+									) : (
+										<>
+											{tweetLoading ? (
+												<Segment>
+													<Placeholder fluid style={{ height: "210px" }}>
+														<Placeholder.Image />
+													</Placeholder>
+												</Segment>
+											) : (
+												<>{sampleTweet}</>
+											)}
+										</>
+									)}
+								</div>
+							)}
+
+							{videoLoaded && (
+								<>
+									<ReactPlayer
+										controls={true}
+										light={false}
+										onProgress={(e) => {}}
+										onStart={() => {}}
+										url={url}
+										width="100%"
 									/>
-								) : (
-									<>
-										{tweetLoading ? (
-											<Segment>
-												<Placeholder fluid style={{ height: "210px" }}>
-													<Placeholder.Image />
-												</Placeholder>
-											</Segment>
-										) : (
-											<>{sampleTweet}</>
-										)}
-									</>
-								)}
-							</div>
+									<Form as={Segment} secondary>
+										<Form.Group widths="equal">
+											<Form.Field>
+												<TimeField
+													input={
+														<Input
+															fluid
+															icon="hourglass start"
+															label={{
+																color: "black",
+																content: "Start"
+															}}
+															type="text"
+														/>
+													}
+													onChange={(e, value) => {
+														const time = moment
+															.duration(value)
+															.asSeconds()
+														setStartTime(time)
+													}}
+													showSeconds={true}
+												/>
+											</Form.Field>
+											<Form.Field>
+												<TimeField
+													input={
+														<Input
+															fluid
+															icon="hourglass end"
+															label={{
+																color: "black",
+																content: "End"
+															}}
+															type="text"
+														/>
+													}
+													onChange={(e, value) => {
+														const time = moment
+															.duration(value)
+															.asSeconds()
+														setEndTime(time)
+													}}
+													showSeconds={true}
+												/>
+											</Form.Field>
+										</Form.Group>
+									</Form>
+								</>
+							)}
 						</Grid.Column>
 						<Grid.Column width={8}>
-							<div className="sampleWrapper contradiction">
-								{cTweetLoaded ? (
-									<Tweet
-										config={{
-											...tweetOptions,
-											handleHoverOn: () => {
-												const text = handleHoverOn()
-												setHighlightedTextC(text)
-											},
-											highlightedText: highlightedTextC
-										}}
-										counts={cTweet.counts}
-										createdAt={cTweet.createdAt}
-										extendedEntities={cTweet.extendedEntities}
-										fullText={cTweet.fullText}
-										history={history}
-										id={cTweet.tweetId}
-										quoted={cTweet.quoted}
-										retweeted={cTweet.retweeted}
-										user={cTweet.user}
-										urls={cTweet.urls}
+							{!cVideoLoaded && (
+								<div className="sampleWrapper contradiction">
+									{cTweetLoaded ? (
+										<Tweet
+											config={{
+												...tweetOptions,
+												handleHoverOn: () => {
+													const text = handleHoverOn()
+													setHighlightedTextC(text)
+												},
+												highlightedText: highlightedTextC
+											}}
+											counts={cTweet.counts}
+											createdAt={cTweet.createdAt}
+											extendedEntities={cTweet.extendedEntities}
+											fullText={cTweet.fullText}
+											history={history}
+											id={cTweet.tweetId}
+											quoted={cTweet.quoted}
+											retweeted={cTweet.retweeted}
+											user={cTweet.user}
+											urls={cTweet.urls}
+										/>
+									) : (
+										<>
+											{tweetLoadingC ? (
+												<Segment>
+													<Placeholder fluid style={{ height: "210px" }}>
+														<Placeholder.Image />
+													</Placeholder>
+												</Segment>
+											) : (
+												<>
+													{!tweetLoaded && _url === ""
+														? sampleTweetC
+														: ""}
+												</>
+											)}
+										</>
+									)}
+								</div>
+							)}
+
+							{cVideoLoaded && (
+								<>
+									<ReactPlayer
+										controls={true}
+										light={false}
+										onProgress={(e) => {}}
+										onStart={() => {}}
+										// ref={videoRef}
+										url={urlC}
+										width="100%"
 									/>
-								) : (
-									<>
-										{tweetLoadingC ? (
-											<Segment>
-												<Placeholder fluid style={{ height: "210px" }}>
-													<Placeholder.Image />
-												</Placeholder>
-											</Segment>
-										) : (
-											<>{!tweetLoaded && _url === "" ? sampleTweetC : ""}</>
-										)}
-									</>
-								)}
-							</div>
+									<Form as={Segment} secondary>
+										<Form.Group widths="equal">
+											<Form.Field>
+												<TimeField
+													input={
+														<Input
+															fluid
+															icon="hourglass start"
+															label={{
+																color: "black",
+																content: "Start"
+															}}
+															type="text"
+														/>
+													}
+													onChange={(e, value) => {
+														const time = moment
+															.duration(value)
+															.asSeconds()
+														setStartTimeCont(time)
+													}}
+													showSeconds={true}
+												/>
+											</Form.Field>
+											<Form.Field>
+												<TimeField
+													input={
+														<Input
+															fluid
+															icon="hourglass end"
+															label={{
+																color: "black",
+																content: "End"
+															}}
+															type="text"
+														/>
+													}
+													onChange={(e, value) => {
+														const time = moment
+															.duration(value)
+															.asSeconds()
+														setEndTimeCont(time)
+													}}
+													showSeconds={true}
+												/>
+											</Form.Field>
+										</Form.Group>
+									</Form>
+								</>
+							)}
 						</Grid.Column>
 					</Grid>
 
@@ -422,6 +643,9 @@ const Assign = ({ history }) => {
 
 					<FallacyForm
 						cTweetId={cTweetLoaded ? cTweet.id : null}
+						cVideoId={cVideoLoaded ? cVideo.id : null}
+						startTimeCont={startTimeCont}
+						endTimeCont={endTimeCont}
 						groupId={groupId}
 						highlightedText={highlightedText}
 						highlightedTextC={highlightedTextC}
@@ -430,6 +654,9 @@ const Assign = ({ history }) => {
 						pageId={pageId}
 						refId={refId}
 						tweetId={tweetLoaded ? tweet.id : null}
+						videoId={videoLoaded ? video.id : null}
+						startTime={startTime}
+						endTime={endTime}
 					/>
 				</Container>
 

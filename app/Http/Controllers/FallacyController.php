@@ -13,6 +13,7 @@ use App\Models\FallacyYouTube;
 use App\Models\GroupMember;
 use App\Models\Reference;
 use App\Models\Tweet;
+use App\Models\Video;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -142,7 +143,10 @@ class FallacyController extends Controller
         $userId = $user ? $user->id : 6;
 
         $request->validate([
-            'tweet' => 'bail|required|exists:tweets,id',
+            'tweet' => 'sometimes|nullable|exists:tweets,id',
+            'cTweet' => 'sometimes|nullable|exists:tweets,id',
+            'video' => 'sometimes|nullable|exists:videos,id',
+            'cVideo' => 'sometimes|nullable|exists:videos,id',
             'explanation' => 'bail|required',
             'refId' => 'bail|required|exists:reference,id',
             'groupId' => 'sometimes|nullable|exists:groups,id'
@@ -155,16 +159,16 @@ class FallacyController extends Controller
         $tweetId = $request->input('tweet', null);
         $highlightedText = $request->input('highlightedText', null);
 
+        $cTweetId = $request->input('cTweet', null);
+        $highlightedTextC = $request->input('highlightedTextC', null);
+
         $videoId = $request->input('video', null);
         $startTime = $request->input('startTime', null);
         $endTime = $request->input('endTime', null);
 
-        $cTweetId = $request->input('cTweet', null);
-        $highlightedTextC = $request->input('highlightedTextC', null);
-
         $cVideoId = $request->input('cVideo', null);
-        $cStartTime = $request->input('cStartTime', null);
-        $cEndTime = $request->input('cEndTime', null);
+        $cStartTime = $request->input('startTimeCont', null);
+        $cEndTime = $request->input('endTimeCont', null);
 
         $isContradiction = $refId == 21;
 
@@ -179,44 +183,62 @@ class FallacyController extends Controller
             $pageId = $page->id;
         }
 
+        if ($videoId) {
+            $video = Video::with(['page'])
+                ->where('id', $videoId)
+                ->first();
+            $page = $video->page;
+            $pageId = $page->id;
+        }
+
         $cPage = null;
         $cPageId = null;
 
-        if ($isContradiction && $cTweetId) {
-            $cTweet = Tweet::with(['page'])
-                ->where('id', $cTweetId)
-                ->first();
-            $cPage = $cTweet->page;
-            $cPageId = $cPage->id;
+        if ($isContradiction) {
+            if ($cTweetId) {
+                $cTweet = Tweet::with(['page'])
+                    ->where('id', $cTweetId)
+                    ->first();
+                $cPage = $cTweet->page;
+                $cPageId = $cPage->id;
 
-            if ($groupId) {
-                $pageIsMember = GroupMember::where([
-                    'group_id' => $groupId,
-                    'page_id' => $pageId
-                ])->count();
+                if ($groupId) {
+                    $pageIsMember = GroupMember::where([
+                        'group_id' => $groupId,
+                        'page_id' => $pageId
+                    ])->count();
 
-                if (!$pageIsMember) {
-                    return response([
-                        'message' => $page->name . ' is not a member of that group'
-                    ], 401);
+                    if (!$pageIsMember) {
+                        return response([
+                            'message' => $page->name . ' is not a member of that group'
+                        ], 401);
+                    }
+
+                    $cPageIsMember = GroupMember::where([
+                        'group_id' => $groupId,
+                        'page_id' => $cPageId
+                    ])->count();
+
+                    if (!$cPageIsMember) {
+                        return response([
+                            'message' => $cPage->name . ' is not a member of that group'
+                        ], 401);
+                    }
+                } else {
+                    if ($cPageId !== $pageId) {
+                        return response([
+                            'message' => 'Contradictions must be from the same page'
+                        ], 401);
+                    }
                 }
+            }
 
-                $cPageIsMember = GroupMember::where([
-                    'group_id' => $groupId,
-                    'page_id' => $cPageId
-                ])->count();
-
-                if (!$cPageIsMember) {
-                    return response([
-                        'message' => $cPage->name . ' is not a member of that group'
-                    ], 401);
-                }
-            } else {
-                if ($cPageId !== $pageId) {
-                    return response([
-                        'message' => 'Contradictions must be from the same page'
-                    ], 401);
-                }
+            if ($cVideoId) {
+                $cVideo = Video::with(['page'])
+                    ->where('id', $cVideoId)
+                    ->first();
+                $cPage = $cVideo->page;
+                $cPageId = $cPage->id;
             }
         }
 
@@ -421,6 +443,10 @@ class FallacyController extends Controller
         $explanation = $request->input('explanation', null);
         $highlightedText = $request->input('highlightedText', null);
         $highlightedText2 = $request->input('highlightedText2', null);
+        $startTime = $request->input('startTime', null);
+        $endTime = $request->input('endTime', null);
+        $startTimeCont = $request->input('startTimeCont', null);
+        $endTimeCont = $request->input('endTimeCont', null);
 
         $fallacy = Fallacy::where('id', $id)
             ->with(['page', 'twitter.tweet', 'contradictionTwitter.tweet'])
@@ -473,6 +499,32 @@ class FallacyController extends Controller
                 ],
                 [
                     'highlighted_text' => $highlightedText2
+                ],
+            );
+        }
+
+        if ($startTime && $endTime && isset($fallacy->youtube)) {
+            FallacyYouTube::updateOrCreate(
+                [
+                    'fallacy_id' => $id,
+                    'video_id' => $fallacy->youtube->video->id,
+                ],
+                [
+                    'start_time' => $startTime,
+                    'end_time' => $endTime,
+                ],
+            );
+        }
+
+        if ($startTimeCont && $endTimeCont && isset($fallacy->contradictionYouTube)) {
+            ContradictionYouTube::updateOrCreate(
+                [
+                    'fallacy_id' => $id,
+                    'video_id' => $fallacy->contradictionYouTube->video->id,
+                ],
+                [
+                    'start_time' => $startTimeCont,
+                    'end_time' => $endTimeCont,
                 ],
             );
         }

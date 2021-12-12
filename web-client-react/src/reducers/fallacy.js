@@ -51,6 +51,11 @@ const reducer = (state, action) => {
 				error: true,
 				loaded: true
 			}
+		case "SET_PAGE_OPTIONS":
+			return {
+				...state,
+				pageOptions: action.options
+			}
 		case "SET_REFERENCE_OPTIONS":
 			return {
 				...state,

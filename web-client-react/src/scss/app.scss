@@ -350,7 +350,13 @@ body {
 
 				.tweetInput {
 					.icon {
-						color: $twitter;
+						&.twitter {
+							color: $twitter;
+						}
+
+						&.youtube {
+							color: $red;
+						}
 					}
 				}
 
@@ -366,6 +372,12 @@ body {
 							.card {
 								background: rgba(192, 57, 43, 0.1) !important;
 							}
+						}
+					}
+
+					.ui.form {
+						.equal.width.fields {
+							margin-bottom: 0;
 						}
 					}
 				}

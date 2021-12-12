@@ -1,14 +1,27 @@
 import "./style.scss"
-import { useEffect } from "react"
-import { Card, Divider, Grid, Header, Icon, Image, Label, Segment } from "semantic-ui-react"
+import { useEffect, useRef, useState } from "react"
+import {
+	Card,
+	Divider,
+	Grid,
+	Header,
+	Icon,
+	Image,
+	Label,
+	Message,
+	Segment
+} from "semantic-ui-react"
 import { hyphenateText } from "utils/textFunctions"
 import renderer, { tweetOptions } from "options/tweet"
+import _ from "underscore"
 import Marked from "marked"
 import Moment from "react-moment"
 import PlaceholderPic from "images/avatar/small/joe.jpg"
 import PropTypes from "prop-types"
 import ReactPlayer from "react-player"
 import Tweet from "components/Tweet"
+
+const youtubeUrl = "https://www.youtube.com/watch"
 
 const FallacyExample = ({
 	colored = false,
@@ -44,6 +57,14 @@ const FallacyExample = ({
 		Marked.use({ renderer })
 	}, [])
 
+	const [playing, setPlaying] = useState(false)
+	const [playingCont, setPlayingCont] = useState(false)
+	const [videoUrlSrc, setVideoUrlSrc] = useState("")
+	const [videoCUrlSrc, setVideoCUrlSrc] = useState("")
+
+	const videoRef = useRef()
+	const videoContRef = useRef()
+
 	let dateOne = ""
 	let dateTwo = ""
 	let tweet = null
@@ -52,28 +73,50 @@ const FallacyExample = ({
 	let highlightedTextC = ""
 	let video = null
 	let cVideo = null
+	let startTime = 0
+	let endTime = 0
+	let startTimeC = 0
+	let endTimeC = 0
 
-	if (typeof twitter !== "undefined" && twitter !== null) {
+	if (!_.isEmpty(twitter)) {
 		tweet = twitter.tweet
 		highlightedText = twitter.highlightedText === null ? "" : twitter.highlightedText
 		highlightedText = newHighlightedText !== "" ? newHighlightedText : highlightedText
 		dateOne = tweet.createdAt
 	}
-	if (typeof contradictionTwitter !== "undefined" && contradictionTwitter !== null) {
+
+	if (!_.isEmpty(contradictionTwitter)) {
 		cTweet = contradictionTwitter.tweet
 		highlightedTextC = contradictionTwitter.highlightedText
 		highlightedTextC = highlightedTextC === null ? "" : highlightedTextC
 		highlightedTextC = newHighlightedTextC !== "" ? newHighlightedTextC : highlightedTextC
 		dateTwo = cTweet.createdAt
 	}
-	if (typeof youtube !== "undefined" && youtube !== null) {
+
+	if (!_.isEmpty(youtube)) {
 		video = youtube.video
-		dateOne = video.createdAt
+		dateOne = video.dateCreated
+		startTime = youtube.startTime
+		endTime = youtube.endTime
 	}
-	if (typeof contradictionYouTube !== "undefined" && contradictionYouTube !== null) {
+
+	if (!_.isEmpty(contradictionYouTube)) {
 		cVideo = contradictionYouTube.video
-		dateTwo = cVideo.createdAt
+		dateTwo = cVideo.dateCreated
+		startTimeC = contradictionYouTube.startTime
+		endTimeC = contradictionYouTube.endTime
 	}
+
+	useEffect(() => {
+		if (video) {
+			setVideoUrlSrc(`${youtubeUrl}?v=${video.videoId}&t=${startTime}`)
+		}
+
+		if (cVideo) {
+			setVideoCUrlSrc(`${youtubeUrl}?v=${cVideo.videoId}&t=${startTimeC}`)
+		}
+		// eslint-disable-next-line
+	}, [])
 
 	const showDateDiff = (tweet || video) && (cTweet || cVideo)
 
@@ -144,59 +187,125 @@ const FallacyExample = ({
 		</div>
 	)
 
-	const Video = () => (
-		<>
-			{video && (
-				<>
-					<ReactPlayer
-						controls
-						loop
-						url={`https://www.youtube.com/watch?v=${video.videoId}&t=${video.startTime}`}
-						width="100%"
-					/>
-					<Divider />
-					<span
-						className="blue"
-						onClick={(e) => {
-							e.stopPropagation()
-							window
-								.open(`https://www.youtube.com/watch?v=${video.videoId}`, "_blank")
-								.focus()
-						}}
-					>
-						https://www.youtube.com/watch?v={video.videoId}
-					</span>
-				</>
-			)}
-		</>
-	)
+	const Video = () => {
+		if (_.isEmpty(video)) {
+			return
+		}
 
-	const ContradictingVideo = () => (
-		<>
-			{cVideo && (
-				<>
-					<ReactPlayer
-						controls
-						loop
-						url={`https://www.youtube.com/watch?v=${cVideo.videoId}&t=${cVideo.startTime}`}
-						width="100%"
-					/>
-					<Divider />
-					<span
-						className="blue"
-						onClick={(e) => {
-							e.stopPropagation()
-							window
-								.open(`https://www.youtube.com/watch?v=${cVideo.videoId}`, "_blank")
-								.focus()
-						}}
-					>
-						https://www.youtube.com/watch?v={cVideo.videoId}
-					</span>
-				</>
-			)}
-		</>
-	)
+		return (
+			<>
+				<ReactPlayer
+					controls={true}
+					light={false}
+					onProgress={(e) => {
+						if (!playing) {
+							return
+						}
+
+						const secs = e.playedSeconds
+						if (secs < startTime) {
+							setPlaying(false)
+							videoRef.current.seekTo(startTime)
+							setPlaying(true)
+						}
+
+						if (secs > endTime) {
+							setPlaying(false)
+							videoRef.current.seekTo(startTime)
+							setPlayingCont(true)
+						}
+					}}
+					onStart={() => {
+						setPlaying(true)
+						setPlayingCont(false)
+					}}
+					playing={playing}
+					ref={videoRef}
+					url={videoUrlSrc}
+					width="100%"
+				/>
+				{video.s3Link && (
+					<>
+						<Divider />
+						<Message warning>
+							<Message.Content>
+								📹 This video has been archived. View archived{" "}
+								<span
+									class="blue"
+									onClick={() => {
+										setVideoUrlSrc(video.s3Link)
+									}}
+								>
+									version
+								</span>
+								.
+							</Message.Content>
+						</Message>
+					</>
+				)}
+			</>
+		)
+	}
+
+	const ContradictingVideo = () => {
+		if (_.isEmpty(cVideo)) {
+			return
+		}
+
+		return (
+			<>
+				<ReactPlayer
+					controls={true}
+					light={false}
+					onProgress={(e) => {
+						if (!playingCont) {
+							return
+						}
+
+						const secs = e.playedSeconds
+						if (secs < startTimeC) {
+							setPlayingCont(false)
+							videoContRef.current.seekTo(startTimeC)
+							setPlayingCont(true)
+						}
+
+						if (secs > endTimeC) {
+							setPlayingCont(false)
+							videoContRef.current.seekTo(startTimeC)
+							setPlaying(true)
+						}
+					}}
+					onStart={() => {
+						setPlaying(false)
+						setPlayingCont(true)
+					}}
+					playing={playingCont}
+					ref={videoContRef}
+					url={videoCUrlSrc}
+					width="100%"
+				/>
+				{cVideo.s3Link && (
+					<>
+						<Divider />
+						<Message warning>
+							<Message.Content>
+								📹 This video has been archived. View archived{" "}
+								<span
+									class="blue"
+									onClick={() => {
+										setVideoCUrlSrc(cVideo.s3Link)
+									}}
+								>
+									version
+								</span>
+								.
+							</Message.Content>
+						</Message>
+					</>
+				)}
+			</>
+		)
+	}
 
 	return (
 		<div className={`fallacyExample ${colored ? "colored" : ""}`}>
