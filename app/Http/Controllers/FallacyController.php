@@ -195,7 +195,7 @@ class FallacyController extends Controller
         $cPageId = null;
 
         if ($isContradiction) {
-            if ($cTweetId) {
+            if ($tweetId && $cTweetId) {
                 $cTweet = Tweet::with(['page'])
                     ->where('id', $cTweetId)
                     ->first();
