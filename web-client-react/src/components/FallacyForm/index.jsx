@@ -31,6 +31,9 @@ toast.configure(toastConfig)
 
 const FallacyForm = ({
 	cTweetId = null,
+	cVideoId = null,
+	endTime = null,
+	endTimeCont = null,
 	groupId = null,
 	highlightedText = "",
 	highlightedTextC = "",
@@ -39,7 +42,10 @@ const FallacyForm = ({
 	pageId = null,
 	refId = 1,
 	showPageSelection = false,
-	tweetId = null
+	startTime = null,
+	startTimeCont = null,
+	tweetId = null,
+	videoId = null
 }) => {
 	const [internalState, dispatch] = useReducer(
 		process.env.NODE_ENV === "development" ? logger(reducer) : reducer,
@@ -106,12 +112,18 @@ const FallacyForm = ({
 				`${process.env.REACT_APP_BASE_URL}fallacies/create`,
 				{
 					cTweet: cTweetId,
+					cVideo: cVideoId,
+					endTime,
+					endTimeCont,
 					explanation,
 					highlightedText,
 					highlightedTextC,
 					groupId,
 					refId: refValue,
-					tweet: tweetId
+					startTime,
+					startTimeCont,
+					tweet: tweetId,
+					video: videoId
 				},
 				{
 					headers: {
@@ -348,14 +360,20 @@ const FallacyForm = ({
 
 FallacyForm.propTypes = {
 	cTweetId: PropTypes.oneOfType([PropTypes.bool, PropTypes.number]),
+	cVideoId: PropTypes.oneOfType([PropTypes.bool, PropTypes.number]),
+	endTime: PropTypes.oneOfType([PropTypes.bool, PropTypes.number]),
+	endTimeCont: PropTypes.oneOfType([PropTypes.bool, PropTypes.number]),
 	groupId: PropTypes.oneOfType([PropTypes.bool, PropTypes.number]),
-	highlightedText: PropTypes.string,
-	highlightedTextC: PropTypes.string,
+	highlightedText: PropTypes.oneOfType([PropTypes.bool, PropTypes.string]),
+	highlightedTextC: PropTypes.oneOfType([PropTypes.bool, PropTypes.string]),
 	inverted: PropTypes.bool,
 	pageId: PropTypes.oneOfType([PropTypes.bool, PropTypes.number]),
-	refId: PropTypes.number,
+	refId: PropTypes.oneOfType([PropTypes.bool, PropTypes.number]),
 	showPageSelection: PropTypes.bool,
-	tweetId: PropTypes.oneOfType([PropTypes.bool, PropTypes.number])
+	startTime: PropTypes.oneOfType([PropTypes.bool, PropTypes.number]),
+	startTimeCont: PropTypes.oneOfType([PropTypes.bool, PropTypes.number]),
+	tweetId: PropTypes.oneOfType([PropTypes.bool, PropTypes.number]),
+	videoId: PropTypes.oneOfType([PropTypes.bool, PropTypes.number])
 }
 
 export default FallacyForm

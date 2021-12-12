@@ -27,6 +27,7 @@ import { dataUrlToFile } from "utils/fileFunctions"
 import { onClickRedirect } from "utils/linkFunctions"
 import { DisplayMetaTags } from "utils/metaFunctions"
 import { formatPlural } from "utils/textFunctions"
+import { getDropdownOptions } from "options/page"
 import { getReferenceOptions } from "options/reference"
 import { getConfig } from "options/toast"
 import { toast } from "react-toastify"
@@ -43,18 +44,20 @@ import initialState from "states/fallacy"
 import logger from "use-reducer-logger"
 import Logo from "images/logos/npc.svg"
 import Marked from "marked"
+import moment from "moment"
 import Moment from "react-moment"
 import PropTypes from "prop-types"
 import reducer from "reducers/fallacy"
 import ThemeContext from "themeContext"
+import TimeField from "react-simple-timefield"
 import TweetList from "components/TweetList"
 
 const toastConfig = getConfig()
 toast.configure(toastConfig)
 
 const PlaceholderSegment = (
-	<Placeholder fluid style={{ height: 220 }}>
-		<Placeholder.Image image />
+	<Placeholder fluid style={{ height: 320 }}>
+		<Placeholder.Image />
 	</Placeholder>
 )
 
@@ -72,8 +75,17 @@ const Fallacy = ({ history, match }) => {
 		process.env.NODE_ENV === "development" ? logger(reducer) : reducer,
 		initialState
 	)
-	const { args, comments, error, fallacies, fallacy, loaded, modalTweets, refOptions } =
-		internalState
+	const {
+		args,
+		comments,
+		error,
+		fallacies,
+		fallacy,
+		loaded,
+		modalTweets,
+		pageOptions,
+		refOptions
+	} = internalState
 	const { createdAt, group, id, page, reference, retracted, title, user } = fallacy
 	const { contradictionTwitter, contradictionYouTube, twitter, youtube } = fallacy
 
@@ -87,7 +99,7 @@ const Fallacy = ({ history, match }) => {
 	const [modalOpen, setModalOpen] = useState(false)
 	const [refId, setRefId] = useState(1)
 	const [showTweetUrls, setShowTweetUrls] = useState(false)
-	const [verticalMode, setVerticalMode] = useState(true)
+	const [verticalMode, setVerticalMode] = useState(false)
 	const [visible, setVisible] = useState(false)
 
 	const [hasMoreC, setHasMoreC] = useState(false)
@@ -106,6 +118,15 @@ const Fallacy = ({ history, match }) => {
 	const [currentArg, setCurrentArg] = useState("")
 	const [currentArgCount, setCurrentArgCount] = useState(0)
 
+	const [startTime, setStartTime] = useState(0)
+	const [endTime, setEndTime] = useState(0)
+	const [startTimeCont, setStartTimeCont] = useState(0)
+	const [endTimeCont, setEndTimeCont] = useState(0)
+
+	const [assignee, setAssignee] = useState(null)
+
+	const canEditAssignee = youtube || contradictionYouTube
+
 	useEffect(() => {
 		const getFallacy = async (slug) => {
 			await axios
@@ -120,19 +141,31 @@ const Fallacy = ({ history, match }) => {
 					getComments(fallacy.id)
 					getArguments(fallacy)
 					setRefId(fallacy.reference.id)
+					setAssignee(fallacy.page.id)
 
-					const { contradictionTwitter, twitter } = fallacy
+					const { contradictionTwitter, contradictionYouTube, twitter, youtube } = fallacy
 					if (_.has(twitter, "highlightedText")) {
 						const highlightedText =
 							twitter.highlightedText === null ? "" : twitter.highlightedText
 						setHighlightedText(highlightedText)
 					}
+
 					if (_.has(contradictionTwitter, "highlightedText")) {
 						const highlightedText2 =
 							contradictionTwitter.highlightedText === null
 								? ""
 								: contradictionTwitter.highlightedText
 						setHighlightedText2(highlightedText2)
+					}
+
+					if (!_.isEmpty(youtube)) {
+						setStartTime(youtube.startTime)
+						setEndTime(youtube.endTime)
+					}
+
+					if (!_.isEmpty(contradictionYouTube)) {
+						setStartTimeCont(contradictionYouTube.startTime)
+						setEndTimeCont(contradictionYouTube.endTime)
 					}
 				})
 				.catch(() => {
@@ -157,6 +190,17 @@ const Fallacy = ({ history, match }) => {
 		}
 
 		getRefOptions()
+	}, [])
+
+	useEffect(() => {
+		const getPageOptions = async () => {
+			const options = await getDropdownOptions(null)
+			dispatch({
+				type: "SET_PAGE_OPTIONS",
+				options
+			})
+		}
+		getPageOptions()
 	}, [])
 
 	const saveScreenshot = async (id, file) => {
@@ -331,6 +375,10 @@ const Fallacy = ({ history, match }) => {
 		setHighlightedText2(value)
 	}
 
+	const onChangeAssignee = (e, { value }) => {
+		setAssignee(value)
+	}
+
 	const onChangeRef = (e, { value }) => {
 		setRefId(value)
 	}
@@ -355,7 +403,11 @@ const Fallacy = ({ history, match }) => {
 					highlightedText,
 					highlightedText2,
 					explanation,
-					refId
+					refId,
+					startTime,
+					endTime,
+					startTimeCont,
+					endTimeCont
 				},
 				{
 					headers: {
@@ -448,6 +500,125 @@ const Fallacy = ({ history, match }) => {
 									/>
 								</Form.Field>
 							)}
+							{canEditAssignee && (
+								<>
+									<Dropdown
+										clearable
+										fluid
+										loading={pageOptions.length === 0}
+										onChange={onChangeAssignee}
+										options={pageOptions}
+										placeholder="Assignee"
+										search
+										selection
+										value={assignee}
+									/>
+								</>
+							)}
+							{youtube && (
+								<>
+									<Header size="small">Video One</Header>
+									<Form.Group widths="equal">
+										<Form.Field>
+											<label>Start Time</label>
+											<TimeField
+												input={
+													<Form.Input
+														fluid
+														icon="hourglass start"
+														placeholder="Start time"
+														type="text"
+													/>
+												}
+												onChange={(e, value) => {
+													const time = moment.duration(value).asSeconds()
+													setStartTime(time)
+												}}
+												showSeconds={true}
+												value={`00:${moment
+													.duration(youtube.startTime, "seconds")
+													.format("mm:ss")}`}
+											/>
+										</Form.Field>
+										<Form.Field>
+											<label>End Time</label>
+											<TimeField
+												input={
+													<Form.Input
+														fluid
+														icon="hourglass end"
+														placeholder="End time"
+														type="text"
+													/>
+												}
+												onChange={(e, value) => {
+													const time = moment.duration(value).asSeconds()
+													setEndTime(time)
+												}}
+												showSeconds={true}
+												value={`00:${moment
+													.duration(youtube.endTime, "seconds")
+													.format("mm:ss")}`}
+											/>
+										</Form.Field>
+									</Form.Group>
+								</>
+							)}
+							{contradictionYouTube && (
+								<>
+									<Header size="small">Video Two</Header>
+									<Form.Group widths="equal">
+										<Form.Field>
+											<label>Start Time</label>
+											<TimeField
+												input={
+													<Form.Input
+														fluid
+														icon="hourglass start"
+														placeholder="Start time"
+														type="text"
+													/>
+												}
+												onChange={(e, value) => {
+													const time = moment.duration(value).asSeconds()
+													setStartTimeCont(time)
+												}}
+												showSeconds={true}
+												value={`00:${moment
+													.duration(
+														contradictionYouTube.startTime,
+														"seconds"
+													)
+													.format("mm:ss")}`}
+											/>
+										</Form.Field>
+										<Form.Field>
+											<label>End Time</label>
+											<TimeField
+												input={
+													<Form.Input
+														fluid
+														icon="hourglass end"
+														placeholder="End time"
+														type="text"
+													/>
+												}
+												onChange={(e, value) => {
+													const time = moment.duration(value).asSeconds()
+													setEndTimeCont(time)
+												}}
+												showSeconds={true}
+												value={`00:${moment
+													.duration(
+														contradictionYouTube.endTime,
+														"seconds"
+													)
+													.format("mm:ss")}`}
+											/>
+										</Form.Field>
+									</Form.Group>
+								</>
+							)}
 							<Form.Field>
 								<Grid>
 									<Grid.Row>
@@ -466,7 +637,7 @@ const Fallacy = ({ history, match }) => {
 										>
 											<ImageUpload
 												as="button"
-												btnSize="mediun"
+												btnSize="medium"
 												// callback={(file) => addImage(file)}
 												headerSize="tiny"
 												inverted={inverted}
@@ -892,9 +1063,18 @@ const Fallacy = ({ history, match }) => {
 					<div className="animationWrapper">
 						<Container>
 							<Segment stacked>
-								{PlaceholderSegment}
-								<Divider section />
-								{PlaceholderSegment}
+								{verticalMode ? (
+									<>
+										{PlaceholderSegment}
+										<Divider section />
+										{PlaceholderSegment}
+									</>
+								) : (
+									<Grid>
+										<Grid.Column width={8}>{PlaceholderSegment}</Grid.Column>
+										<Grid.Column width={8}>{PlaceholderSegment}</Grid.Column>
+									</Grid>
+								)}
 							</Segment>
 						</Container>
 					</div>

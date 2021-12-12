@@ -168,7 +168,7 @@ class PageController extends Controller
         }
 
         $pages = $pages->orderBy('fallacies_count', 'desc')
-            ->limit(50)
+            // ->limit(50)
             ->get();
         return new PageOptionCollection($pages);
     }

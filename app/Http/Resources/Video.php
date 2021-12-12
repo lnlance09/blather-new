@@ -22,9 +22,10 @@ class Video extends JsonResource
                 'likes' => $this->like_count,
                 'views' => $this->view_count
             ],
+            'dateCreated' => $this->date_created,
             'description' => $this->description,
             'page' => new PageResource($this->page),
-            's3Link' => $this->s3_link,
+            's3Link' => empty($this->s3_link) ? null : env('AWS_URL', 'https://blather-new.s3.us-west-2.amazonaws.com/') . $this->s3_link,
             'thumbnail' => $this->thumbnail,
             'title' => $this->title,
             'videoId' => $this->video_id,

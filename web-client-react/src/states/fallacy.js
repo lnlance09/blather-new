@@ -56,6 +56,7 @@ const initialState = {
 	},
 	loaded: false,
 	modalTweets: [],
+	pageOptions: [],
 	refOptions: []
 }
 

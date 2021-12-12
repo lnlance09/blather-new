@@ -10,14 +10,40 @@ const reducer = (state, action) => {
 				...state,
 				tweet: action.tweet,
 				tweetError: false,
-				tweetLoaded: true
+				tweetLoaded: true,
+				video: {},
+				videoError: false,
+				videoLoaded: false
 			}
 		case "GET_TWEET_CONTRADICTION":
 			return {
 				...state,
 				cTweet: action.tweet,
 				cTweetError: false,
-				cTweetLoaded: true
+				cTweetLoaded: true,
+				cVideo: {},
+				cVideoError: false,
+				cVideoLoaded: false
+			}
+		case "GET_VIDEO":
+			return {
+				...state,
+				video: action.video,
+				videoError: false,
+				videoLoaded: true,
+				tweet: {},
+				tweetError: false,
+				tweetLoaded: false
+			}
+		case "GET_VIDEO_CONTRADICTION":
+			return {
+				...state,
+				cVideo: action.video,
+				cVideoError: false,
+				cVideoLoaded: true,
+				cTweet: {},
+				cTweetError: false,
+				cTweetLoaded: false
 			}
 		case "RESET_CONTRADICTING_TWEET":
 			return {
@@ -33,12 +59,26 @@ const reducer = (state, action) => {
 				tweetError: false,
 				tweetLoaded: false
 			}
+		case "RESET_VIDEO":
+			return {
+				...state,
+				video: {},
+				videoError: false,
+				videoLoaded: false
+			}
 		case "RESET_TWEET_CONTRADICTION":
 			return {
 				...state,
 				cTweet: {},
 				cTweetError: false,
 				cTweetLoaded: false
+			}
+		case "RESET_VIDEO_CONTRADICTION":
+			return {
+				...state,
+				cVideo: {},
+				cVideoError: false,
+				cVideoLoaded: false
 			}
 		default:
 			throw new Error()

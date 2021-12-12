@@ -142,6 +142,10 @@
         }
     }
 
+    span.blue {
+        cursor: pointer;
+    }
+
     &.colored {
         .tweetWrapper {
             background: rgba(255, 255, 255, 0.75);
