@@ -1,22 +1,22 @@
 {
   "files": {
-    "main.css": "/static/css/main.d6e57d9a.chunk.css",
-    "main.js": "/static/js/main.c94e7571.chunk.js",
-    "runtime-main.js": "/static/js/runtime-main.4849eda3.js",
+    "main.css": "/static/css/main.a43eb5aa.chunk.css",
+    "main.js": "/static/js/main.ad23b1d5.chunk.js",
+    "runtime-main.js": "/static/js/runtime-main.45ed95bd.js",
     "static/css/2.4a753237.chunk.css": "/static/css/2.4a753237.chunk.css",
-    "static/js/2.944e9ac5.chunk.js": "/static/js/2.944e9ac5.chunk.js",
+    "static/js/2.39d736d6.chunk.js": "/static/js/2.39d736d6.chunk.js",
     "index.html": "/index.html",
-    "static/js/2.944e9ac5.chunk.js.LICENSE.txt": "/static/js/2.944e9ac5.chunk.js.LICENSE.txt",
+    "static/js/2.39d736d6.chunk.js.LICENSE.txt": "/static/js/2.39d736d6.chunk.js.LICENSE.txt",
     "static/media/brain.ce0ea62f.svg": "/static/media/brain.ce0ea62f.svg",
     "static/media/semantic.min.css": "/static/media/outline-icons.c5240512.woff2",
     "static/media/npc.0e77ea48.svg": "/static/media/npc.0e77ea48.svg",
     "static/media/steve.31dd511e.jpg": "/static/media/steve.31dd511e.jpg"
   },
   "entrypoints": [
-    "static/js/runtime-main.4849eda3.js",
+    "static/js/runtime-main.45ed95bd.js",
     "static/css/2.4a753237.chunk.css",
-    "static/js/2.944e9ac5.chunk.js",
-    "static/css/main.d6e57d9a.chunk.css",
-    "static/js/main.c94e7571.chunk.js"
+    "static/js/2.39d736d6.chunk.js",
+    "static/css/main.a43eb5aa.chunk.css",
+    "static/js/main.ad23b1d5.chunk.js"
   ]
 }
