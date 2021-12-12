@@ -328,7 +328,7 @@ class FallacyController extends Controller
         $tweetIds = $request->input('tweetIds', []);
 
         if ($network == 'twitter') {
-            $fallacies = Fallacy::where(function ($query) use ($args, $tweetIds) {
+            $fallacies = Fallacy::where(function ($query) use ($args, $tweetIds, $id) {
                 $query->whereHas('twitter', function ($query) use ($args, $tweetIds) {
                     $query->whereHas('tweet', function ($query) use ($args, $tweetIds) {
                         $query->where(function ($query) use ($args) {
@@ -339,8 +339,8 @@ class FallacyController extends Controller
                             });
                         })->orWhereIn('id', $tweetIds);
                     });
-                });
-            })->orWhere(function ($query) use ($args, $tweetIds) {
+                })->where('id', '!=', $id);;
+            })->orWhere(function ($query) use ($args, $tweetIds, $id) {
                 $query->whereHas('contradictionTwitter', function ($query) use ($args, $tweetIds) {
                     $query->whereHas('tweet', function ($query) use ($args, $tweetIds) {
                         $query->where(function ($query) use ($args) {
@@ -351,15 +351,14 @@ class FallacyController extends Controller
                             });
                         })->orWhereIn('id', $tweetIds);
                     });
-                });
+                })->where('id', '!=', $id);
             });
         }
 
         if ($network == 'youtube') {
         }
 
-        $fallacies = $fallacies->where('id', '!=', $id)
-            ->get();
+        $fallacies = $fallacies->get();
 
         return new FallacyCollection($fallacies);
     }
