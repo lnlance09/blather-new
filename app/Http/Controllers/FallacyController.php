@@ -433,11 +433,13 @@ class FallacyController extends Controller
     {
         $request->validate([
             'id' => 'bail|required|exists:fallacies,id',
+            'assignee' => 'sometimes|nullable|exists:pages,id',
             'refId' => 'sometimes|nullable|exists:reference,id',
             'explanation' => 'sometimes|nullable|required'
         ]);
 
         $id = $request->input('id');
+        $assignee = $request->input('assignee', null);
         $refId = $request->input('refId', null);
         $explanation = $request->input('explanation', null);
         $highlightedText = $request->input('highlightedText', null);
@@ -459,6 +461,10 @@ class FallacyController extends Controller
             $ref = Reference::find($refId);
             $fallacy->ref_id = $refId;
             $fallacy->title = $ref->name . ' by ' . $fallacy->page->name;
+        }
+
+        if ($assignee) {
+            $fallacy->page_id = $assignee;
         }
 
         $changes = $fallacy->getDirty();
