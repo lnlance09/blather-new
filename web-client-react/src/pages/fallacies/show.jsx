@@ -400,6 +400,7 @@ const Fallacy = ({ history, match }) => {
 				`${process.env.REACT_APP_BASE_URL}fallacies/update`,
 				{
 					id,
+					assignee,
 					highlightedText,
 					highlightedText2,
 					explanation,
@@ -501,7 +502,8 @@ const Fallacy = ({ history, match }) => {
 								</Form.Field>
 							)}
 							{canEditAssignee && (
-								<>
+								<Form.Field>
+									<label>Assigned To</label>
 									<Dropdown
 										clearable
 										fluid
@@ -513,7 +515,7 @@ const Fallacy = ({ history, match }) => {
 										selection
 										value={assignee}
 									/>
-								</>
+								</Form.Field>
 							)}
 							{youtube && (
 								<>
