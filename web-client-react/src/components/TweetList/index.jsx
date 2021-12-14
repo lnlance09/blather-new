@@ -86,7 +86,7 @@ const TweetList = ({
 			{showEmptyMsg && (
 				<Segment placeholder>
 					<Header icon>
-						<Icon className="twitter" name="twitter" />
+						<Icon className="twitterIcon" name="twitter" />
 						{emptyMsg}
 					</Header>
 				</Segment>

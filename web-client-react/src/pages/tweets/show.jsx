@@ -57,6 +57,7 @@ const TweetPage = ({ history, match }) => {
 	const showArgs = loaded && !error ? tweet.arguments.data.length > 0 : false
 
 	const [activeItem, setActiveItem] = useState("fallacies")
+	const [argId, setArgId] = useState(null)
 	const [modalOpen, setModalOpen] = useState(false)
 	const [hasMore, setHasMore] = useState(false)
 	const [hasMoreC, setHasMoreC] = useState(false)
@@ -349,6 +350,7 @@ const TweetPage = ({ history, match }) => {
 														[arg.argument.id],
 														[tweet.user.id]
 													)
+													setArgId(arg.argument.id)
 													setModalOpen(true)
 												}}
 												size="large"
@@ -464,7 +466,7 @@ const TweetPage = ({ history, match }) => {
 											offset={[50, 50]}
 											onBottomVisible={() => {
 												if (!loadingT && !loadingMoreT && hasMoreT) {
-													getTweets([id], [tweet.user.id], pageNumberT)
+													getTweets([argId], [tweet.user.id], pageNumberT)
 												}
 											}}
 										>
