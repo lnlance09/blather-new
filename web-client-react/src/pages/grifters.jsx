@@ -1,4 +1,4 @@
-import { Divider, Grid, Header, Image } from "semantic-ui-react"
+import { Container, Divider, Grid, Header, Image } from "semantic-ui-react"
 import { useContext } from "react"
 import { DisplayMetaTags } from "utils/metaFunctions"
 import { grifters } from "options/grifters"
@@ -43,6 +43,13 @@ const Grifters = ({ history }) => {
 						talking points to a naive audience that is very desperate to have their
 						pre-existing opinions confirmed.
 					</p>
+
+					<div className="headerBackground">
+						<Header inverted size="large" textAlign="center">
+							"Influencers are to social media what infomercial hosts were to
+							television in the 90's"
+						</Header>
+					</div>
 
 					<Header as="h1">MAGA Grifters</Header>
 					<p>
