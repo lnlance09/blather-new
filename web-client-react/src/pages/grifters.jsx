@@ -1,4 +1,4 @@
-import { Container, Divider, Grid, Header, Image } from "semantic-ui-react"
+import { Divider, Grid, Header, Image } from "semantic-ui-react"
 import { useContext } from "react"
 import { DisplayMetaTags } from "utils/metaFunctions"
 import { grifters } from "options/grifters"
