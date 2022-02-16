@@ -155,7 +155,8 @@ const Tweet = ({
 
 	const parseMedia = (entities) => {
 		return entities.media.map((item, i) => {
-			if (item.type !== "photo" && item.type !== "video") {
+			const { type } = item
+			if (type !== "photo" && type !== "video" && type !== "animated_gif") {
 				return null
 			}
 			return (
