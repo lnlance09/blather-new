@@ -102,8 +102,18 @@ class Tweet extends JsonResource
 
         $urls = [];
         if (count($this->urls) > 0) {
+            $base64Img = '';
+            $imgUrl = $this->urls[0]['image'];
+
+            if (filter_var($imgUrl, FILTER_VALIDATE_URL)) {
+                $image = file_get_contents($imgUrl);
+                if ($image !== false) {
+                    $base64Img = 'data:image/jpg;base64,' . base64_encode($image);
+                }
+            }
+
             $urls['description'] = $this->urls[0]['description'];
-            $urls['image'] = $this->urls[0]['image'];
+            $urls['image'] = $base64Img;
             $urls['title'] = $this->urls[0]['title'];
             $urls['url'] = $this->urls[0]['url'];
         }
