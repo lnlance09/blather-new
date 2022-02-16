@@ -225,7 +225,7 @@ const Tweet = ({
 						bordered
 						circular
 						className="tweetUserImg"
-						crossOrigin={crossOriginAnonymous ? "true" : null}
+						crossOrigin={crossOriginAnonymous ? "anonymous" : null}
 						floated="left"
 						onError={(i) => {
 							const newImg = headerImg !== defaultUserImg ? defaultUserImg : ItemPic
@@ -270,10 +270,9 @@ const Tweet = ({
 						>
 							{!_.isEmpty(urls.image) && (
 								<Image
-									crossOrigin={crossOriginAnonymous ? "true" : null}
+									crossOrigin={crossOriginAnonymous ? "anonymous" : null}
 									onError={(i) => (i.target.src = UrlPic)}
 									src={urls.image}
-									wrapped
 								/>
 							)}
 							<Card.Content>
