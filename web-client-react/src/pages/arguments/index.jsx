@@ -167,7 +167,10 @@ const Arguments = ({ history }) => {
 																const top = document.getElementById(
 																	`cardArg${c.slug}`
 																).offsetTop
-																window.scroll(0, top - 75)
+																window.scrollTo({
+																	top: top - 75,
+																	behavior: "smooth"
+																})
 															}}
 														>
 															<Card.Content>
