@@ -50,13 +50,13 @@ class TweetController extends Controller
             });
         });
 
-        if (count($argIds) > 0) {
+        if (!empty($argIds)) {
             $tweets = $tweets->whereHas('arguments', function ($query) use ($argIds) {
                 $query->whereIn('argument_id', $argIds);
             });
         }
 
-        if (count($pageIds) > 0) {
+        if (!empty($pageIds)) {
             $tweets = $tweets->whereIn('page_id', $pageIds);
         }
 
