@@ -34,8 +34,8 @@ class TweetController extends Controller
     {
         $q = $request->input('q');
         $ids = $request->input('ids');
-        $argIds = $request->input('argIds', null);
-        $pageIds = $request->input('pageIds', null);
+        $argIds = $request->input('argIds', []);
+        $pageIds = $request->input('pageIds', []);
         $limit = $request->input('limit', 15);
         $sort = $request->input('sort', 'id');
         $dir = $request->input('dir', 'asc');
@@ -50,25 +50,21 @@ class TweetController extends Controller
             });
         });
 
-        if (is_array($pageIds)) {
+        if (count($argIds) > 0) {
+            $tweets = $tweets->whereHas('arguments', function ($query) use ($argIds) {
+                $query->whereIn('argument_id', $argIds);
+            });
+        }
+
+        if (count($pageIds) > 0) {
             $tweets = $tweets->whereIn('page_id', $pageIds);
         }
 
         if (is_array($ids)) {
-            $tweets = $tweets->whereIn('tweet_id', $ids);
-        }
-
-        if (is_array($ids)) {
             $idsOrdered = implode(',', $ids);
-            $tweets = $tweets->orderByRaw("FIELD(id, $idsOrdered)");
+            $tweets = $tweets->whereIn('tweet_id', $ids)->orderByRaw("FIELD(id, " . $idsOrdered . ")");
         } else {
             $tweets = $tweets->orderBy($sort, $dir);
-        }
-
-        if (is_array($argIds)) {
-            $tweets = $tweets->whereHas('arguments', function ($query) use ($argIds) {
-                $query->whereIn('argument_id', $argIds);
-            });
         }
 
         $tweets = $tweets->with(['page'])
