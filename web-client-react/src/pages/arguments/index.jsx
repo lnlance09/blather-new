@@ -124,11 +124,16 @@ const Arguments = ({ history }) => {
 			{args.map((arg, i) => {
 				const { contradictions, description, explanation } = arg
 				const hasContradictions = loaded ? !_.isEmpty(contradictions.data) : false
+				const key = `cardArg${typeof arg.slug === "undefined" ? i : arg.slug}`
+
 				return (
 					<Card
 						fluid
-						key={`cardArg${i}`}
-						onClick={(e) => onClickRedirect(e, history, `/arguments/${arg.slug}`)}
+						id={key}
+						key={key}
+						onClick={(e) => {
+							onClickRedirect(e, history, `/arguments/${arg.slug}`)
+						}}
 					>
 						{loaded ? (
 							<>
@@ -154,7 +159,17 @@ const Arguments = ({ history }) => {
 														content="What this contradicts"
 													/>
 													{contradictions.data.map((c, x) => (
-														<Card fluid key={`contradiction${x}`}>
+														<Card
+															fluid
+															key={`contradiction${x}`}
+															onClick={async (e) => {
+																e.stopPropagation()
+																const top = document.getElementById(
+																	`cardArg${c.slug}`
+																).offsetTop
+																window.scroll(0, top - 75)
+															}}
+														>
 															<Card.Content>
 																<Card.Header>
 																	{c.description}

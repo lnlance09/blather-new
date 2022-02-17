@@ -454,7 +454,12 @@ const Argument = ({ history, match }) => {
 										offset={[50, 50]}
 										onBottomVisible={() => {
 											if (!loadingT && !loadingMoreT && hasMoreT) {
-												getTweets([id], [purveyorId], null, pageNumberT)
+												getTweets(
+													[id],
+													purveyorId === null ? null : [purveyorId],
+													null,
+													pageNumberT
+												)
 											}
 										}}
 									>
