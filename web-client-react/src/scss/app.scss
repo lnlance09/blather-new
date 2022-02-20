@@ -381,6 +381,14 @@ body {
 						}
 					}
 				}
+
+				.ui.message {
+					cursor: pointer;
+
+					&.selected {
+						border: solid 1px $lightBlue;
+					}
+				}
 			}
 		}
 
