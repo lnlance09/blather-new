@@ -610,7 +610,11 @@ const Assign = ({ history }) => {
 							<Divider hidden />
 
 							{groups.map((group) => (
-								<Message key={`groupMsg${group.id}`}>
+								<Message
+									className={group.id === groupId ? "selected" : ""}
+									key={`groupMsg${group.id}`}
+									onClick={() => setGroupId(group.id)}
+								>
 									<Message.Content>
 										<Message.Header>
 											Member of the {group.name} group
