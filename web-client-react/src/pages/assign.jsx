@@ -35,7 +35,7 @@ const toastConfig = getConfig()
 toast.configure(toastConfig)
 
 const sampleTweetUser = {
-	image: "https://blather22.s3.amazonaws.com/pages/twitter/charlie-tiny-face.jpeg",
+	image: "https://blather-new.s3.us-west-2.amazonaws.com/tiny-face.jpeg",
 	name: "Charlie Kirk",
 	username: "charliekirk11"
 }
