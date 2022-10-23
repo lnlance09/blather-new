@@ -21,7 +21,7 @@ const Footer = ({ history }) => {
 						<Link to="/rules">Rules</Link>
 					</List.Item>
 				</List>
-				<p>© 2018 - 2021, Blather</p>
+				<p>© 2018 - 2023, Blather</p>
 			</Container>
 		</Segment>
 	)

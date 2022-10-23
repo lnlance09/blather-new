@@ -18,7 +18,7 @@ class Fallacy extends Model
      * @var array
      */
     protected $dispatchesEvents = [
-        'created' => FallacyCreated::class
+        // 'created' => FallacyCreated::class
     ];
 
     /**
