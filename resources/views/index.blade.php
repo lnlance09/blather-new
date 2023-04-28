@@ -80,6 +80,6 @@
 
     <!-- React build JS -->
     <script src="/static/js/2.39d736d6.chunk.js"></script>
-    <script src="/static/js/main.72f62de4.chunk.js"></script>
+    <script src="/static/js/main.270adb3f.chunk.js"></script>
     <script src="/static/js/runtime-main.45ed95bd.js"></script>
 </html>
