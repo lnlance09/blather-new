@@ -239,18 +239,18 @@ const Grifters = ({ history }) => {
 						find a carefully curated stream of content that reaffirms their
 						self-appointed position in society as a "disruptor," a "game changer," and a
 						"revolutionary." They've probably attended a very prestigious school
-						(they'll let you know) or appeared on some 30 under 30 list. The goal is to
-						cultivate a reputation and then use that reputation to build a personal
-						brand. Remember Trump Steaks, Trump Vodka, Trump Magazine, Trump Airlines
-						and so on? It's a similar strategy here and it's one that's used by a ton of
-						celebrities. Once the brand has been successfully established (usually by
-						peddling vaporware), these folks can slap their name on a seminar or a
-						conference the same way that someone like Kylie Jenner can slap her name on
-						just about any generic product like lipstick or foundation and expect it to
-						sell from brand recognition alone. Silicon Valley is notorious for
-						glamorizing the founders of startups as mythical figures in television and
-						in pop culture in general so it makes sense that it attracts its fair share
-						of celebrity wannabes.
+						(they'll let you know) or appeared on some 30 under 30 list or have given a
+						TED talk. The goal is to cultivate a reputation and then use that reputation
+						to build a personal brand. Remember Trump Steaks, Trump Vodka, Trump
+						Magazine, Trump Airlines and so on? It's a similar strategy here and it's
+						one that's used by a ton of celebrities. Once the brand has been
+						successfully established (usually by peddling vaporware), these folks can
+						slap their name on a seminar or a conference the same way that someone like
+						Kylie Jenner can slap her name on just about any generic product like
+						lipstick or foundation and expect it to sell from brand recognition alone.
+						Silicon Valley is notorious for glamorizing the founders of startups as
+						mythical figures in television and in pop culture in general so it makes
+						sense that it attracts its fair share of celebrity wannabes.
 					</p>
 					<div className="gallery-wrapper">
 						<div className="tiles">
