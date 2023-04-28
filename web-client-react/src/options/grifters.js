@@ -243,8 +243,29 @@ export const grifters = {
 		{
 			src: "public/jessica-matthews.png",
 			name: "Jessica Matthews",
+			network: null,
+			username: null,
+			link: "https://en.wikipedia.org/wiki/Jessica_O._Matthews"
+		},
+		{
+			src: "public/molly-swenson.jpg",
+			name: "Molly Dewolf Swenson",
+			network: null,
+			username: null,
+			link: "https://en.wikipedia.org/wiki/Molly_DeWolf_Swenson"
+		},
+		{
+			src: "public/sbf.jpeg",
+			name: "Sam Bankman-Fried",
 			network: "twitter",
-			username: "jessomatt"
+			username: "sbf_ftx"
+		},
+		{
+			src: "public/charlie-javice.jpeg",
+			name: "Charlie Javice",
+			network: null,
+			username: null,
+			link: "https://en.wikipedia.org/wiki/Charlie_Javice"
 		}
 	]
 }
